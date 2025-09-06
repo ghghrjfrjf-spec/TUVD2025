@@ -1,0 +1,19 @@
+/* cursor.css */
+body, * {
+    cursor: none !important; /* 기본 마우스 커서 완전히 숨김 */
+}
+  
+.cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 48px;
+    height: 48px;
+    background-image: url('../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png'); /* 장미 로고 이미지 */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}

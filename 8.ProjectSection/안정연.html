@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>개인프로젝트페이지</title><!-- 🔺 스타일시트 연결 -->
+  <link rel="stylesheet" href="../2.PageElement/Tob_nav/Tob_nav.css" />
+  <link rel="stylesheet" href="../2.PageElement/Footer/Footer.css" />
+  <link rel="stylesheet" href="../2.PageElement/Cursor/cursor.css" />
+
+  <style>
+    /* Hide-on-scroll for Tob_nav */
+    .tob-nav { transition: transform .28s ease; will-change: transform; }
+    .tob-nav.is-hidden { transform: translateY(-110%); }
+    /* Fallback selectors for injected header without class */
+    #nav-placeholder header { transition: transform .28s ease; will-change: transform; }
+    #nav-placeholder header.is-hidden { transform: translateY(-110%); }
+    :root { --bg: #000; --text: #fff; }
+    html, body { margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Pretendard', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+
+    /* prevent overlap with sticky nav */
+    .nav-spacer { height: 72px; }
+    .hero { display:block; width:100%; height:auto; margin-top: 0; }
+    @media (max-width: 900px) { .nav-spacer { height: 56px; } }
+
+    .main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .project-card {
+      background: #f5f5f5;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 10px;
+    }
+    .project-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .project-card h3 {
+      margin: 10px 0 5px;
+      font-size: 1.1rem;
+      color: #333;
+    }
+    .project-card p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* ===== Horizontal marquee (auto-scroll left, reappear from right) ===== */
+    .marquee {
+      width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      padding: 10px 0;
+      /* nav-spacer will handle offset */
+      margin-top: 0;
+    }
+    .marquee-track {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      width: max-content;
+      animation: marquee-left 22s linear infinite;
+    }
+    .marquee-item {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+    }
+    .marquee-item img {
+      width: 140px;
+      height: auto;
+      border-radius: 6px;
+      display: block;
+    }
+    .marquee:hover .marquee-track { animation-play-state: paused; }
+
+    @keyframes marquee-left {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-track { animation: none; }
+    }
+
+    /* spacing helpers */
+    #footer-placeholder { margin-top: 40px; }
+
+    @media (max-width: 900px) {
+    }
+  </style>
+</head>
+<body>
+  <!-- 🔺 네비게이션 영역 -->
+  <div id="nav-placeholder"></div>
+  <div class="nav-spacer"></div>
+  <img class="hero" src="/Before_Work3/8.ProjectSection/안정연/3번->디자인 소개-100.jpg" alt="메인">
+  <section class="marquee" aria-label="프로젝트 미리보기">
+    <div class="marquee-track">
+      <!-- Set A -->
+      <div class="marquee-item"><img src="project1.jpg" alt="프로젝트 1" /><span>프로젝트 1</span></div>
+      <div class="marquee-item"><img src="project2.jpg" alt="프로젝트 2" /><span>프로젝트 2</span></div>
+      <div class="marquee-item"><img src="project3.jpg" alt="프로젝트 3" /><span>프로젝트 3</span></div>
+      <div class="marquee-item"><img src="project4.jpg" alt="프로젝트 4" /><span>프로젝트 4</span></div>
+      <!-- Set B (duplicate for seamless loop) -->
+      <div class="marquee-item"><img src="project1.jpg" alt="프로젝트 1" /><span>프로젝트 1</span></div>
+      <div class="marquee-item"><img src="project2.jpg" alt="프로젝트 2" /><span>프로젝트 2</span></div>
+      <div class="marquee-item"><img src="project3.jpg" alt="프로젝트 3" /><span>프로젝트 3</span></div>
+      <div class="marquee-item"><img src="project4.jpg" alt="프로젝트 4" /><span>프로젝트 4</span></div>
+    </div>
+  </section>
+  <div id="footer-placeholder"></div>
+  <script>
+
+function initHeaderHideOnScroll() {
+  const root = document.getElementById('nav-placeholder');
+  if (!root) return;
+  const header = root.querySelector('.tob-nav') || root.querySelector('header');
+  if (!header) return;
+
+  let lastY = window.pageYOffset || document.documentElement.scrollTop;
+  const threshold = 100; // start after 100px
+  let ticking = false;
+
+  const onScroll = () => {
+    const y = window.pageYOffset || document.documentElement.scrollTop;
+    if (y > lastY && y > threshold) {
+      header.classList.add('is-hidden');
+    } else {
+      header.classList.remove('is-hidden');
+    }
+    lastY = y <= 0 ? 0 : y;
+    ticking = false;
+  };
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(onScroll);
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
+// 📜 JavaScript
+  // 네비게이션 HTML 로드 (주입 + 경로 정규화 + 스크롤시 숨김)
+fetch('../2.PageElement/Tob_nav/Tob_nav.html')
+  .then(res => res.text())
+  .then(html => {
+    const root = document.getElementById('nav-placeholder');
+    root.innerHTML = html;
+
+    // Ensure injected header has .tob-nav class (for hide/show CSS)
+    const injectedHeader = root.querySelector('header');
+    if (injectedHeader && !injectedHeader.classList.contains('tob-nav')) {
+      injectedHeader.classList.add('tob-nav');
+    }
+
+    // Fix logo image(s) inside nav for this page depth
+    const logoImg = root.querySelector('#tuvd-logo, .tob-nav__logo img, .logo img');
+    if (logoImg) {
+      logoImg.src = '../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png';
+      logoImg.alt = '장미로고';
+      logoImg.onerror = function(){ this.onerror=null; this.src = '../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png'; };
+    }
+
+    // Normalize any image paths that incorrectly start with ../../ inside the injected fragment
+    root.querySelectorAll('img[src]').forEach(img => {
+      const s = img.getAttribute('src');
+      if (s.startsWith('../../1.Picture/')) img.setAttribute('src', s.replace('../../1.Picture/', '../1.Picture/'));
+      if (s.startsWith('../../2.PageElement/')) img.setAttribute('src', s.replace('../../2.PageElement/', '../2.PageElement/'));
+    });
+
+    // Normalize nav links to this depth
+    const BASE = '../3.PageExhibition';
+    const map = {
+      about: `${BASE}/2.AboutPage/About.html`,
+      project: `${BASE}/3.ProjectPage/project2.html`,
+      designer: `${BASE}/4.DesignerPage/Designer.html`,
+      guest: `${BASE}/5.GuestBookPage/Guest.html`,
+      gallery: `${BASE}/6.GalleryPage/Gallery.html`,
+      home: `${BASE}/1.MainPage/1.MainPage.html`
+    };
+    root.querySelectorAll('a[href]').forEach(a => {
+      const t = (a.textContent || '').toLowerCase();
+      const h = a.getAttribute('href') || '';
+      if (/about/i.test(t) || /about/i.test(h)) a.href = map.about;
+      else if (/project/i.test(t) || /project/i.test(h)) a.href = map.project;
+      else if (/designer/i.test(t) || /designer/i.test(h)) a.href = map.designer;
+      else if (/guest.?book/i.test(t) || /guest.?book/i.test(h) || /guest/i.test(t)) a.href = map.guest;
+      else if (/gallery/i.test(t) || /gallery/i.test(h)) a.href = map.gallery;
+      else if (/home|main|index/i.test(t) || /mainPage|home|index/i.test(h)) a.href = map.home;
+    });
+
+    initHeaderHideOnScroll();
+
+    // Dynamically size spacer to exact header height
+    const spacer = document.querySelector('.nav-spacer');
+    const header = root.querySelector('.tob-nav') || root.querySelector('header');
+    if (spacer && header) {
+      const setSpacerHeight = () => {
+        // Use offsetHeight to include padding/border
+        spacer.style.height = (header.offsetHeight - 8) + 'px';
+      };
+      setSpacerHeight();
+      window.addEventListener('resize', setSpacerHeight);
+      // In case web fonts change height after load
+      setTimeout(setSpacerHeight, 100);
+    }
+  });
+
+// 푸터 HTML 로드 (주입 + 경로 정규화)
+fetch('../2.PageElement/Footer/Footer.html')
+  .then(res => res.text())
+  .then(html => {
+    const foot = document.getElementById('footer-placeholder');
+    foot.innerHTML = html;
+    foot.querySelectorAll('img[src]').forEach(img => {
+      const s = img.getAttribute('src');
+      if (s.startsWith('../../1.Picture/')) img.setAttribute('src', s.replace('../../1.Picture/', '../1.Picture/'));
+      if (s.startsWith('../../2.PageElement/')) img.setAttribute('src', s.replace('../../2.PageElement/', '../2.PageElement/'));
+    });
+  });
+  </script>
+</body>
+</html>

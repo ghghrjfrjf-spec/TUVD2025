@@ -1,0 +1,11 @@
+<!-- Rose Cursor (fragment) -->
+<div class="cursor-dot" aria-hidden="true"></div>
+<script>
+  // follow pointer
+  document.addEventListener('mousemove', function(e){
+    var dot = document.querySelector('.cursor-dot');
+    if (!dot) return;
+    dot.style.left = e.clientX + 'px';
+    dot.style.top  = e.clientY + 'px';
+  }, { passive: true });
+</script>

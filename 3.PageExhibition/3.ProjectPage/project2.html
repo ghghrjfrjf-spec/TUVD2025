@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Page</title>
+  <!-- 🔺 스타일시트 연결 -->
+  <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
+  <link rel="stylesheet" href="project2.css" />
+</head>
+<body>
+   <!-- 🔺 네비게이션 영역 -->
+   <div id="nav-placeholder"></div>
+   <div id="cursor-placeholder"></div>
+ 
+
+  <div class="main">
+    <h1 class="project-title">PROJECT</h1>
+    <!-- 🔍 블랙&레드 필터/검색/정렬 영역 -->
+    <div class="project-toolbar" style="padding: 40px 60px 30px; margin: 0 auto; max-width: 1280px; border-bottom: 1px solid #ddd;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <!-- 필터 탭 -->
+        <div style="display: flex; gap: 36px; align-items: center;">
+          <span data-filter="all" style="font-size: 18px; font-weight: 700; color: red; cursor: pointer;">All</span>
+          <span data-filter="character" style="font-size: 18px; font-weight: 500; color: #aaa; cursor: pointer;">캐릭터</span>
+          <span data-filter="ci-bi-package" style="font-size: 18px; font-weight: 500; color: #aaa; cursor: pointer;">CI&BI&패키지</span>
+          <span data-filter="editorialvideo" style="font-size: 18px; font-weight: 500; color: #aaa; cursor: pointer;">편집&영상</span>
+          <span data-filter="uxui" style="font-size: 18px; font-weight: 500; color: #aaa; cursor: pointer;">UX/UI</span>
+        </div>
+
+        <!-- 정렬 -->
+        <div style="display: flex; gap: 10px;">
+          <button style="padding: 10px 18px; border: 1px solid #111; background: #fff; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer;">오름차순</button>
+          <button style="padding: 10px 18px; border: 1px solid #111; background: #fff; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer;">내림차순</button>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 60px 24px; border-bottom: 1px solid #ddd;">
+      <div id="project-count" style="font-size: 48px; font-weight: 900; display: flex; justify-content: center; align-items: center; gap: 10px;">0 Project</div>
+      <div>
+        <input
+          id="project-search"
+          type="text"
+          placeholder="Search by name..."
+          style="
+            padding: 10px 18px;
+            border: none;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(6px);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            width: 220px;
+            transition: box-shadow 0.3s ease;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+          "
+          onfocus="this.style.boxShadow='inset 0 0 0 2px rgba(255, 255, 255, 0.4)'"
+          onblur="this.style.boxShadow='inset 0 0 0 1px rgba(255, 255, 255, 0.2)'"
+        />
+      </div>
+    </div>
+
+    <div class="project-gallery"> 
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>김나연</strong><br /><span>KIM NAYEON</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>김민진</strong><br /><span>KIM MINJIN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="uxui">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>김사율</strong><br /><span>Kim Sayul</span></div>
+         </div>
+      <div class="project-gridcard" data-category="uxui">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>김서진</strong><br /><span>KIM SEOJIN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>김유빈</strong><br /><span>KIM YUBIN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>김준성</strong><br /><span>KIM JUNSEONG</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>김지우</strong><br /><span>KIM JIU</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+      <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>김혜림</strong><br /><span>kim hyerim</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>김혜연</strong><br /><span>kim hyeyeon</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>라영강</strong><br /><span>LUO YONGKANG</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>량역운</strong><br /><span>LIANG YIYUN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>박은제</strong><br /><span>PARK EUN JE</span></div>
+      </div>
+      <div class="project-gridcard" data-category="uxui">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>박진수</strong><br /><span>PARK JINSOO</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>배유진</strong><br /><span>BAE YUJIN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>배주아</strong><br /><span>BAEJUA</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>범상우</strong><br /><span>FAN XIANGYU</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>서은선</strong><br /><span>SEO EUNSUN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>설가심</strong><br /><span>XUE KEXIN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="editorialvideo">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>안예진</strong><br /><span>AN YEJIN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character" onclick="location.href='../../8.ProjectSection/안정연.html'" style="cursor: pointer;">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>안정연</strong><br /><span>AN JEONG YEON</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>양유성</strong><br /><span>YANG YUSEONG</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>왕몽연</strong><br /><span>WANG MENGRAN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>윤민주</strong><br /><span>YOON MINJU</span></div>
+      </div>
+      <div class="project-gridcard" data-category="uxui">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>이다현</strong><br /><span>RHIE DAHYEON</span></div>
+      </div>
+      <div class="project-gridcard" data-category="uxui">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>이서진</strong><br /><span>LEE SEOJIN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="editorialvideo">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>이수빈</strong><br /><span>LEE SUBIN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>이우비</strong><br /><span>빈칸</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>이은경</strong><br /><span>LEE EUNGYEONG</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>이주영</strong><br /><span>LEE JU YEONG</span></div>
+      </div>
+      <div class="project-gridcard" data-category="uxui">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>이혜주</strong><br /><span>LEE HYEJU</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>장세희</strong><br /><span>JANG SEHEE</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>장주아</strong><br /><span>JANG JU AH(or JANG JUA)</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>장청청</strong><br /><span>ZHANG QINGQING</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>전우곤</strong><br /><span>빈칸</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>주하우</strong><br /><span>빈칸</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>지영현</strong><br /><span>JI YEONGHYEON</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>차은지</strong><br /><span>CHA EUNJI</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>최민원</strong><br /><span>CHOI MINWON</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>최순주</strong><br /><span>CHOI SOONJU</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>최영인</strong><br /><span>CHOI YOUNGIN</span></div>
+      </div>
+      <div class="project-gridcard" data-category="character">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>최자연</strong><br /><span>CHOI JAYEON</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>한패달</strong><br /><span>HAN PEIDA</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>홍화정</strong><br /><span>HWAJUNG HONG</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>황만규</strong><br /><span>HWANG MANGYU</span></div>
+      </div>
+      <div class="project-gridcard" data-category="ci-bi-package">
+        <img src="../../1.Picture/2. Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <div class="title">Project Title</div>
+        <div class="text"><strong>황예빈</strong><br /><span>HWANG YEBIN</span></div>
+      </div>
+    </div>
+  </div>
+
+   <!-- 🔻 푸터 영역 -->
+   <div id="footer-placeholder"></div>
+
+   <!-- 📜 JavaScript -->
+   <script>
+     // 네비게이션 HTML 로드 (로고 교체 + 링크 정규화 + 스크롤시 숨김)
+     function initHeaderHideOnScroll() {
+       const root = document.getElementById('nav-placeholder');
+       if (!root) return;
+       const header = root.querySelector('header');
+       if (!header) {
+         const obs = new MutationObserver(() => {
+           const h = root.querySelector('header');
+           if (h) {
+             obs.disconnect();
+             applyHideOnScroll(h);
+           }
+         });
+         obs.observe(root, { childList: true, subtree: true });
+         return;
+       }
+       applyHideOnScroll(header);
+     }
+     function applyHideOnScroll(header) {
+       header.style.transition = 'transform .3s ease';
+       let prev = window.pageYOffset || document.documentElement.scrollTop;
+       window.addEventListener('scroll', () => {
+         const y = window.pageYOffset || document.documentElement.scrollTop;
+         header.style.transform = (y > prev) ? 'translateY(-100%)' : 'translateY(0)';
+         prev = y;
+       }, { passive: true });
+     }
+     fetch('../../2.PageElement/Tob_nav/Tob_nav.html')
+       .then(res => res.text())
+       .then(html => {
+         const parser = new DOMParser();
+         const doc = parser.parseFromString(html, 'text/html');
+
+         // 로고 이미지 교체 (상대경로 이슈 방지)
+         const logoContainer = doc.querySelector('.logo');
+         if (logoContainer) {
+           const imgs = logoContainer.querySelectorAll('img');
+           if (imgs.length > 0) {
+             imgs[0].outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+             if (imgs.length > 1) {
+               imgs[1].setAttribute('src', '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
+             }
+           }
+         } else {
+           // 혹시 .logo 래퍼가 없으면 이미지 전체에서 대체
+           doc.querySelectorAll('img').forEach(img => {
+             const alt = img.getAttribute('alt') || '';
+             const src = img.getAttribute('src') || '';
+             if (alt.includes('장미') || /BLOOM_LOGO|대지\.png|대지\.png/.test(src)) {
+               img.outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+             }
+           });
+         }
+
+         // 링크 정규화 (어느 페이지에서든 동작)
+         const baseEl = doc.querySelector('base');
+         if (baseEl) baseEl.remove();
+         const logoLink = doc.querySelector('a.logo, .logo a');
+         if (logoLink && logoLink.setAttribute) {
+           logoLink.setAttribute('href', '../1.MainPage/1.MainPage.html');
+         }
+         const linkMap = {
+           'home': '../1.MainPage/1.MainPage.html',
+           'about': '../2.AboutPage/About.html',
+           'project': '../3.ProjectPage/project2.html',
+           'designer': '../4.DesignerPage/Designer.html',
+           'guest book': '../5.GuestBookPage/Guest.html',
+           'guestbook': '../5.GuestBookPage/Guest.html',
+           'gallery': '../6.GalleryPage/Gallery.html'
+         };
+         doc.querySelectorAll('a[href]').forEach(a => {
+           const text = (a.textContent || '').trim().toLowerCase();
+           const href = (a.getAttribute('href') || '').trim();
+           if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
+           if (/about/i.test(href)) a.setAttribute('href', linkMap['about']);
+           else if (/project/i.test(href)) a.setAttribute('href', linkMap['project']);
+           else if (/designer/i.test(href)) a.setAttribute('href', linkMap['designer']);
+           else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
+           else if (/gallery/i.test(href)) a.setAttribute('href', linkMap['gallery']);
+           else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
+         });
+
+         document.getElementById('nav-placeholder').innerHTML = doc.body.innerHTML;
+         initHeaderHideOnScroll();
+       });
+     fetch('../../2.PageElement/Cursor/cursor.html')
+       .then(res => res.text())
+       .then(data => {
+         document.getElementById('cursor-placeholder').innerHTML = data;
+         // 커서 요소 주입 후 위치 업데이트 연결
+         (function setupCustomCursor() {
+           function attach() {
+             const dot = document.querySelector('.cursor-dot');
+             const ring = document.querySelector('.cursor-ring');
+             if (!dot && !ring) return false;
+             // 초기 위치
+             const move = (e) => {
+               if (dot) { dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px'; }
+               if (ring) { ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }
+             };
+             document.addEventListener('mousemove', move, { passive: true });
+             return true;
+           }
+           if (!attach()) {
+             const mo = new MutationObserver(() => { if (attach()) mo.disconnect(); });
+             mo.observe(document.body, { childList: true, subtree: true });
+           }
+         })();
+       });
+     // --- Cursor fallback: ensure .cursor-dot exists and follows mouse ---
+     (function ensureCursorFallback(){
+       function mount(){
+         let dot = document.querySelector('.cursor-dot');
+         if (!dot){
+           dot = document.createElement('div');
+           dot.className = 'cursor-dot';
+           document.body.appendChild(dot);
+         }
+         // optional ring off if not styled
+         const ring = document.querySelector('.cursor-ring');
+         if (ring) ring.style.pointerEvents = 'none';
+         // attach mousemove once
+         if (!window.__cursorMoveAttached){
+           document.addEventListener('mousemove', function(e){
+             if (dot){ dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px'; }
+             const r = document.querySelector('.cursor-ring');
+             if (r){ r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px'; }
+           }, { passive: true });
+           window.__cursorMoveAttached = true;
+         }
+       }
+       // If fetch failed, add a safety timeout to mount anyway
+       setTimeout(mount, 100);
+       // Also observe DOM in case cursor nodes are injected later
+       const mo = new MutationObserver(() => {
+         if (document.querySelector('.cursor-dot')) { mo.disconnect(); }
+         else { mount(); }
+       });
+       mo.observe(document.body, { childList: true, subtree: true });
+     })();
+     fetch('../../2.PageElement/Footer/Footer.html')
+       .then(res => res.text())
+       .then(data => {
+         document.getElementById('footer-placeholder').innerHTML = data;
+       });
+
+     // 필터 버튼 클릭 시 필터링 기능
+     document.querySelectorAll('[data-filter]').forEach(button => {
+       button.addEventListener('click', () => {
+         const selectedCategory = button.getAttribute('data-filter');
+         const cards = document.querySelectorAll('.project-gridcard');
+
+         cards.forEach(card => {
+           const cardCategory = card.getAttribute('data-category');
+           if (selectedCategory === 'all' || cardCategory === selectedCategory) {
+             card.style.display = 'flex';
+           } else {
+             card.style.display = 'none';
+           }
+         });
+
+         // 활성 탭 스타일 바꾸기
+         document.querySelectorAll('[data-filter]').forEach(btn => {
+           btn.style.color = '#aaa';
+           btn.style.fontWeight = '500';
+         });
+         button.style.color = 'red';
+         button.style.fontWeight = '700';
+       });
+     });
+
+     function updateProjectCount() {
+       const selectedCategory = document.querySelector('[data-filter][style*="color: red"]')?.getAttribute('data-filter') || 'all';
+       const cards = document.querySelectorAll('.project-gridcard');
+
+       let count = 0;
+       cards.forEach(card => {
+         const category = card.getAttribute('data-category');
+         const isVisible = card.style.display !== 'none';
+         if ((selectedCategory === 'all' || category === selectedCategory) && isVisible) {
+           count++;
+         }
+       });
+
+       document.getElementById('project-count').innerHTML = `<span style="font-size: 72px; color: white;">${count}</span> <span style="font-size: 18px; color: #aaa;">Project</span>`;
+     }
+
+     // 🔍 이름으로 검색 필터링
+     document.getElementById('project-search').addEventListener('input', function (e) {
+       const query = e.target.value.toLowerCase();
+       const cards = document.querySelectorAll('.project-gridcard');
+
+       cards.forEach(card => {
+         const name = card.querySelector('.text')?.innerText.toLowerCase();
+         if (name.includes(query)) {
+           card.style.display = 'flex';
+         } else {
+           card.style.display = 'none';
+         }
+       });
+
+       updateProjectCount();
+     });
+
+     // 초기 로드시 반영
+     updateProjectCount();
+
+     // 필터 적용 후 개수 업데이트
+     document.querySelectorAll('[data-filter]').forEach(button => {
+       button.addEventListener('click', () => {
+         setTimeout(updateProjectCount, 100);
+       });
+     });
+   </script>
+</body>
+</html>

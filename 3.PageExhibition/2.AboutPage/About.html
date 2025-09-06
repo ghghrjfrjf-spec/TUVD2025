@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AboutPage</title>
+  <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0a0a0a; --text:#fff; --line:rgba(255,255,255,.12);
+      --red:#ff3b3b; --red-600:#ff4d4d; --card:#121212; --card-2:#151515;
+      --max:1280px;
+    }
+    /* Global font: keep Pretendard to match other pages */
+    body{ font-family:'Pretendard', system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+
+    /* Decorative ABOUT mark (centered, large serif) */
+    .about-mark{
+      display:block;
+      margin:48px 0 0 0; /* align with section spacing */
+      text-align:left;    /* left aligned text */
+      font-family:'Playfair Display','Noto Serif KR',serif;
+      font-weight:700;
+      font-size:clamp(40px,6vw,96px);
+      line-height:1;
+      color:#fff;
+      letter-spacing:.02em;
+      opacity:.95;
+    }
+    @media (max-width:720px){
+      .about-mark{ font-size:clamp(32px,10vw,72px); margin-top:32px; }
+    }
+
+    /* Layout */
+    html,body{margin:0; padding:0; background:var(--bg); color:#fff !important;
+      font-family: 'Pretendard', system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+    a{color:inherit; text-decoration:none}
+    img{max-width:100%; height:auto; display:block}
+
+    /* Layout */
+    .container{max-width:var(--max); margin:0 auto; padding:0 24px; box-sizing:border-box}
+    main{display:block}
+
+    /* Hero */
+    /* Top visual banner (image-only at the very top) */
+    .top-banner{position:relative; width:100%; background:var(--bg);}
+    /* New: simple top-right image slot */
+    .top-right-slot{display:flex; justify-content:flex-end; padding:16px max(24px,6vw) 0;}
+    .top-right-slot img{display:block; width:min(560px,46vw); height:auto;}
+    @media (max-width:720px){
+      .top-right-slot{justify-content:center; padding:12px 16px 0}
+      .top-right-slot img{width:min(420px,86vw)}
+    }
+    .top-banner.fullbleed img{display:block; width:100%; height:auto;}
+    /* Framed option (unused now, keep for later) */
+    .top-banner.framed{padding:20px 0;}
+    .top-banner.framed .banner{max-width:var(--max); margin:0 auto; padding:0 24px;}
+    .top-banner.framed .banner-inner{border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+    .top-banner.framed .banner-inner img{width:100%; height:420px; object-fit:cover; object-position:center; display:block;}
+    /* Alignment helpers for the top banner image */
+    .top-banner.align-right img{ width:min(740px,72vw); margin:0 max(24px,6vw) 0 auto; }
+    .top-banner.align-center img{ width:min(900px,92vw); margin:24px auto 0 auto; }
+    .top-banner.align-left img{ width:min(740px,72vw); margin:24px auto 0 max(24px,6vw); }
+    @media (max-width:720px){
+      .top-banner.align-right img,
+      .top-banner.align-left img{ width:min(560px,86vw); margin:0 auto 0 auto; }
+    }
+    .hero{position:relative; overflow:hidden; padding:132px 0 84px; background:linear-gradient(180deg, rgba(255,59,59,.12), rgba(0,0,0,0));}
+    /* Image slot INSIDE the red gradient hero */
+    .hero .container{position:relative; z-index:1}
+    .hero-art{position:absolute; top:8px; right:clamp(-60px, -3vw, -8px); z-index:0; pointer-events:none}
+    .hero-art img{display:block; width:min(440px,34vw); height:auto}
+    /* keep text above the art */
+    .hero .hero-grid{position:relative; z-index:1}
+    @media (max-width: 900px){
+      .hero-art{position:static; margin:8px auto 0; text-align:center}
+      .hero-art img{width:min(420px,82vw)}
+    }
+    .hero .eyebrow{display:inline-flex; align-items:center; gap:10px; padding:6px 12px; border:1px solid var(--line); border-radius:999px; font-weight:700; letter-spacing:.4px; color:#fff}
+    .hero .title{
+      margin:18px 0 12px;
+      font-size:54px;
+      line-height:1.06;
+      font-weight:900;
+      letter-spacing:-.5px;
+      color:var(--red-600) !important;
+    }
+    .hero .subtitle{color:#fff !important; font-size:18px; max-width:860px}
+    .hero .cta{margin-top:28px; display:flex; gap:12px; flex-wrap:wrap}
+    .btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:12px 18px; border-radius:10px; border:1px solid #222; background:#fff; color:#111; font-weight:800}
+
+    /* Hero layout upgrade: left copy + date pill */
+    .hero-grid{display:grid; grid-template-columns:1fr; gap:24px; align-items:start}
+    .hero-left{min-width:0}
+    .hero-right{display:flex; justify-content:flex-end; align-items:flex-end}
+    .date-large{font-weight:900; text-align:right; letter-spacing:.5px; color:#fff; line-height:.9; font-size: clamp(44px, 8vw, 120px)}
+    .date-large .yy{font-size: .58em; display:block; opacity:.95}
+    .hero .cta{margin-top:28px; display:flex; gap:12px; flex-wrap:wrap}
+    /* Date pill inside red gradient hero */
+    .date-pill{
+      display:inline-flex; align-items:center; gap:8px;
+      margin-top:16px; padding:10px 14px; border-radius:12px;
+      background:linear-gradient(90deg, #ff3b3b, #ff6b6b);
+      color:#fff; font-weight:900; letter-spacing:.3px;
+      box-shadow:0 6px 20px rgba(255,59,59,.25);
+    }
+    .date-pill .yy{opacity:.95; font-weight:900}
+    @media (max-width: 800px){ .hero-grid{grid-template-columns:1fr} }
+
+    .btn.outline{background:transparent; color:#fff; border:1px solid var(--line)}
+    .btn .dot{width:8px; height:8px; border-radius:999px; background:var(--red)}
+
+    /* Info stripe */
+    .stripe{border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:rgba(255,255,255,.03)}
+    .info-grid{display:grid; grid-template-columns: repeat(3, 1fr); gap:24px; padding:28px 0}
+    .info-item{display:flex; flex-direction:column; gap:6px}
+    .info-label{color:#fff !important; font-weight:700; letter-spacing:.3px}
+    .info-value{font-size:20px; font-weight:800; color:#fff !important}
+
+    /* Theme section */
+    .section{padding:56px 0}
+    .section h2{font-size:28px; margin:0 0 16px; font-weight:900; color:#fff !important;}
+    .lead{color:#fff !important; font-size:20px; line-height:1.8}
+    .split{display:grid; grid-template-columns:1.2fr .8fr; gap:28px}
+    .panel{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px}
+
+    /* Highlights */
+    .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+    .card{background:var(--card-2); border:1px solid var(--line); border-radius:14px; padding:20px}
+    .card h3{margin:0 0 8px; font-size:18px; color:#fff !important;}
+    .card p{margin:0; color:#fff !important;}
+
+    /* Stats */
+    .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+    .stat{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; text-align:center}
+    .stat .num{font-size:32px; font-weight:900; color:#fff !important;}
+    .stat .cap{color:#fff !important; font-weight:700}
+
+    /* Map/venue */
+    .venue{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+    .venue p {color:#fff !important;}
+    .map{background:#0f0f0f; border:1px solid var(--line); border-radius:14px; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center; color:#888}
+
+    /* Footer CTA */
+    .cta-row{display:flex; gap:10px; flex-wrap:wrap}
+
+    /* Responsive */
+    @media (max-width: 1000px){ .info-grid{grid-template-columns:1fr 1fr} .split{grid-template-columns:1fr} .venue{grid-template-columns:1fr} .cards{grid-template-columns:1fr 1fr} .stats{grid-template-columns:1fr 1fr} .hero{padding:96px 0 56px} .hero .title{font-size:40px} }
+    @media (max-width: 520px){ .info-grid{grid-template-columns:1fr} .cards{grid-template-columns:1fr} .stats{grid-template-columns:1fr 1fr} .hero .title{font-size:34px} }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div id="cursor-placeholder"></div>
+
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-left">
+            <span class="eyebrow"><span class="dot" style="background:var(--red);"></span> 27th Graduation Exhibition</span>
+            <h1 class="title">BLOOM — 27th Graduation Exhibition</h1>
+            <p class="subtitle">우리의 지난 시간은 하나의 씨앗처럼 작은 가능성을 품고 있었습니다. 그렇게 우리는 순수함과 열정을 더하며 그 가능성을 키워 왔습니다. 이제 졸업전시 BLOOM에서 각자의 열정과 순수함을 담아낸 꽃을 피웁니다.</p>
+            <div class="date-pill"><span class="yy">2025</span>&nbsp;10.17–20</div>
+          </div>
+        </div>
+        <div class="hero-art">
+          <!-- 히어로 내부 이미지: src만 교체해서 사용하세요 -->
+          <img src="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE.png" alt="BLOOM rose" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Info stripe -->
+    <section class="stripe">
+      <div class="container info-grid">
+        <div class="info-item"><span class="info-label">기간</span><span class="info-value">2025. 10. 17 — 10. 20</span></div>
+        <div class="info-item"><span class="info-label">장소</span><span class="info-value">OO대학교 디자인관 전시홀 A</span></div>
+        <div class="info-item"><span class="info-label">관람</span><span class="info-value">무료 · AM 10:00 — PM 6:00</span></div>
+      </div>
+    </section>
+    <div class="container"><div class="about-mark">ABOUT</div></div>
+
+    <!-- Theme & Intro -->
+    <section class="section">
+      <div class="container split">
+        <div class="panel">
+          <h2>전시 주제: BLOOM</h2>
+          <p class="lead">한 장의 스케치에서 시작된 작은 가능성이, 리서치와 프로토타입, 피드백과 개선을 거쳐 <strong>완성의 순간</strong>을 맞이합니다. 그 여정 전체가 우리가 피워 낸 <strong>꽃</strong>입니다.</p>
+        </div>
+        <div class="panel">
+          <h2>영역</h2>
+          <div class="cards" style="grid-template-columns:1fr 1fr;">
+            <div class="card"><h3>편집</h3><p>타이포그래피와 컴포지션으로 메시지를 구조화합니다.</p></div>
+            <div class="card"><h3>캐릭터</h3><p>이야기와 감정을 담은 형태와 움직임.</p></div>
+            <div class="card"><h3>CI/BI & 패키지</h3><p>브랜드의 정체성과 경험을 통합합니다.</p></div>
+            <div class="card"><h3>영상디자인</h3><p>시간과 공간을 넘어서는 시각 언어.</p></div>
+            <div class="card"><h3>UX/UI</h3><p>문제를 정의하고 더 나은 상호작용을 설계합니다.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Highlights -->
+    <section class="section">
+      <div class="container">
+        <h2>하이라이트</h2>
+        <div class="cards">
+          <div class="card"><h3>오프닝 토크</h3><p>전시 기획 배경과 참여 디자이너 라운드테이블.</p></div>
+          <div class="card"><h3>워크숍</h3><p>타이포 포스터, 캐릭터 라이브 드로잉, 프로토타입 스프린트.</p></div>
+          <div class="card"><h3>가이드 투어</h3><p>도슨트와 함께 섹션별 의도와 제작 비하인드 소개.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats strip -->
+    <section class="section stripe">
+      <div class="container stats">
+        <div class="stat"><div class="num">27</div><div class="cap">기수</div></div>
+        <div class="stat"><div class="num">40+</div><div class="cap">참여 디자이너</div></div>
+        <div class="stat"><div class="num">80+</div><div class="cap">프로젝트</div></div>
+        <div class="stat"><div class="num">5</div><div class="cap">카테고리</div></div>
+      </div>
+    </section>
+
+    <!-- Venue / Map placeholder -->
+    <section class="section">
+      <div class="container venue">
+        <div class="panel">
+          <h2>오시는 길</h2>
+          <p class="lead">서울시 OO구 OO로 00, OO대학교 디자인관 전시홀 A<br>지하철 2호선 OO역 3번 출구 도보 7분</p>
+          <div class="cta-row">
+            <a class="btn" href="#">네이버 지도</a>
+            <a class="btn outline" href="#">카카오맵</a>
+          </div>
+        </div>
+        <div class="map">지도 영역(이미지/임베드 예정)</div>
+      </div>
+    </section>
+
+    <!-- Thanks / Credits -->
+    <section class="section">
+      <div class="container panel">
+        <h2>Thanks to</h2>
+        <p class="lead" style="margin-bottom:8px">지도교수 · 운영스태프 · 도슨트 · 스폰서 여러분께 감사드립니다.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <span class="btn outline">Advisor</span>
+          <span class="btn outline">Operation</span>
+          <span class="btn outline">Docent</span>
+          <span class="btn outline">Sponsor</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script>
+    // 네비게이션 HTML 삽입 (로고 교체 + 링크 정규화)
+    fetch('../../2.PageElement/Tob_nav/Tob_nav.html', {cache: "no-store"})
+      .then(res => res.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // 로고 이미지 교체 (장미로고 + 텍스트 로고)
+        const logoContainer = doc.querySelector('.logo');
+        if (logoContainer) {
+          const imgs = logoContainer.querySelectorAll('img');
+          if (imgs.length > 0) {
+            imgs[0].outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+            if (imgs.length > 1) {
+              imgs[1].setAttribute('src', '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
+            }
+          }
+        }
+
+        // base 태그 제거 (상대 경로 꼬임 방지)
+        const baseEl = doc.querySelector('base');
+        if (baseEl) baseEl.remove();
+
+        // 링크 정규화: 3.PageExhibition/* 어디서든 정상 동작
+        const logoLink = doc.querySelector('a.logo, .logo a');
+        if (logoLink) logoLink.setAttribute('href', '../1.MainPage/1.MainPage.html');
+        const linkMap = {
+          'home': '../1.MainPage/1.MainPage.html',
+           'about': '../2.AboutPage/About.html',
+           'project': '../3.ProjectPage/project2.html',
+           'designer': '../4.DesignerPage/Designer.html',
+           'guest book': '../5.GuestBookPage/Guest.html',
+           'guestbook': '../5.GuestBookPage/Guest.html',
+           'gallery': '../6.GalleryPage/Gallery.html'
+         };
+        doc.querySelectorAll('a[href]').forEach(a => {
+          const text = (a.textContent || '').trim().toLowerCase();
+          const href = (a.getAttribute('href') || '').trim();
+          if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
+          if (/about/i.test(href)) a.setAttribute('href', linkMap['about']);
+          else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
+          else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
+        });
+
+        const navRoot = document.getElementById('nav-placeholder');
+        if (navRoot) navRoot.innerHTML = doc.body.innerHTML;
+      });
+
+    // 푸터 HTML 삽입
+    fetch('../../2.PageElement/Footer/Footer.html', {cache: "no-store"})
+      .then(res => res.text())
+      .then(data => {
+        const root = document.getElementById('footer-placeholder');
+        if (root) root.innerHTML = data;
+      });
+
+    // 커서 HTML 삽입
+    (function loadCursor(){
+      const root = document.getElementById('cursor-placeholder');
+      if (!root) return;
+      fetch('../../2.PageElement/Cursor/cursor.html', {cache: "no-store"})
+        .then(res => res.text())
+        .then(html => { root.innerHTML = html; })
+        .catch(err => console.error('Cursor load failed:', err));
+    })();
+
+    // 커서 움직임 제어
+    document.addEventListener('mousemove', function(e){
+      const dot = document.querySelector('.cursor-dot');
+      if(dot){
+        dot.style.left = e.clientX + 'px';
+        dot.style.top = e.clientY + 'px';
+      }
+    });
+  </script>
+
+  <!-- Firebase SDK --></body>
+</html>

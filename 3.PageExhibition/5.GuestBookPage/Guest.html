@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>방명록</title>
+  <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
+  <style>
+    html, body {
+      height: 100%;
+    }
+    :root { --footer-safe: 0px; }
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    main.content {
+      padding-top: 108px; /* moved the whole guestbook content slightly lower */
+      padding-bottom: calc(var(--footer-safe) + 24px);
+    }
+    body {
+      margin: 0;
+      font-family: 'Pretendard', sans-serif;
+      background-color: #000;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    .guestbook-container {
+      max-width: 1200px;
+      margin: 24px auto 0; 
+      padding: 20px;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 40px;
+      background: none;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .guestbook-title {
+      font-family: 'Times New Roman', serif;
+      font-size: 4.5rem;
+      color: white;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    hr {
+      border-color: #ffffff;
+    }
+
+    .write-button-wrapper {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    #toggleWriteForm {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .guestbook-form-container.hidden {
+      display: none;
+    }
+
+    .search-bar {
+      margin: 2rem auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-bar input {
+      padding: 0.8rem 1rem;
+      border-radius: 20px;
+      border: 2px solid white;
+      background-color: #222;
+      color: white;
+      font-size: 1rem;
+      width: 300px;
+    }
+
+    .search-bar input::placeholder {
+      color: #ffcccc;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      align-items: stretch; /* 중앙 정렬 제거, 좌우로 꽉 차게 */
+    }
+
+    input, textarea {
+      padding: 1rem;
+      background: #222;
+      color: white;
+      border-radius: 12px;
+      font-size: 1rem;
+      border: 1px solid #333;
+      clip-path: none;
+      width: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+
+    input:focus, textarea:focus{
+      outline: none;
+      border-color: #ff4d4d;
+      box-shadow: 0 0 0 2px rgba(255,77,77,0.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    button {
+      padding: 0.8rem;
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 80%;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    .guestbook-form-container button[type="submit"] {
+      background-color: #fff;
+      color: #000;
+      border: 1px solid #000;
+    }
+    .guestbook-form-container button[type="submit"]:hover {
+      background-color: #000; /* invert on hover */
+      color: #fff;
+      border-color: #000;
+    }
+
+    button:hover {
+      background-color: #e60000;
+    }
+
+    .message {
+      background: white;
+      border-radius: 10px;
+      color: black;
+      font-weight: 500;
+      padding: 1.2rem;
+      margin: 0; /* remove extra margins — we use gap on the container */
+      flex: 0 0 calc((100% - 2rem) / 3); /* 3 columns accounting for two 1rem gaps */
+      box-sizing: border-box;
+      display: block;
+      position: relative;
+      min-height: 150px;
+    }
+
+    .message-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: flex-start;
+    }
+
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;          /* tighter spacing */
+      margin-top: 1rem;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .pagination .page-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      font-weight: 700;
+      color: #aaa;
+      background: transparent;
+      cursor: pointer;
+      user-select: none;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .pagination .page-link.active {
+      background: #ff4d4d; /* red background */
+      color: #fff;
+    }
+    .pagination .page-link:hover:not(.active) {
+      background: rgba(255,77,77,0.1);
+      color: #ff4d4d;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Two-column layout */
+    .guestbook-left {
+      flex: 0 0 40%;
+      display: flex;           /* 세로 플렉스 컨테이너 */
+      flex-direction: column;
+    }
+    .guestbook-right { flex: 1 1 60%; max-width: 700px; }
+
+    /* Title block on the left */
+    .guestbook-left h1 { 
+      font-family: 'Times New Roman', serif;
+      font-size: 4.5rem;
+      color: #fff;
+      margin: 36px 0 12px 0; /* moved further down */
+    }
+    .guestbook-left p { color: #ddd; margin: 0; }
+
+    /* Form + inputs on the left (equal widths) */
+    .guestbook-left .write-button-wrapper { text-align: left; margin-bottom: 16px; }
+    .guestbook-left .guestbook-form-container {
+      margin-top: auto;        /* ▶ 폼을 칼럼 하단으로 밀기 */
+      margin-bottom: 20px;
+    }
+    .guestbook-left form { display: flex; flex-direction: column; gap: 12px; max-width: 520px; }
+    .guestbook-left input[type="text"],
+    .guestbook-left textarea,
+    .guestbook-left button[type="submit"],
+    .guestbook-left #toggleWriteForm {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Message list lives on the right */
+    .guestbook-right .message-list { justify-content: flex-start; }
+
+    /* === Guest message edit UI === */
+    .message .msg-actions {
+      margin-top: .75rem;
+      display: flex;
+      gap: .5rem;
+    }
+    .message .msg-actions button {
+      background: #222;
+      color: #fff;
+      border: 1px solid #444;
+      padding: .4rem .6rem;
+      border-radius: 6px;
+      font-size: .85rem;
+      cursor: pointer;
+    }
+    .message .msg-actions button:hover { background:#333; }
+    .message .edit-form {
+      display:flex;
+      flex-direction:column;
+      gap:.6rem;
+    }
+    .message .edit-form input[type="text"],
+    .message .edit-form textarea {
+      width:100%;
+      box-sizing:border-box;
+      border:1px solid #bbb;
+      border-radius:8px;
+      padding:.6rem .7rem;
+      font-size: .95rem;
+      background:#fafafa;
+      color:#111;
+    }
+    .message .edit-form textarea { min-height: 96px; resize: vertical; }
+
+    /* Guest message text: clamp to 2 lines by default, no inner scroll */
+    .message p.msg-text {
+      line-height: 1.6;
+      margin: 0;
+      color: #000;
+      background: transparent;
+      font-size: 1.1rem;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      white-space: normal;         /* 줄바꿈 자연스럽게 */
+    }
+
+
+    /* Saved message layout: To → Message → From */
+    .message .kv { display:flex; flex-direction:column; gap:.3rem; }
+    .message .kv .row { display:flex; flex-direction:column; gap:.1rem; }
+    .message .kv .label { font-size:.85rem; font-weight:700; color:#666; letter-spacing:.2px; }
+    .message .kv .value { font-size:1rem; font-weight:700; color:#111; }
+    .message .kv .msg-text { margin-top:0; }
+    .message .kv .row.message .label { display:none; }
+
+
+    @media (max-width: 900px) {
+      .guestbook-container { flex-direction: column; gap: 24px; }
+      .guestbook-left, .guestbook-right { flex: 1 1 auto; max-width: 100%; }
+    }
+
+.guestbook-right {
+  flex: 1 1 auto;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* 내부 스크롤 허용 */
+}
+
+.message-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-start;
+  flex: 1 1 auto;       /* 남은 공간 전부 차지 */
+  min-height: 0;
+  padding-bottom: calc(var(--footer-safe) + 104px);
+  overflow: visible;    /* 리스트 자체 스크롤 제거 → 페이지가 스크롤 */
+}
+
+#pagination{
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--footer-safe) + 0px);
+  transform: translateX(-50%);
+  z-index: 10;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 6px 10px; border-radius: 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+/* Restore compact spacing: Pager is not fixed, so minimal bottom padding is sufficient */
+
+
+
+    /* Stick footer to the bottom of the viewport, full-width */
+    #footer-placeholder {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000; /* above pager */
+      width: 100%;
+    }
+    #footer-placeholder footer,
+    #footer-placeholder .footer,
+    #footer-placeholder .site-footer { position: relative; z-index: 1000; }
+
+/* Keep existing look & feel for buttons */
+#pagination .page-link.active { background: #ff4d4d; color: #fff; }
+#pagination .page-link:hover:not(.active) { background: rgba(255,77,77,0.1); color: #ff4d4d; }
+
+/* Mobile tweak: nudge up a little on very short screens */
+@media (max-height: 620px) {
+  #pagination { bottom: calc(var(--footer-safe) + 0px); }
+}
+
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div id="nav-placeholder"></div>
+    <div id="cursor-placeholder"></div>
+    <main class="content">
+      <div class="guestbook-container">
+        <div class="guestbook-left">
+          <h1 class="page-title guestbook-title">GUEST BOOK</h1>
+          <div class="write-button-wrapper">
+            <button id="toggleWriteForm">✍ 글쓰기</button>
+          </div>
+          <div class="guestbook-form-container hidden">
+            <form id="guestForm">
+              <input type="text" id="name" placeholder="To" required />
+              <textarea id="message" placeholder="메시지를 남겨주세요" required></textarea>
+              <input type="text" id="from" placeholder="From" required />
+              <button type="submit">남기기</button>
+            </form>
+          </div>
+        </div>
+        <div class="guestbook-right">
+          <div class="message-list" id="messageList"></div>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </div>
+    </main>
+    <div id="footer-placeholder"></div>
+  </div>
+  <script> 
+    // 네비게이션 HTML 로드 (로고 교체 + 링크 정규화)
+    fetch('../../2.PageElement/Tob_nav/Tob_nav.html') 
+      .then(res => res.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        // 로고 이미지 교체
+        const logoContainer = doc.querySelector('.logo');
+        if (logoContainer) {
+          const imgs = logoContainer.querySelectorAll('img');
+          if (imgs.length > 0) {
+            imgs[0].outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+            if (imgs.length > 1) {
+              imgs[1].setAttribute('src', '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
+            }
+          }
+        }
+        // 링크 정규화 (3.PageExhibition/* 어디서든 동작)
+        const baseEl = doc.querySelector('base');
+        if (baseEl) baseEl.remove();
+        const logoLink = doc.querySelector('a.logo, .logo a');
+        if (logoLink) logoLink.setAttribute('href', '../1.MainPage/1.MainPage.html');
+        const linkMap = {
+          'home': '../1.MainPage/1.MainPage.html',
+          'about': '../2.AboutPage/About.html',
+          'project': '../3.ProjectPage/project2.html',
+          'designer': '../4.DesignerPage/Designer.html',
+          'guest book': '../5.GuestBookPage/Guest.html',
+          'guestbook': '../5.GuestBookPage/Guest.html',
+          'gallery': '../6.GalleryPage/Gallery.html'
+        };
+        doc.querySelectorAll('a[href]').forEach(a => {
+          const text = (a.textContent || '').trim().toLowerCase();
+          const href = (a.getAttribute('href') || '').trim();
+          if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
+          if (/about/i.test(href)) a.setAttribute('href', linkMap['about']);
+          else if (/project/i.test(href)) a.setAttribute('href', linkMap['project']);
+          else if (/designer/i.test(href)) a.setAttribute('href', linkMap['designer']);
+          else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
+          else if (/gallery/i.test(href)) a.setAttribute('href', linkMap['gallery']);
+          else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
+        });
+        document.getElementById('nav-placeholder').innerHTML = doc.body.innerHTML;
+      });
+    // 푸터 HTML 로드 + 고정 페이지네이션과 겹치지 않도록 안전 여백 계산
+    fetch('../../2.PageElement/Footer/Footer.html')
+      .then(res => res.text())
+      .then(data => {
+        const root = document.getElementById('footer-placeholder');
+        if (root) root.innerHTML = data;
+
+        const setFooterSafe = () => {
+          const h = root.offsetHeight || 0;
+          document.documentElement.style.setProperty('--footer-safe', h + 'px');
+        };
+        setFooterSafe();
+
+        const ro = new ResizeObserver(setFooterSafe);
+        ro.observe(root);
+        window.addEventListener('resize', setFooterSafe, { passive: true });
+      });
+
+    // 커서 HTML 삽입 + 초기화 (부드러운 추적)
+    (function loadCursor(){
+      const root = document.getElementById('cursor-placeholder');
+      if (!root) return;
+
+      function initRoseCursor(){
+        const cursor = document.querySelector('.cursor-dot');
+        if (!cursor) return false;
+        // 중복 RAF 방지 (재초기화 시 루프 중첩 방지)
+        if (cursor.dataset.raf === 'on') return true;
+
+        // 성능 힌트: transform 업데이트 가속
+        cursor.style.willChange = 'transform';
+
+        let x = 0, y = 0, tx = 0, ty = 0, started = false;
+        const ease = 0.62; // ↑ 값이 클수록 더 빠르게 따라옴 (기존 0.25)
+
+        function raf(){
+          tx += (x - tx) * ease;
+          ty += (y - ty) * ease;
+          cursor.style.transform = `translate3d(calc(${tx}px - 50%), calc(${ty}px - 50%), 0)`;
+          requestAnimationFrame(raf);
+        }
+
+        document.addEventListener('mousemove', (e)=>{
+          x = e.clientX; y = e.clientY;
+          if (!started){ tx = x; ty = y; started = true; }
+        }, {passive:true});
+
+        cursor.dataset.raf = 'on';
+        requestAnimationFrame(raf);
+        return true;
+      }
+
+      fetch('../../2.PageElement/Cursor/cursor.html', {cache: 'no-store'})
+        .then(res => res.text())
+        .then(html => {
+          root.innerHTML = html;
+          if (!initRoseCursor()) {
+            const mo = new MutationObserver(()=>{ if (initRoseCursor()) mo.disconnect(); });
+            mo.observe(root, {childList:true, subtree:true});
+          }
+        })
+        .catch(err => console.error('Cursor load failed:', err));
+    })();
+
+    const messagesPerPage = 6; // 3 columns x 2 rows per page
+    let messages = [];
+    let currentPage = 1;
+
+    // --- helpers to avoid HTML injection when rendering user text ---
+    function escHtml(str){
+      return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+    }
+    function escAttr(str){ return escHtml(str); }
+
+    function renderMessages() {
+      const messageList = document.getElementById("messageList");
+      const pagination = document.getElementById("pagination");
+      // Hide pager when there are no messages; show when messages exist
+      if (messages.length === 0) {
+        messageList.innerHTML = "";
+        pagination.innerHTML = "";
+        pagination.classList.add("hidden");
+      } else {
+        pagination.classList.remove("hidden");
+      }
+      messageList.innerHTML = "";
+      pagination.innerHTML = "";
+
+      const start = (currentPage - 1) * messagesPerPage;
+      const end = start + messagesPerPage;
+      const paginatedItems = messages.slice(start, end);
+
+      paginatedItems.forEach((item, iLocal) => {
+        const idx = start + iLocal;
+        const { name, message, editing } = item;
+        const msgDiv = document.createElement("div");
+        msgDiv.classList.add("message");
+
+        if (editing) {
+          msgDiv.innerHTML = `
+            <form class="edit-form" data-index="${idx}">
+              <input type="text" id="edit-name-${idx}" value="${escAttr(name)}" placeholder="To" required />
+              <input type="text" id="edit-from-${idx}" value="${escAttr(item.from || '')}" placeholder="From" required />
+              <textarea id="edit-message-${idx}" required>${escHtml(message)}</textarea>
+              <div class="msg-actions">
+                <button type="submit" class="save-btn">저장</button>
+                <button type="button" class="cancel-btn">취소</button>
+                <button type="button" class="delete-btn" data-index="${idx}">삭제</button>
+              </div>
+            </form>
+          `;
+        } else {
+          const safeName = escHtml(name);
+          const safeMsg = escHtml(message).replace(/\n/g,'<br>');
+          msgDiv.innerHTML = `
+            <div class="kv">
+              <div class="row to"><span class="label">To</span><span class="value">${safeName}</span></div>
+              <div class="row message"><span class="label">Message</span><p class="msg-text">${safeMsg}</p></div>
+              <div class="row from"><span class="label">From</span><span class="value">${escHtml(item.from || safeName)}</span></div>
+            </div>
+            <div class="msg-actions">
+              <button class="edit-btn" data-index="${idx}">수정</button>
+              <button class="delete-btn" data-index="${idx}">삭제</button>
+            </div>`;
+        }
+
+        messageList.appendChild(msgDiv);
+      });
+
+      const pageCount = Math.max(1, Math.ceil(messages.length / messagesPerPage));
+      for (let i = 1; i <= pageCount; i++) {
+        const link = document.createElement("span");
+        link.className = "page-link" + (i === currentPage ? " active" : "");
+        link.textContent = i;
+        link.addEventListener("click", () => {
+          currentPage = i;
+          renderMessages();
+        });
+        pagination.appendChild(link);
+        if (i < pageCount) {
+          const sep = document.createElement("span");
+          sep.className = "page-sep";
+          sep.textContent = "·";
+          sep.style.margin = "0 .1rem";
+          sep.style.opacity = "0.6";
+          pagination.appendChild(sep);
+        }
+      }
+      document.documentElement.style.setProperty('--footer-safe', (document.getElementById('footer-placeholder').offsetHeight || 0) + 'px');
+    }
+
+    document.getElementById("guestForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const message = document.getElementById("message").value;
+      const from = document.getElementById("from").value;
+      messages.unshift({ name, message, from });
+      currentPage = 1;
+      renderMessages();
+      this.reset();
+    });
+
+    document.getElementById("toggleWriteForm").addEventListener("click", function () {
+      const formContainer = document.querySelector(".guestbook-form-container");
+      formContainer.classList.toggle("hidden");
+    });
+
+    // --- delegated edit/delete handlers on the message list ---
+    document.getElementById('messageList').addEventListener('click', (e) => {
+      const editBtn = e.target.closest('.edit-btn');
+      const cancelBtn = e.target.closest('.cancel-btn');
+      const delBtn = e.target.closest('.delete-btn');
+
+      if (editBtn) {
+        const idx = parseInt(editBtn.dataset.index, 10);
+        if (!isNaN(idx) && messages[idx]) {
+          messages[idx].editing = true;
+          renderMessages();
+        }
+        return;
+      }
+
+      if (cancelBtn) {
+        const form = e.target.closest('.edit-form');
+        const idx = form ? parseInt(form.dataset.index, 10) : -1;
+        if (!isNaN(idx) && messages[idx]) {
+          messages[idx].editing = false;
+          renderMessages();
+        }
+        return;
+      }
+
+      if (delBtn) {
+        const idx = parseInt(delBtn.dataset.index, 10);
+        if (!isNaN(idx) && messages[idx]) {
+          if (confirm('정말 삭제하시겠어요?')) {
+            messages.splice(idx, 1);
+            const maxPage = Math.ceil(messages.length / messagesPerPage) || 1;
+            if (currentPage > maxPage) currentPage = maxPage;
+            renderMessages();
+          }
+        }
+        return;
+      }
+    });
+
+    document.getElementById('messageList').addEventListener('submit', (e) => {
+      const form = e.target.closest('.edit-form');
+      if (!form) return;
+      e.preventDefault();
+      const idx = parseInt(form.dataset.index, 10);
+      if (isNaN(idx) || !messages[idx]) return;
+      const newName = document.getElementById(`edit-name-${idx}`).value;
+      const newFrom = document.getElementById(`edit-from-${idx}`).value;
+      const newMsg  = document.getElementById(`edit-message-${idx}`).value;
+      messages[idx] = { name: newName, from: newFrom, message: newMsg, editing: false };
+      renderMessages();
+    });
+
+    renderMessages();
+  </script>
+</body>
+</html>
+
+
+<!-- =========================
+File: /3.PageExhibition/5.GuestBookPage/guestbook.html
+Purpose: 방명록 UI (정적 사이트 + Firestore)
+Note: 아래 CSS/JS를 같은 폴더에 두고 HTML에서 링크하세요.
+========================= -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guest Book</title>
+  <link rel="stylesheet" href="Guest.css" />
+</head>
+<body>
+  <!-- 상단 내비/푸터는 기존 fetch 방식 유지 -->
+  <div id="nav-placeholder"></div>
+  <main class="guestbook-wrap">
+    <h1>GUEST BOOK</h1>
+
+    <!-- 상태/카운트 표시 -->
+    <div class="gb-status">
+      <span id="gb-count">0</span>
+      <span class="muted">entries</span>
+      <span class="sep">•</span>
+      <span id="gb-limit"></span>
+    </div>어
+</body>
+</html>

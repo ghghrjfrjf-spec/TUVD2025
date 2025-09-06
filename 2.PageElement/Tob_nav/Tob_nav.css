@@ -1,0 +1,161 @@
+/* 전체 헤더 스타일 */
+
+
+body {
+  color: black;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    color: black;
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90px; /* 더 높임 */
+    background-color: #111;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 30px; /* 양옆 간격 좁게 */
+    box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+  
+  /* 내부 구조 */
+  .header-inner {
+    width: 100%;
+    max-width: 1600px;
+    padding: 0 0px;
+    display: flex;
+    align-items: center; /* 원래 flex-start → 가운데 정렬로 */
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+  
+  /* 로고 영역 */
+  .logo {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-decoration: none;
+    color: white;
+    padding-top: 5px;
+  }
+  
+  .logo img {
+    height: 45px;
+    width: auto;
+    display: block;
+  }
+  
+  .logo-texts {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    line-height: 1.3;
+    padding-top: 4px;
+  }
+  
+  .logo-main {
+    font-size: 15px;
+    font-weight: 800;
+    color: white;
+  }
+  
+  .logo-sub {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ff3c3c;
+  }
+
+  .logo-sub sup {
+    font-size: 10px;
+    vertical-align: super;
+  }
+  
+  /* 네비게이션 */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* 헤더 높이에 맞춰서 전체 세로 사용 */
+    padding-top: 0; /* 제거 */
+    line-height: 1.3;
+  }
+   
+  nav ul {
+    display: flex;
+    list-style: none;
+    gap: 48px;
+    padding: 0;
+    margin: 0;
+    flex-wrap: nowrap;
+  }
+  
+  nav ul li {
+    position: relative;
+  }
+  
+nav ul li a {
+    font-weight: 700;
+    font-size: 15px;
+    color: white;
+    text-decoration: none;
+    padding: 12px 0;
+  }
+  
+  nav ul li a:hover {
+    color: #ff3c3c;
+    transition: 0.2s;
+  }
+  
+  /* 드롭다운 */
+  nav ul li ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #222;
+    padding: 0; /* 드롭다운 전체 간격 제거 */
+    border-radius: 4px;
+    min-width: 150px; /* 드롭다운 너비 */
+    border: 1px solid #444;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    margin-top: 10px;
+  }
+  
+  nav ul li:hover ul {
+    display: block;
+  }
+  
+  nav ul li ul li {
+    border-top: 1px solid #444; /* 각 li 요소 위에 구분선 추가 */
+  }
+  
+  nav ul li ul li:first-child {
+    border-top: none; /* 첫 번째 li 요소의 구분선 제거 */
+  }
+  
+  nav ul li ul li a {
+    padding: 4px 8px; /* 위아래 4px, 좌우 8px로 간격 설정 */
+    color: #fff;
+    text-decoration: none;
+    display: flex; /* 플렉스 박스를 사용하여 정렬 */
+    align-items: center; /* 세로 정중앙 정렬 */
+    justify-content: flex-start; /* 가로 왼쪽 정렬 */
+    padding-left: 12px;
+    text-align: left;
+    height: 30px; /* 모든 항목의 높이를 30px로 고정 */
+    line-height: 1; /* 텍스트 간격을 일정하게 설정 */
+  }
+  
+  nav ul li ul li a:hover {
+    background: #333;
+  }
+  

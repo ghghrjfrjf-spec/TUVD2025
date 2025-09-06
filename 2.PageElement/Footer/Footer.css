@@ -1,0 +1,142 @@
+/* Footer.css — BLOOM (screenshot-accurate) */
+.footer {
+  background: #000;
+  color: #fff;
+  border-top: 1px solid #2a2a2a; /* 상단 가는 라인 */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.footer-align { width: 100%; }
+.footer-container {
+  max-width: 1280px;                /* 필요 시 1200~1360 사이로 조정 */
+  margin: 0 auto;
+  padding: 18px 20px;               /* 낮은 높이로 담백하게 */
+  box-sizing: border-box;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: flex-start;          /* 한 줄 정렬 (윗선 맞춤) */
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 24px;
+}
+
+/* ── LEFT: 로고 + BLOOM + 부제 (1줄) / COPYRIGHT (2줄) ───────── */
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;                         /* 브랜드 라인과 카피 사이 간격 */
+  min-width: 0;
+  flex: 1 1 auto;                   /* 왼쪽이 유연하게 넓어짐 */
+  max-width: 62%;
+  text-align: left;
+}
+
+.footer-brandline {
+  display: flex;
+  align-items: baseline;            /* 로고/BLOOM/부제 기준선 정렬 */
+  gap: 10px;                        /* 로고 ↔ BLOOM ↔ 부제 간격 */
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.footer-logo {
+  width: 38px;                      /* 장미 아이콘 크기 */
+  height: auto;
+  display: block;
+}
+
+.footer-bloom-text {
+  height: 26px;                     /* BLOOM 텍스트 높이 */
+  width: auto;
+  display: block;
+}
+
+.brand-sub {
+  font-size: 12px;
+  color: #cfcfcf;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  margin-left: 4px;
+  position: relative; top: 1px;     /* 베이스라인 미세조정 */
+}
+
+.copy {
+  margin: 0;
+  font-size: 12px;
+  color: #cfcfcf;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+/* ── RIGHT: 연락처 + 학교 로고 ───────────── */
+.footer-right {
+  display: flex;
+  align-items: flex-start;          /* 왼쪽과 같은 윗선에서 시작 */
+  justify-content: flex-end;        /* 오른쪽 끝 정렬 */
+  gap: 18px;
+  min-width: 0;
+  flex: 0 0 auto;
+  max-width: 38%;
+  text-align: left;
+}
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: nowrap;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.footer-contact p {
+  margin: 0;
+  font-size: 12px;
+  color: #e6e6e6;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.tu-logo {
+  width: 92px;                      /* 우측 학교 로고 크기 */
+  height: auto;
+  display: block;
+  opacity: 0.9;
+}
+
+/* ── Micro-adjust: 줄 높이/간격 정돈 ───────── */
+.footer, .footer * { line-height: 1.1; }
+
+/* ── Responsive ───────────── */
+@media (max-width: 880px) {
+  .brand-sub { display: none; }     /* 작은 화면에서 부제 제거 */
+  .tu-logo { width: 76px; }
+  .footer-container { padding: 12px 16px; }
+}
+
+@media (max-width: 640px) {
+  .footer-container { padding: 10px 14px; }
+  .footer-inner {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: nowrap;              /* 줄바꿈 방지 (한 줄 유지) */
+  }
+  .footer-left { max-width: 60%; }
+  .footer-right { max-width: 40%; justify-content: flex-end; }
+  .footer-bloom-text { height: 24px; }  /* BLOOM 크기 소폭 축소 */
+  .copy { font-size: 11px; }
+  .footer-contact p { font-size: 11px; }
+  .tu-logo { width: 70px; }
+}
+
+/* Defensive: ensure footer vertical padding always applies */
+.footer-container { padding-block: 18px !important; }

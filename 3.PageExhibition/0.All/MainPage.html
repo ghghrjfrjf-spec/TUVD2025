@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>TUVD 27th Graduate Exhibition - BLOOM</title>
+  <!-- 🔺 스타일시트 연결 -->
+  <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
+  <link rel="stylesheet" href="1.MainPage.css" />
+  <style>
+    /* Fallback styles for custom cursor (rose) */
+    .cursor-dot{ position:fixed; left:-100px; top:-100px; width:12px; height:12px; border-radius:50%; background:#ff3b3b; box-shadow:0 0 0 2px rgba(255,59,59,.25); pointer-events:none; transform:translate(-50%,-50%); z-index:9999; }
+    .cursor-ring{ position:fixed; left:-100px; top:-100px; width:36px; height:36px; border-radius:50%; border:2px solid rgba(255,59,59,.35); pointer-events:none; transform:translate(-50%,-50%); z-index:9998; }
+    body{ cursor: none; }
+  </style>
+  
+</head>
+<body>
+  <!-- 🌹 사용자 커서 -->
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+
+  <!-- 🔺 네비게이션 영역 -->
+  <div id="nav-placeholder"></div>
+
+  <!-- 🎬 메인 배경 -->
+  <div class="video-area">
+    <!-- 불필요한 이미지 제거 -->
+    <!-- <img src="제목을 입력해주세요_-001.jpeg" alt="Video Placeholder" /> -->
+  </div>
+
+  <!-- 🔻 전시 정보 -->
+  <div class="poster-stage">
+    <img class="poster-horizontal" src="../../1.Picture/1. 27th Graduation/BLOOM_Poster/가로.jpg" alt="가로" loading="lazy" />
+  </div>
+
+  <!-- 🔻 푸터 영역 -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scroll to Top Button -->
+  <button onclick="scrollToTop()" id="scrollTopBtn" class="scroll-btn">▲</button>
+
+  <!-- 📜 JavaScript -->
+  <script>
+    function initHeaderHideOnScroll() {
+      const root = document.getElementById('nav-placeholder');
+      if (!root) return;
+      const header = root.querySelector('header');
+      if (!header) {
+        // If header isn't in the DOM yet, observe and initialize once it appears
+        const obs = new MutationObserver(() => {
+          const h = root.querySelector('header');
+          if (h) {
+            obs.disconnect();
+            applyHideOnScroll(h);
+          }
+        });
+        obs.observe(root, { childList: true, subtree: true });
+        return;
+      }
+      applyHideOnScroll(header);
+    }
+
+    function applyHideOnScroll(header) {
+      header.style.transition = 'transform .3s ease';
+      let prev = window.pageYOffset || document.documentElement.scrollTop;
+      window.addEventListener('scroll', () => {
+        const y = window.pageYOffset || document.documentElement.scrollTop;
+        header.style.transform = (y > prev) ? 'translateY(-100%)' : 'translateY(0)';
+        prev = y;
+      }, { passive: true });
+    }
+
+    // 네비게이션 HTML 로드
+    fetch('../../2.PageElement/Tob_nav/Tob_nav.html')
+      .then(res => res.text())
+      .then(data => {
+        // Replace logo images according to instructions before injecting
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data, 'text/html');
+        const logoContainer = doc.querySelector('.logo');
+        if (logoContainer) {
+          const imgs = logoContainer.querySelectorAll('img');
+          if (imgs.length > 0) {
+            imgs[0].outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+            if (imgs.length > 1) {
+              imgs[1].src = '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png';
+            }
+          }
+        } else {
+          // If no .logo container, check for any img with alt or src matching criteria
+          const imgs = doc.querySelectorAll('img');
+          for (let img of imgs) {
+            const alt = img.getAttribute('alt') || '';
+            const src = img.getAttribute('src') || '';
+            if (alt.includes('장미로고') || src.includes('BLOOM_LOGO') || src.includes('/대지.png') || src.includes('/대지.png')) {
+              img.outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+              break;
+            }
+          }
+        }
+        // --- Normalize nav links so they work from any 3.PageExhibition/* page ---
+        // Remove any <base> that might break relative links in the injected fragment
+        const baseEl = doc.querySelector('base');
+        if (baseEl) baseEl.remove();
+
+        // If there's a clickable logo link, point it to MainPage
+        const logoLink = doc.querySelector('a.logo, .logo a');
+        if (logoLink && logoLink.setAttribute) {
+          logoLink.setAttribute('href', '../1.MainPage/1.MainPage.html');
+        }
+
+        // Map menu text -> target path (document-relative)
+        const linkMap = {
+          'home': '../1.MainPage/1.MainPage.html',
+          'about': '../2.AboutPage/About.html',
+          'project': '../3.ProjectPage/project2.html',
+          'designer': '../4.DesignerPage/Designer.html',
+          'guest book': '../5.GuestBookPage/Guest.html',
+          'guestbook': '../5.GuestBookPage/Guest.html',
+          'gallery': '../6.GalleryPage/Gallery.html'
+        };
+
+        // Rewrite anchors based on their text content or existing hrefs
+        doc.querySelectorAll('a[href]').forEach(a => {
+          const text = (a.textContent || '').trim().toLowerCase();
+          const href = (a.getAttribute('href') || '').trim();
+
+          if (linkMap[text]) {
+            a.setAttribute('href', linkMap[text]);
+            return;
+          }
+          // Fallback: detect by partial hrefs that point to older/absolute paths
+          if (/about/i.test(href)) a.setAttribute('href', linkMap['about']);
+          else if (/project/i.test(href)) a.setAttribute('href', linkMap['project']);
+          else if (/designer/i.test(href)) a.setAttribute('href', linkMap['designer']);
+          else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
+          else if (/gallery/i.test(href)) a.setAttribute('href', linkMap['gallery']);
+          else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
+        });
+        document.getElementById('nav-placeholder').innerHTML = doc.body.innerHTML;
+        // Initialize hide-on-scroll after the header has been injected
+        initHeaderHideOnScroll();
+      });
+
+    // 푸터 HTML 로드
+    fetch('../../2.PageElement/Footer/Footer.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('footer-placeholder').innerHTML = data;
+      });
+
+    // 사용자 커서 움직임 처리 (fallback + ring 지원)
+    (function(){
+      function move(e){
+        var dot = document.querySelector('.cursor-dot');
+        var ring = document.querySelector('.cursor-ring');
+        if(dot){ dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px'; }
+        if(ring){ ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }
+      }
+      // 최초 위치 숨김 방지
+      document.addEventListener('mousemove', move, { passive:true });
+      // 로드 후에도 요소가 없다면 생성 (안전장치)
+      window.addEventListener('load', function(){
+        if(!document.querySelector('.cursor-dot')){
+          var d=document.createElement('div'); d.className='cursor-dot'; document.body.appendChild(d);
+        }
+        if(!document.querySelector('.cursor-ring')){
+          var r=document.createElement('div'); r.className='cursor-ring'; document.body.appendChild(r);
+        }
+      });
+    })();
+
+    // Scroll to Top button functionality
+    document.addEventListener("DOMContentLoaded", function () {
+      const scrollBtn = document.getElementById("scrollTopBtn");
+      window.addEventListener("scroll", function () {
+        if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1) {
+          scrollBtn.style.display = "flex";
+        } else {
+          scrollBtn.style.display = "none";
+        }
+      });
+      window.scrollToTop = function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+    });
+  </script>
+</body>
+</html>

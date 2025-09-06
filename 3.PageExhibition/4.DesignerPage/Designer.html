@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designer Page</title>
+  <link rel="stylesheet" href="Designer.css"/>
+  <!-- 공통 요소 CSS (상대경로) -->
+  <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css">
+  <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css">
+  <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css">
+  <style>
+    /* 네비게이션: 스크롤 내리면 숨기고, 올리면 나타나도록 (레이아웃 점프 방지) */
+    #nav-placeholder { position: sticky; top: 0; z-index: 1000; transition: transform .3s ease; }
+    body.nav-hidden #nav-placeholder { transform: translateY(-110%); }
+
+    /* 메인 컨텐츠 상/하 여백 (푸터와 간격 포함) */
+    .main { padding-top: 62px; padding-bottom: 160px; }
+    /* nav height spacer so content never hides under the header */
+    .nav-spacer { height: 72px; }
+    @media (max-width: 900px){ .nav-spacer { height: 56px; } }
+
+    /* 좌우 동일 여백 래퍼 */
+    .gallery-wrap { max-width: 1280px; margin: 0 auto; padding: 0 60px; }
+
+    /* 변수 기반 레이아웃: 카드 폭·간격·열 수를 한 번에 제어 */
+    :root{ --cols:5; --card-w:220px; --gap:12px; }
+
+    .studentstaff-grid{
+      display:grid;
+      grid-template-columns: repeat(var(--cols), var(--card-w));
+      gap: var(--gap);
+      justify-content:start;
+      /* 그리드 총폭을 타이틀/보조네비의 선과 동일하게 고정 → 이미지가 선 밖으로 안 벗어남 */
+      width: calc(var(--cols) * var(--card-w) + (var(--cols) - 1) * var(--gap));
+    }
+    .student-card{ display:block; width: var(--card-w); text-align:center; text-decoration:none; color:inherit; cursor:pointer; }
+    .student-card img{ width:100%; height:auto; display:block; border-radius:8px; }
+
+    /* 이미지 아래 캡션(이름/영문) 정렬 및 구분선 - 이미지 폭과 동일하게 */
+    .student-card br{ display:none; }
+    .student-card strong, .student-card span{ display:block; text-align:left; margin:0; }
+    .student-card strong{ margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.18); font-weight:700; }
+    .student-card span{ margin-top:4px; font-weight:400; color:#bbb; }
+
+    /* 반응형: 열 수/카드폭/간격을 변수만 바꿔 동일 정렬 유지 */
+    @media (max-width:1200px){ :root{ --cols:4; --card-w:220px; --gap:12px; } }
+    @media (max-width:980px){  :root{ --cols:3; --card-w:200px; --gap:12px; } }
+    @media (max-width:680px){  :root{ --cols:2; --card-w:160px; --gap:10px; } }
+    @media (max-width:420px){
+      :root{ --cols:1; --card-w:88%; --gap:10px; }
+      .student-card{ max-width:320px; }
+      /* 단일열에서도 선/그리드 폭을 동일 기준으로 */
+      .studentstaff-grid, .alpha-nav, .alpha-title{ width: min(88%, 320px); }
+    }
+
+    /* 초성 보조 네비 + 그룹 타이틀 */
+    .alpha-nav{ position: sticky; top: 84px; z-index: 10; display:flex; gap:8px; flex-wrap:wrap; padding:12px 0 16px; background:rgba(0,0,0,0.6); backdrop-filter: blur(4px); border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .alpha-nav a{ display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:999px; text-decoration:none; font-weight:700; font-size:14px; color:#aaa; border:1px solid rgba(255,255,255,0.18);} 
+    .alpha-nav a:hover{ color:#fff; border-color:#fff; }
+    /* JS에서 오프셋 스크롤을 처리하므로 아래 값은 폴백용 */
+    .alpha-title{ margin:48px 0 12px; font-size:20px; font-weight:900; color:#ff3b3b; scroll-margin-top: 140px; }
+
+    /* 초성 보조 네비/타이틀 폭 = (열수×카드폭) + (간격×(열수-1)) → 이미지 그리드와 라인 일치 */
+    .alpha-nav, .alpha-title{
+      width: calc(var(--cols) * var(--card-w) + (var(--cols) - 1) * var(--gap));
+      margin-left:0; margin-right:0;
+    }
+    /* 단일열 구간은 카드 폭 퍼센트/최대폭 규칙에 맞춰 조정 */
+    @media (max-width:420px){
+      .alpha-nav, .alpha-title{ width: min(88%, 320px); }
+    }
+
+    /* ── Designer 상단 탭 영역: Project 페이지와 동일 폭/패딩/라인 ── */
+    .designer-toolbar{ padding: 40px 60px 30px; margin: 0 auto; max-width: 1280px; border-bottom: 1px solid #ddd; }
+    .designer-toolbar .row{ display:flex; justify-content: space-between; align-items: center; }
+    .designer-tabs{ display:flex; gap:16px; align-items:center; }
+    .designer-tabs [data-filter]{ font-size:18px; cursor:pointer; }
+    .designer-tabs [data-filter="all"]{ font-weight:700; color:red; }
+    .designer-tabs [data-filter="staff"]{ font-weight:500; color:#aaa; }
+  </style>
+</head>
+<body>
+  <!-- 네비게이션 HTML 삽입 -->
+  <div id="nav-placeholder"></div>
+  <div class="nav-spacer"></div>
+  <div id="cursor-placeholder"></div>
+  <div class="main"> 
+    <h1 class="project-title">DESIGNER</h1>
+    <div class="designer-toolbar">
+      <div class="row">
+        <div class="designer-tabs">
+          <span data-filter="all">All</span>
+          <span id="tab-staff" data-filter="staff">Staff</span>
+        </div>
+        <div></div>
+      </div>
+    </div>
+    <div class="gallery-wrap" id="staff">
+      <div class="studentstaff-grid">
+    <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/김사율.jpg" alt="김사율">
+        <strong>김사율</strong><br />
+        <span>Kim Sayul</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/김준성.jpg" alt="김준성">
+        <strong>김준성</strong><br />
+        <span>KIM JUNSEONG</span>
+      </div>
+        
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/김혜림.jpg" alt="김혜림">
+        <strong>김혜림</strong><br />
+        <span>kim hyerim</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/김혜연.png" alt="김혜연">
+        <strong>김혜연</strong><br />
+        <span>kim hyeyeon</span>
+      </div>
+
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/남예주.png" alt="남예주">
+        <strong>남예주</strong><br />
+        <span>[영문 이름]</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/박은제.jpg" alt="박은제">
+        <strong>박은제</strong><br />
+        <span>PARK EUN JE</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/배유진.jpg" alt="배유진">
+        <strong>배유진</strong><br />
+        <span>BAE YUJIN</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/안예진.jpg" alt="안예진">
+        <strong>안예진</strong><br />
+        <span>AN YEJIN</span>
+      </div>
+
+     <a class="student-card" data-group="staff" href="../7.DeisgnerSection/안정연.html" aria-label="안정연 상세 페이지로 이동">
+       <img src="../../1.Picture/1. 27th Graduation/Profile/안졍연.jpg" alt="안정연">
+       <strong>안정연</strong><br />
+       <span>AN JEONG YEON</span>
+     </a>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/이다현.jpg" alt="이다현">
+        <strong>이다현</strong><br />
+        <span>RHIE DAHYEON</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/이혜주.jpg" alt="이혜주">
+        <strong>이혜주</strong><br />
+        <span>LEE HYEJU</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/지영현.jpg" alt="지영현">
+        <strong>지영현</strong><br />
+        <span>JI YEONGHYEON</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/차은지.jpg" alt="차은지">
+        <strong>차은지</strong><br />
+        <span>CHA EUNJI</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/최자연.jpg" alt="최자연">
+        <strong>최자연</strong><br />
+        <span>CHOI JAYEON</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/홍화정.jpg" alt="홍화정">
+        <strong>홍화정</strong><br />
+        <span>HWAJUNG HONG</span>
+      </div>
+
+      <div class="student-card" data-group="staff">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/황만규.jpg" alt="황만규">
+        <strong>황만규</strong><br />
+        <span>HWANG MANGYU</span>
+      </div>
+
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/김나연.jpg" alt="김나연">
+        <strong>김나연</strong><br />
+        <span>KIM NAYEON</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/김민진.jpg" alt="김민진">
+        <strong>김민진</strong><br />
+        <span>KIM MINJIN</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/김서진.jpg" alt="김서진">
+        <strong>김서진</strong><br />
+        <span>KIM SEOJIN</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/김유빈.jpg" alt="김유빈">
+        <strong>김유빈</strong><br />
+        <span>KIM YUBIN</span>
+      </div>
+  
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/김지우.jpg" alt="김지우">
+        <strong>김지우</strong><br />
+        <span>KIM JIU</span>
+      </div>
+    
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/라영강.jpg" alt="라영강">
+        <strong>라영강</strong><br />
+        <span>LUO YONGKANG</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/량역운.jpg" alt="량역운">
+        <strong>량역운</strong><br />
+        <span>LIANG YIYUN</span>
+      </div>
+    
+      
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/배주아.jpg" alt="배주아">
+        <strong>배주아</strong><br />
+        <span>BAEJUA</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/범상우.jpeg" alt="범상우">
+        <strong>범상우</strong><br />
+        <span>FAN XIANGYU</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/서은선.jpg" alt="서은선">
+        <strong>서은선</strong><br />
+        <span>SEO EUNSUN</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/설가심.jpg" alt="설가심">
+        <strong>설가심</strong><br />
+        <span>XUE KEXIN</span>
+      </div>
+     
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/양유성.jpg" alt="양유성">
+        <strong>양유성</strong><br />
+        <span>YANG YUSEONG</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/왕몽연.jpg" alt="왕몽연">
+        <strong>왕몽연</strong><br />
+        <span>WANG MENGRAN</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/윤민주.jpg" alt="윤민주">
+        <strong>윤민주</strong><br />
+        <span>YOON MINJU</span>
+      </div>
+     
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/이서진.jpg" alt="이서진">
+        <strong>이서진</strong><br />
+        <span>LEE SEOJIN</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/이수빈.jpg" alt="이수빈">
+        <strong>이수빈</strong><br />
+        <span>LEE SUBIN</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/이우비.jpg" alt="이우비">
+        <strong>이우비</strong><br />
+        <span>[영문 이름]</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/이은경.jpg" alt="이은경">
+        <strong>이은경</strong><br />
+        <span>LEE EUNGYEONG</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/이주영.jpg" alt="이주영">
+        <strong>이주영</strong><br />
+        <span>LEE JU YEONG</span>
+      </div>
+      
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/장세희.jpg" alt="장세희">
+        <strong>장세희</strong><br />
+        <span>JANG SEHEE</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/장수아.jpg" alt="장수아">
+        <strong>장수아</strong><br />
+        <span>[영문 이름]</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/장주아.jpg" alt="장주아">
+        <strong>장주아</strong><br />
+        <span>JANG JU AH</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/장청청.jpg" alt="장청청">
+        <strong>장청청</strong><br />
+        <span>ZHANG QINGQING</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/전우곤.jpg" alt="전우곤">
+        <strong>전우곤</strong><br />
+        <span>[영문 이름]</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/주하우.jpg" alt="주하우">
+        <strong>주하우</strong><br />
+        <span>[영문 이름]</span>
+      </div>
+      
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/최민원.jpg" alt="최민원">
+        <strong>최민원</strong><br />
+        <span>CHOI MINWON</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/최순주.jpg" alt="최순주">
+        <strong>최순주</strong><br />
+        <span>CHOI SOONJU</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/최영인.jpg" alt="최영인">
+        <strong>최영인</strong><br />
+        <span>CHOI YOUNGIN</span>
+      </div>
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/한패달.jpg" alt="한패달">
+        <strong>한패달</strong><br />
+        <span>HAN PEIDA</span>
+      </div>
+
+      <div class="student-card">
+        <img src="../../1.Picture/1. 27th Graduation/Profile/황예빈.jpg" alt="황예빈">
+        <strong>황예빈</strong><br />
+        <span>HWANG YEBIN</span>
+      </div>
+      
+
+
+</div>
+      <!-- 🔻 푸터 영역 -->
+   <div id="footer-placeholder"></div>
+
+   <!-- 📜 JavaScript -->
+   <script>
+     // 네비게이션 HTML 삽입 (로고 경로/링크 정규화)
+     fetch('../../2.PageElement/Tob_nav/Tob_nav.html')
+       .then(res => res.text())
+       .then(html => {
+         const parser = new DOMParser();
+         const doc = parser.parseFromString(html, 'text/html');
+
+         // 로고 이미지 교체 (장미로고 + 텍스트 로고)
+         const logoContainer = doc.querySelector('.logo');
+         if (logoContainer) {
+           const imgs = logoContainer.querySelectorAll('img');
+           if (imgs.length > 0) {
+             imgs[0].outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+             if (imgs.length > 1) {
+               imgs[1].setAttribute('src', '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
+             }
+           }
+         }
+
+         // base 태그 제거 (상대 경로 꼬임 방지)
+         const baseEl = doc.querySelector('base');
+         if (baseEl) baseEl.remove();
+
+         // 링크 정규화: 3.PageExhibition/* 어디서든 정상 동작
+         const logoLink = doc.querySelector('a.logo, .logo a');
+         if (logoLink) logoLink.setAttribute('href', '../1.MainPage/1.MainPage.html');
+         const linkMap = {
+           'home': '../1.MainPage/1.MainPage.html',
+           'about': '../2.AboutPage/About.html',
+           'project': '../3.ProjectPage/project2.html',
+           'designer': '../4.DesignerPage/Designer.html',
+           'guest book': '../5.GuestBookPage/Guest.html',
+           'guestbook': '../5.GuestBookPage/Guest.html',
+           'gallery': '../6.GalleryPage/Gallery.html'
+         };
+         doc.querySelectorAll('a[href]').forEach(a => {
+           const text = (a.textContent || '').trim().toLowerCase();
+           const href = (a.getAttribute('href') || '').trim();
+           if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
+           if (/about/i.test(href)) a.setAttribute('href', linkMap['about']);
+           else if (/project/i.test(href)) a.setAttribute('href', linkMap['project']);
+           else if (/designer/i.test(href)) a.setAttribute('href', linkMap['designer']);
+           else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
+           else if (/gallery/i.test(href)) a.setAttribute('href', linkMap['gallery']);
+           else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
+         });
+
+         document.getElementById('nav-placeholder').innerHTML = doc.body.innerHTML;
+
+         // --- dynamically match spacer to header height ---
+         const spacer = document.querySelector('.nav-spacer');
+         const injectedHeader = document.querySelector('#nav-placeholder header');
+         if (spacer && injectedHeader) {
+           const setSpacer = () => { spacer.style.height = (injectedHeader.offsetHeight + 8) + 'px'; };
+           setSpacer();
+           window.addEventListener('resize', setSpacer);
+           setTimeout(setSpacer, 150); // in case webfonts adjust height
+         }
+
+         // 스크롤 방향에 따라 네비게이션 숨김/표시
+         let __lastY = window.pageYOffset || 0;
+         window.addEventListener('scroll', () => {
+           const y = window.pageYOffset || 0;
+           if (y > __lastY + 8 && y > 40) {
+             document.body.classList.add('nav-hidden'); // 아래로 스크롤 → 숨김
+           } else if (y < __lastY - 8) {
+             document.body.classList.remove('nav-hidden'); // 위로 스크롤 → 표시
+           }
+           __lastY = y;
+         }, { passive: true });
+       });
+
+    // 커서 HTML 삽입 + 초기화 (부드러운 추적)
+    (function loadCursor(){
+      const root = document.getElementById('cursor-placeholder');
+      if (!root) return;
+
+      function initRoseCursor(){
+        const cursor = document.querySelector('.cursor-dot');
+        if (!cursor) return false;
+        // 중복 RAF 방지 (다시 초기화될 때 루프 2개 이상 도는 문제 예방)
+        if (cursor.dataset.raf === 'on') return true;
+
+        // 성능 힌트: transform 변경을 GPU로 부드럽게
+        cursor.style.willChange = 'transform';
+
+        let x = 0, y = 0, tx = 0, ty = 0, started = false;
+        const ease = 0.62; // ↑ 값이 클수록 더 빠르게 따라옴 (기존 0.25)
+
+        function raf(){
+          tx += (x - tx) * ease;
+          ty += (y - ty) * ease;
+          cursor.style.transform = `translate3d(calc(${tx}px - 50%), calc(${ty}px - 50%), 0)`;
+          requestAnimationFrame(raf);
+        }
+
+        document.addEventListener('mousemove', (e)=>{
+          x = e.clientX; y = e.clientY;
+          if (!started){ tx = x; ty = y; started = true; }
+        }, {passive:true});
+
+        cursor.dataset.raf = 'on';
+        requestAnimationFrame(raf);
+        return true;
+      }
+
+      fetch('../../2.PageElement/Cursor/cursor.html', {cache: 'no-store'})
+        .then(res => res.text())
+        .then(html => {
+          root.innerHTML = html;
+          if (!initRoseCursor()) {
+            const mo = new MutationObserver(()=>{ if (initRoseCursor()) mo.disconnect(); });
+            mo.observe(root, {childList:true, subtree:true});
+          }
+        })
+        .catch(err => console.error('Cursor load failed:', err));
+    })();
+
+    // 푸터 HTML 삽입
+    fetch('../../2.PageElement/Footer/Footer.html')
+      .then(res => res.text())
+      .then(data => {
+        const el = document.getElementById('footer-placeholder');
+        if (el) el.innerHTML = data;
+      });
+
+      
+    // --- ALL 뷰: 초성(ㄱ~ㅎ) 보조 네비 + 그룹 묶기 ---
+    (function buildAlphabetGroups(){
+      const wrap = document.querySelector('.gallery-wrap');
+      if (!wrap) return;
+      const ALPH = ['ㄱ','ㄴ','ㄹ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅎ'];
+      const CHOSEONG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+
+      function getChoseong(name){
+        const ch = (name||'').trim().charAt(0);
+        const code = ch.charCodeAt(0);
+        if (code >= 0xAC00 && code <= 0xD7A3){
+          const idx = Math.floor((code - 0xAC00) / 28 / 21);
+          const cs = CHOSEONG[idx];
+          // ㄲ, ㄸ, ㅃ, ㅆ, ㅉ 은 각각 기본 초성으로 매핑
+          const mapped = ({'ㄲ':'ㄱ','ㄸ':'ㄷ','ㅃ':'ㅂ','ㅆ':'ㅅ','ㅉ':'ㅈ'}[cs]) || cs;
+          // 제외된 초성(ㄴ, ㄷ, ㅁ, ㅋ, ㅍ 등)은 'ㅇ' 그룹으로 재배치
+          return (ALPH.includes(mapped) ? mapped : 'ㅇ');
+        }
+        // 한글이 아니면 ㅇ 그룹로 묶기(임시 규칙)
+        return 'ㅇ';
+      }
+
+      // 기존 카드 모으기
+      const originalCards = Array.from(wrap.querySelectorAll('.student-card'));
+      if (!originalCards.length) return;
+
+      // 기존 내용 비우고 보조 네비 생성
+      wrap.innerHTML = '';
+      const nav = document.createElement('div');
+      nav.className = 'alpha-nav';
+      ALPH.forEach(c => {
+        const a = document.createElement('a');
+        a.href = `#sec-${c}`; a.textContent = c; nav.appendChild(a);
+      });
+      wrap.appendChild(nav);
+
+      // ⬇️ 초성 보조 네비 클릭 시, 상단 고정 네비+보조네비 높이만큼 오프셋을 두고 스크롤
+      nav.addEventListener('click', function(e){
+        const t = e.target;
+        if (!(t && t.tagName === 'A')) return;
+        e.preventDefault();
+        const hash = (t.getAttribute('href') || '').replace('#','');
+        const sec = document.getElementById(`sec-${hash}`) || document.getElementById(hash);
+        if (!sec) return;
+
+        // 기준 타이틀 요소(섹션 내 .alpha-title) 위치 계산
+        const titleEl = sec.querySelector('.alpha-title') || sec;
+        const titleY = titleEl.getBoundingClientRect().top + window.pageYOffset;
+
+        // 상단 고정 헤더(#nav-placeholder 내부 header) + 보조 네비(.alpha-nav) 실제 높이 합산
+        const headerEl = document.querySelector('#nav-placeholder header');
+        const headerH = headerEl ? headerEl.offsetHeight : 0;
+        const alphaNavEl = document.querySelector('.alpha-nav');
+        const alphaNavH = alphaNavEl ? alphaNavEl.offsetHeight : 0;
+
+        const extraGap = 12; // 시각적 여백
+        const targetY = Math.max(0, titleY - headerH - alphaNavH - extraGap);
+
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+        // 주소 해시 동기화 (뒤로 가기 동작 자연스럽게)
+        try { history.pushState(null, '', `#sec-${hash}`); } catch(_) {}
+      });
+
+      // 그룹핑
+      const groups = {}; ALPH.forEach(c=>groups[c]=[]);
+      originalCards.forEach(card=>{
+        const name = (card.querySelector('strong')?.textContent||'').trim();
+        const key = getChoseong(name);
+        if (groups[key]) groups[key].push(card);
+      });
+
+      // 각 그룹 정렬 후 섹션 구성
+      ALPH.forEach(c=>{
+        const list = groups[c];
+        if (!list || !list.length) return;
+        list.sort((a,b)=>{
+          const an=(a.querySelector('strong')?.textContent||'').trim();
+          const bn=(b.querySelector('strong')?.textContent||'').trim();
+          return an.localeCompare(bn,'ko-KR');
+        });
+        const sec = document.createElement('section'); sec.className='alpha-group'; sec.id = `sec-${c}`;
+        const h2 = document.createElement('h2'); h2.className='alpha-title'; h2.textContent = c;
+        const grid = document.createElement('div'); grid.className='studentstaff-grid';
+        list.forEach(card=>grid.appendChild(card));
+        sec.appendChild(h2); sec.appendChild(grid);
+        wrap.appendChild(sec);
+      });
+
+      // 그룹 가시성 업데이트 (필터와 함께 사용)
+      window.__updateAlphaSections = function(){
+        document.querySelectorAll('.alpha-group').forEach(sec=>{
+          const visible = Array.from(sec.querySelectorAll('.student-card')).some(c=>c.style.display !== 'none');
+          sec.style.display = visible ? '' : 'none';
+        });
+      };
+    })();
+    // --- Staff 필터: Staff 탭 클릭 시 staff만 표시 / All 클릭 시 전체 표시 ---
+    (function enableStaffFilter(){
+      const tabAll = document.querySelector('[data-filter="all"]');
+      const tabStaff = document.getElementById('tab-staff');
+      const cards = () => Array.from(document.querySelectorAll('.student-card'));
+
+      if (tabAll) {
+        tabAll.addEventListener('click', () => {
+          cards().forEach(c => { c.style.display = ''; });
+          // active styles
+          tabAll.style.color = 'red';
+          tabAll.style.fontWeight = '700';
+          if (tabStaff) { tabStaff.style.color = '#aaa'; tabStaff.style.fontWeight = '500'; }
+          if (window.__updateAlphaSections) window.__updateAlphaSections();
+        });
+      }
+      if (tabStaff) {
+        tabStaff.addEventListener('click', () => {
+          cards().forEach(c => {
+            if (c.getAttribute('data-group') === 'staff') c.style.display = '';
+            else c.style.display = 'none';
+          });
+          // active styles
+          tabStaff.style.color = 'red';
+          tabStaff.style.fontWeight = '700';
+          if (tabAll) { tabAll.style.color = '#aaa'; tabAll.style.fontWeight = '500'; }
+          if (window.__updateAlphaSections) window.__updateAlphaSections();
+        });
+      }
+    })();
+   </script>
+</body>
+</html>

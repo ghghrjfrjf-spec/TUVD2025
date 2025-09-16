@@ -24,7 +24,7 @@
 
   <!-- 🔻 전시 정보 -->
   <div class="poster-stage">
-    <img class="poster-horizontal" src="../../1.Picture/1. 27th Graduation/BLOOM_Poster/가로.jpg" alt="가로" loading="lazy" />
+    <img class="poster-horizontal" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_Poster/가로.jpg" alt="가로" loading="lazy" />
   </div>
 
   <!-- 🔻 푸터 영역 -->
@@ -75,9 +75,9 @@
         if (logoContainer) {
           const imgs = logoContainer.querySelectorAll('img');
           if (imgs.length > 0) {
-            imgs[0].outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+            imgs[0].outerHTML = '<img src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
             if (imgs.length > 1) {
-              imgs[1].src = '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png';
+              imgs[1].src = '../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png';
             }
           }
         } else {
@@ -87,7 +87,7 @@
             const alt = img.getAttribute('alt') || '';
             const src = img.getAttribute('src') || '';
             if (alt.includes('장미로고') || src.includes('BLOOM_LOGO') || src.includes('/대지.png') || src.includes('/대지.png')) {
-              img.outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+              img.outerHTML = '<img src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
               break;
             }
           }

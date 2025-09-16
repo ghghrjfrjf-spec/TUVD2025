@@ -34,7 +34,7 @@
       margin: 24px auto 0; 
       padding: 20px;
       display: flex;
-      align-items: stretch;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 40px;
       background: none;
@@ -161,13 +161,14 @@
       border-radius: 10px;
       color: black;
       font-weight: 500;
-      padding: 1.2rem;
-      margin: 0; /* remove extra margins — we use gap on the container */
-      flex: 0 0 calc((100% - 2rem) / 3); /* 3 columns accounting for two 1rem gaps */
+      padding: 0.75rem 1rem; /* roomier */
+      margin: 0;
+      flex: 0 0 calc((100% - 2rem) / 3);
       box-sizing: border-box;
       display: block;
       position: relative;
-      min-height: 150px;
+      min-height: 72px; /* not too short */
+      align-self: flex-start;
     }
 
     .message-list {
@@ -175,6 +176,8 @@
       flex-wrap: wrap;
       gap: 1rem;
       justify-content: flex-start;
+      align-items: flex-start;
+      align-content: flex-start;
     }
 
 
@@ -218,8 +221,11 @@
     /* Two-column layout */
     .guestbook-left {
       flex: 0 0 40%;
-      display: flex;           /* 세로 플렉스 컨테이너 */
+      display: flex;
       flex-direction: column;
+      align-self: flex-start;
+      position: sticky;
+      top: 120px; /* below nav (108px) + extra spacing */
     }
     .guestbook-right { flex: 1 1 60%; max-width: 700px; }
 
@@ -235,7 +241,7 @@
     /* Form + inputs on the left (equal widths) */
     .guestbook-left .write-button-wrapper { text-align: left; margin-bottom: 16px; }
     .guestbook-left .guestbook-form-container {
-      margin-top: auto;        /* ▶ 폼을 칼럼 하단으로 밀기 */
+      margin-top: 16px; /* keep small gap, no push to bottom */
       margin-bottom: 20px;
     }
     .guestbook-left form { display: flex; flex-direction: column; gap: 12px; max-width: 520px; }
@@ -252,20 +258,30 @@
 
     /* === Guest message edit UI === */
     .message .msg-actions {
-      margin-top: .75rem;
-      display: flex;
-      gap: .5rem;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: none; /* hidden until pencil clicked */
+      gap: .35rem;
+      margin: 0;
     }
     .message .msg-actions button {
       background: #222;
       color: #fff;
       border: 1px solid #444;
-      padding: .4rem .6rem;
+      padding: .28rem .48rem;
       border-radius: 6px;
-      font-size: .85rem;
+      font-size: .78rem;
       cursor: pointer;
     }
     .message .msg-actions button:hover { background:#333; }
+    .message.show-actions .msg-actions { display: flex; }
+    .message .edit-toggle {
+      position: absolute; top: 8px; right: 8px;
+      background: transparent; border: 0; cursor: pointer;
+      font-size: 18px; line-height: 1; padding: 2px; color: #555;
+    }
+    .message .edit-toggle:hover { color: #000; }
     .message .edit-form {
       display:flex;
       flex-direction:column;
@@ -282,19 +298,21 @@
       background:#fafafa;
       color:#111;
     }
-    .message .edit-form textarea { min-height: 96px; resize: vertical; }
+    .message .edit-form textarea { min-height: 80px; resize: vertical; }
 
     /* Guest message text: clamp to 2 lines by default, no inner scroll */
     .message p.msg-text {
-      line-height: 1.6;
+      line-height: 1.45;
       margin: 0;
       color: #000;
       background: transparent;
-      font-size: 1.1rem;
+      font-size: 1rem;
       overflow: hidden;
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      white-space: normal;         /* 줄바꿈 자연스럽게 */
+      line-clamp: 2;
+      max-height: calc(1.45em * 2);
+      white-space: normal;
     }
 
 
@@ -329,6 +347,8 @@
   min-height: 0;
   padding-bottom: calc(var(--footer-safe) + 104px);
   overflow: visible;    /* 리스트 자체 스크롤 제거 → 페이지가 스크롤 */
+  align-items: flex-start;
+  align-content: flex-start;
 }
 
 #pagination{
@@ -346,6 +366,66 @@
 /* Restore compact spacing: Pager is not fixed, so minimal bottom padding is sufficient */
 
 
+
+    /* ===== Project list: equal-sized tiles ===== */
+.project ul,
+.projects ul,
+.project-list { 
+  display: grid; 
+  grid-template-columns: repeat(3, minmax(0, 1fr)); 
+  gap: 16px; 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+}
+
+.project ul li,
+.projects ul li,
+.project-list li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #111;
+  color: #fff;
+  overflow: hidden;
+  /* Make every tile the exact same size */
+  aspect-ratio: 1 / 1;          /* perfect square */
+  min-height: 180px;            /* floor for very narrow screens */
+}
+
+/* If an image or thumbnail exists inside li, make it fit uniformly */
+.project ul li img,
+.projects ul li img,
+.project-list li img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* consistent crop */
+  display: block;
+}
+
+/* Optional inner content wrapper support */
+.project ul li > a,
+.projects ul li > a,
+.project-list li > a,
+.project ul li > .card,
+.projects ul li > .card,
+.project-list li > .card {
+  position: absolute; inset: 0; 
+  display: flex; align-items: center; justify-content: center; 
+  text-decoration: none; color: inherit;
+  padding: 12px;
+}
+
+/* Responsive columns */
+@media (max-width: 1000px) {
+  .project ul, .projects ul, .project-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .project ul, .projects ul, .project-list { grid-template-columns: 1fr; }
+}
 
     /* Stick footer to the bottom of the viewport, full-width */
     #footer-placeholder {
@@ -411,9 +491,9 @@
         if (logoContainer) {
           const imgs = logoContainer.querySelectorAll('img');
           if (imgs.length > 0) {
-            imgs[0].outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+            imgs[0].outerHTML = '<img src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
             if (imgs.length > 1) {
-              imgs[1].setAttribute('src', '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
+              imgs[1].setAttribute('src', '../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
             }
           }
         }
@@ -564,15 +644,16 @@
           const safeName = escHtml(name);
           const safeMsg = escHtml(message).replace(/\n/g,'<br>');
           msgDiv.innerHTML = `
-            <div class="kv">
-              <div class="row to"><span class="label">To</span><span class="value">${safeName}</span></div>
-              <div class="row message"><span class="label">Message</span><p class="msg-text">${safeMsg}</p></div>
-              <div class="row from"><span class="label">From</span><span class="value">${escHtml(item.from || safeName)}</span></div>
-            </div>
-            <div class="msg-actions">
-              <button class="edit-btn" data-index="${idx}">수정</button>
-              <button class="delete-btn" data-index="${idx}">삭제</button>
-            </div>`;
+  <button class="edit-toggle" aria-label="수정 메뉴 열기">✏️</button>
+  <div class="kv">
+    <div class="row to"><span class="label">To</span><span class="value">${safeName}</span></div>
+    <div class="row message"><span class="label">Message</span><p class="msg-text">${safeMsg}</p></div>
+    <div class="row from"><span class="label">From</span><span class="value">${escHtml(item.from || safeName)}</span></div>
+  </div>
+  <div class="msg-actions">
+    <button class="edit-btn" data-index="${idx}">수정</button>
+    <button class="delete-btn" data-index="${idx}">삭제</button>
+  </div>`;
         }
 
         messageList.appendChild(msgDiv);
@@ -621,7 +702,12 @@
       const editBtn = e.target.closest('.edit-btn');
       const cancelBtn = e.target.closest('.cancel-btn');
       const delBtn = e.target.closest('.delete-btn');
-
+      const toggleBtn = e.target.closest('.edit-toggle');
+      if (toggleBtn) {
+        const card = toggleBtn.closest('.message');
+        if (card) card.classList.toggle('show-actions');
+        return;
+      }
       if (editBtn) {
         const idx = parseInt(editBtn.dataset.index, 10);
         if (!isNaN(idx) && messages[idx]) {
@@ -630,7 +716,6 @@
         }
         return;
       }
-
       if (cancelBtn) {
         const form = e.target.closest('.edit-form');
         const idx = form ? parseInt(form.dataset.index, 10) : -1;
@@ -640,7 +725,6 @@
         }
         return;
       }
-
       if (delBtn) {
         const idx = parseInt(delBtn.dataset.index, 10);
         if (!isNaN(idx) && messages[idx]) {
@@ -670,35 +754,5 @@
 
     renderMessages();
   </script>
-</body>
-</html>
-
-
-<!-- =========================
-File: /3.PageExhibition/5.GuestBookPage/guestbook.html
-Purpose: 방명록 UI (정적 사이트 + Firestore)
-Note: 아래 CSS/JS를 같은 폴더에 두고 HTML에서 링크하세요.
-========================= -->
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guest Book</title>
-  <link rel="stylesheet" href="Guest.css" />
-</head>
-<body>
-  <!-- 상단 내비/푸터는 기존 fetch 방식 유지 -->
-  <div id="nav-placeholder"></div>
-  <main class="guestbook-wrap">
-    <h1>GUEST BOOK</h1>
-
-    <!-- 상태/카운트 표시 -->
-    <div class="gb-status">
-      <span id="gb-count">0</span>
-      <span class="muted">entries</span>
-      <span class="sep">•</span>
-      <span id="gb-limit"></span>
-    </div>어
 </body>
 </html>

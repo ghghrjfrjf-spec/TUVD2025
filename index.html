@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <title>TUVD 27th Graduate Exhibition – BLOOM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- 스타일시트: 루트 기준 경로로 수정 -->
+  <!-- 스타일시트: 루트 기준 경로 -->
   <link rel="stylesheet" href="2.PageElement/Tob_nav/Tob_nav.css" />
   <link rel="stylesheet" href="2.PageElement/Footer/Footer.css" />
   <link rel="stylesheet" href="2.PageElement/Cursor/cursor.css" />
-  <!-- ↓ 실제 파일명에 맞추세요: index.css 또는 1.MainPage.css 중 존재하는 것으로 -->
   <link rel="stylesheet" href="3.PageExhibition/1.MainPage/index.css" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
   <div id="cursor-placeholder"></div>
@@ -26,7 +24,7 @@
   <div class="poster-stage">
     <img class="poster-horizontal"
          src="1.Picture/1.%2027th%20Graduation/BLOOM_Poster/가로.jpg"
-         alt="가로" loading="lazy" />
+         alt="가로" loading="lazy" decoding="async" />
   </div>
 
   <!-- 푸터 -->
@@ -36,7 +34,26 @@
   <button onclick="scrollToTop()" id="scrollTopBtn" class="scroll-btn">▲</button>
 
   <script>
-    /* --- 스크롤 시 헤더 숨김 --- */
+    // --- 공통: 주입된 조각의 상대경로를 루트 기준으로 보정 ---
+    function fixRelativePaths(doc, basePath) {
+      // href
+      doc.querySelectorAll('[href]').forEach(el => {
+        const href = el.getAttribute('href');
+        if (!href) return;
+        // 절대/앵커/메일/프로토콜은 그대로 둠
+        if (/^(?:https?:)?\/|^#|^mailto:/i.test(href)) return;
+        el.setAttribute('href', basePath + href.replace(/^\.\//,''));
+      });
+      // src
+      doc.querySelectorAll('[src]').forEach(el => {
+        const src = el.getAttribute('src');
+        if (!src) return;
+        if (/^(?:https?:)?\/|^data:|^blob:/i.test(src)) return;
+        el.setAttribute('src', basePath + src.replace(/^\.\//,''));
+      });
+    }
+
+    // --- 스크롤 시 헤더 숨김 ---
     function initHeaderHideOnScroll() {
       const root = document.getElementById('nav-placeholder');
       if (!root) return;
@@ -61,108 +78,97 @@
       }, { passive: true });
     }
 
-    /* --- 네비게이션 HTML 로드 --- */
-    fetch('2.PageElement/Tob_nav/Tob_nav.html')
-      .then(res => res.text())
-      .then(data => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(data, 'text/html');
+    // 초기화는 DOMContentLoaded 이후에
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- 네비게이션 ---
+      fetch('2.PageElement/Tob_nav/Tob_nav.html')
+        .then(res => res.text())
+        .then(data => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data, 'text/html');
 
-        // 로고 이미지 경로 보정(루트 기준)
-        const logoContainer = doc.querySelector('.logo');
-        if (logoContainer) {
-          const imgs = logoContainer.querySelectorAll('img');
-          if (imgs.length > 0) {
-            imgs[0].outerHTML = '<img src="1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
-          }
-          if (imgs.length > 1) {
-            imgs[1].src = '1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png';
-          }
-        } else {
-          // 대체: 문서 내 임의의 이미지 교체
-          const imgs = doc.querySelectorAll('img');
-          for (let img of imgs) {
-            const alt = img.getAttribute('alt') || '';
-            const src = img.getAttribute('src') || '';
-            if (alt.includes('장미로고') || src.includes('BLOOM_LOGO') || src.includes('/대지.png') || src.includes('/대지.png')) {
-              img.outerHTML = '<img src="1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
-              break;
+          // ① 상대경로 보정 (중요)
+          fixRelativePaths(doc, '/2.PageElement/Tob_nav/');
+
+          // ② 로고 이미지 경로 보정(루트 기준)
+          const logoContainer = doc.querySelector('.logo');
+          if (logoContainer) {
+            const imgs = logoContainer.querySelectorAll('img');
+            if (imgs.length > 0) {
+              imgs[0].outerHTML = '<img src="/1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+            }
+            if (imgs.length > 1) {
+              imgs[1].src = '/1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png';
             }
           }
-        }
 
-        // 루트 기준 링크 맵(절대경로)
-        const linkMap = {
-          'home': '/',
-          'about': '/3.PageExhibition/2.AboutPage/About.html',
-          'project': '/3.PageExhibition/3.ProjectPage/project2.html',
-          'designer': '/3.PageExhibition/4.DesignerPage/Designer.html',
-          'guest book': '/3.PageExhibition/5.GuestBookPage/Guest.html',
-          'guestbook': '/3.PageExhibition/5.GuestBookPage/Guest.html',
-          'gallery': '/3.PageExhibition/6.GalleryPage/Gallery.html'
-        };
+          // ③ 메뉴 링크를 절대경로로 통일
+          const linkMap = {
+            'home': '/',
+            'about': '/3.PageExhibition/2.AboutPage/About.html',
+            'project': '/3.PageExhibition/3.ProjectPage/project2.html',
+            'designer': '/3.PageExhibition/4.DesignerPage/Designer.html',
+            'guest book': '/3.PageExhibition/5.GuestBookPage/Guest.html',
+            'guestbook': '/3.PageExhibition/5.GuestBookPage/Guest.html',
+            'gallery': '/3.PageExhibition/6.GalleryPage/Gallery.html'
+          };
+          const logoLink = doc.querySelector('a.logo, .logo a');
+          if (logoLink) logoLink.setAttribute('href', linkMap['home']);
 
-        // 클릭 가능한 로고가 있으면 홈으로
-        const logoLink = doc.querySelector('a.logo, .logo a');
-        if (logoLink && logoLink.setAttribute) {
-          logoLink.setAttribute('href', linkMap['home']);
-        }
+          doc.querySelectorAll('a[href]').forEach(a => {
+            const text = (a.textContent || '').trim().toLowerCase();
+            const href = (a.getAttribute('href') || '').trim();
+            if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
+            if (/about/i.test(href)) a.setAttribute('href', linkMap['about']);
+            else if (/project/i.test(href)) a.setAttribute('href', linkMap['project']);
+            else if (/designer/i.test(href)) a.setAttribute('href', linkMap['designer']);
+            else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
+            else if (/gallery/i.test(href)) a.setAttribute('href', linkMap['gallery']);
+            else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
+          });
 
-        // 메뉴 링크 정규화
-        doc.querySelectorAll('a[href]').forEach(a => {
-          const text = (a.textContent || '').trim().toLowerCase();
-          const href = (a.getAttribute('href') || '').trim();
-          if (linkMap[text]) {
-            a.setAttribute('href', linkMap[text]);
-            return;
-          }
-          if (/about/i.test(href))      a.setAttribute('href', linkMap['about']);
-          else if (/project/i.test(href)) a.setAttribute('href', linkMap['project']);
-          else if (/designer/i.test(href)) a.setAttribute('href', linkMap['designer']);
-          else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
-          else if (/gallery/i.test(href)) a.setAttribute('href', linkMap['gallery']);
-          else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
+          document.getElementById('nav-placeholder').innerHTML = doc.body.innerHTML;
+          initHeaderHideOnScroll();
         });
 
-        document.getElementById('nav-placeholder').innerHTML = doc.body.innerHTML;
-        initHeaderHideOnScroll();
-      });
+      // --- 푸터 ---
+      fetch('2.PageElement/Footer/Footer.html')
+        .then(res => res.text())
+        .then(h => {
+          const doc = new DOMParser().parseFromString(h, 'text/html');
+          fixRelativePaths(doc, '/2.PageElement/Footer/');
+          document.getElementById('footer-placeholder').innerHTML = doc.body.innerHTML || h;
+        });
 
-    /* --- 푸터 HTML 로드 --- */
-    fetch('2.PageElement/Footer/Footer.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('footer-placeholder').innerHTML = data;
-      });
-
-    /* --- 커서 HTML 로드 + 초기화 --- */
-    function initRoseCursor() {
-      const cursor = document.querySelector('.cursor-dot');
-      if (!cursor) return false;
-      if (cursor.dataset.raf === 'on') return true;
-      cursor.style.willChange = 'transform';
-      let x=0, y=0, tx=0, ty=0, started=false;
-      const ease = 0.62;
-      function raf() {
-        tx += (x - tx) * ease;
-        ty += (y - ty) * ease;
-        cursor.style.transform = `translate3d(calc(${tx}px - 50%), calc(${ty}px - 50%), 0)`;
+      // --- 커서 ---
+      function initRoseCursor() {
+        const cursor = document.querySelector('.cursor-dot');
+        if (!cursor) return false;
+        if (cursor.dataset.raf === 'on') return true;
+        cursor.style.willChange = 'transform';
+        let x=0, y=0, tx=0, ty=0, started=false;
+        const ease = 0.62;
+        function raf() {
+          tx += (x - tx) * ease;
+          ty += (y - ty) * ease;
+          cursor.style.transform = `translate3d(calc(${tx}px - 50%), calc(${ty}px - 50%), 0)`;
+          requestAnimationFrame(raf);
+        }
+        document.addEventListener('mousemove', (e) => {
+          x = e.clientX; y = e.clientY;
+          if (!started) { tx=x; ty=y; started=true; }
+        }, { passive:true });
+        cursor.dataset.raf = 'on';
         requestAnimationFrame(raf);
+        return true;
       }
-      document.addEventListener('mousemove', (e) => {
-        x = e.clientX; y = e.clientY;
-        if (!started) { tx=x; ty=y; started=true; }
-      }, { passive:true });
-      cursor.dataset.raf = 'on';
-      requestAnimationFrame(raf);
-      return true;
-    }
-    (function loadCursor(){
-      const root = document.getElementById('cursor-placeholder');
-      if (!root) return;
       fetch('2.PageElement/Cursor/cursor.html')
         .then(res => res.text())
-        .then(html => {
+        .then(h => {
+          const doc = new DOMParser().parseFromString(h, 'text/html');
+          fixRelativePaths(doc, '/2.PageElement/Cursor/');
+          const html = doc.body.innerHTML || h;
+          const root = document.getElementById('cursor-placeholder');
           root.innerHTML = html;
           if (!initRoseCursor()) {
             const mo = new MutationObserver(() => { if (initRoseCursor()) mo.disconnect(); });
@@ -170,10 +176,8 @@
           }
         })
         .catch(err => console.error('Cursor load failed:', err));
-    })();
 
-    // Scroll To Top
-    document.addEventListener("DOMContentLoaded", function () {
+      // Scroll To Top
       const scrollBtn = document.getElementById("scrollTopBtn");
       window.addEventListener("scroll", function () {
         if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1) {
@@ -181,7 +185,7 @@
         } else {
           scrollBtn.style.display = "none";
         }
-      });
+      }, { passive:true });
       window.scrollToTop = function () {
         window.scrollTo({ top: 0, behavior: "smooth" });
       };

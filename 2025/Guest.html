@@ -18,7 +18,7 @@
       flex-direction: column;
     }
     main.content {
-      padding-top: 108px; /* moved the whole guestbook content slightly lower */
+      padding-top: 0; /* spacer will handle header height */
       padding-bottom: calc(var(--footer-safe) + 24px);
     }
     body {
@@ -28,6 +28,77 @@
       color: #fff;
       overflow-x: hidden;
     }
+    
+      #nav-placeholder header .header-inner{
+    max-width: 1600px;
+    padding: 0;
+    margin: 0 auto;
+    display: flex;              /* 추가 */
+    align-items: center;        /* 추가 */
+    justify-content: space-between; /* 추가 */
+    height: 100%;               /* 추가 */
+  }
+   /* === Tob_nav style (match Guest page) === */
+   #nav-placeholder{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: transform .3s ease;
+      will-change: transform;
+    }
+    body.nav-hidden #nav-placeholder{ transform: translateY(-110%); }
+    .nav-spacer{ height: 0; }
+
+    /* Visuals: black translucent + blur + thin divider */
+    #nav-placeholder header{
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      box-sizing: border-box;
+      width: 100%;
+      height: 90px;
+      padding-left: 59px;
+      padding-right: 60px;
+    }
+    
+
+    /* Logo sizing */
+    #nav-placeholder header .logo img{
+      max-height: 38px;
+      transform: translateY(2px);
+    }
+    #nav-placeholder .logo .logo-main{ font-size: 15px !important; }
+    #nav-placeholder .logo .logo-sub { font-size: 15px !important; }
+
+     /* 네비게이션: 스크롤 내리면 숨기고, 올리면 나타나도록 (레이아웃 점프 방지) */
+     #nav-placeholder { position: sticky; top: 0; z-index: 1000; transition: transform .3s ease; }
+    body.nav-hidden #nav-placeholder { transform: translateY(-110%); }
+
+    /* Link typography */
+    #nav-placeholder header a{
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      text-decoration: none;
+      color: #fff;
+      padding: 8px 0;
+    }
+    #nav-placeholder header a:hover{ color:#ff3b3b; }
+    #nav-placeholder header a.is-active{ color:#ff4d4d; font-weight:700; }
+    /* — nav 간격/패딩 축소 — */
+    #nav-placeholder nav ul{ gap:47px; }  /* 기존 48px → 32px */
+
+    /* Flatten: disable dropdown menus entirely on Main page (like Guest) */
+    #nav-placeholder nav ul li ul,
+    #nav-placeholder .dropdown,
+    #nav-placeholder .submenu,
+    #nav-placeholder .has-dropdown > ul,
+    #nav-placeholder .has-children > ul{
+      display: none !important;
+    }
+    #nav-placeholder nav ul li:hover > ul{ display:none !important; }
 
     .guestbook-container {
       max-width: 1200px;
@@ -225,7 +296,7 @@
       flex-direction: column;
       align-self: flex-start;
       position: sticky;
-      top: 120px; /* below nav (108px) + extra spacing */
+      top: 120px; /* keep previous spacing under 90px header */
     }
     .guestbook-right { flex: 1 1 60%; max-width: 700px; }
 
@@ -480,50 +551,141 @@
     <div id="footer-placeholder"></div>
   </div>
   <script> 
-    // 네비게이션 HTML 로드 (로고 교체 + 링크 정규화)
-    fetch('../../2.PageElement/Tob_nav/Tob_nav.html') 
-      .then(res => res.text())
-      .then(html => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        // 로고 이미지 교체
-        const logoContainer = doc.querySelector('.logo');
-        if (logoContainer) {
-          const imgs = logoContainer.querySelectorAll('img');
-          if (imgs.length > 0) {
-            imgs[0].outerHTML = '<img src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
-            if (imgs.length > 1) {
-              imgs[1].setAttribute('src', '../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
-            }
+    // 네비게이션 HTML 로드 (Project.page 스타일 우선 적용) + 로고 교체 + 링크 정규화
+    (async function loadProjectNav(){
+      const root = document.getElementById('nav-placeholder');
+      if (!root) return;
+      const basePath = '../../2.PageElement/Tob_nav/';
+      const candidates = [
+        basePath + 'Tob_nav_project.html', // Project 페이지와 동일 네비 우선
+        basePath + 'Tob_nav.html'          // 없으면 기본 네비 사용
+      ];
+      let html = '';
+      for (const url of candidates){
+        try{
+          const res = await fetch(url, { cache: 'no-store' });
+          if (res.ok){ html = await res.text(); break; }
+        }catch(_){ /* try next */ }
+      }
+      if (!html){ console.warn('[guest] nav load failed'); return; }
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // 로고 이미지 교체 (장미로고 + 텍스트 로고)
+      const logoContainer = doc.querySelector('.logo');
+      if (logoContainer) {
+        const imgs = logoContainer.querySelectorAll('img');
+        if (imgs.length > 0) {
+          imgs[0].outerHTML = '<img src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+          if (imgs.length > 1) {
+            imgs[1].setAttribute('src', '../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
           }
         }
-        // 링크 정규화 (3.PageExhibition/* 어디서든 동작)
-        const baseEl = doc.querySelector('base');
-        if (baseEl) baseEl.remove();
-        const logoLink = doc.querySelector('a.logo, .logo a');
-        if (logoLink) logoLink.setAttribute('href', '../1.MainPage/1.MainPage.html');
-        const linkMap = {
-          'home': '../1.MainPage/1.MainPage.html',
-          'about': '../2.AboutPage/About.html',
-          'project': '../3.ProjectPage/project2.html',
-          'designer': '../4.DesignerPage/Designer.html',
-          'guest book': '../5.GuestBookPage/Guest.html',
-          'guestbook': '../5.GuestBookPage/Guest.html',
-          'gallery': '../6.GalleryPage/Gallery.html'
-        };
-        doc.querySelectorAll('a[href]').forEach(a => {
-          const text = (a.textContent || '').trim().toLowerCase();
-          const href = (a.getAttribute('href') || '').trim();
-          if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
-          if (/about/i.test(href)) a.setAttribute('href', linkMap['about']);
-          else if (/project/i.test(href)) a.setAttribute('href', linkMap['project']);
-          else if (/designer/i.test(href)) a.setAttribute('href', linkMap['designer']);
-          else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
-          else if (/gallery/i.test(href)) a.setAttribute('href', linkMap['gallery']);
-          else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
-        });
-        document.getElementById('nav-placeholder').innerHTML = doc.body.innerHTML;
+      }
+
+      // base 태그 제거 (상대경로 꼬임 방지)
+      const baseEl = doc.querySelector('base');
+      if (baseEl) baseEl.remove();
+
+      // 링크 정규화: 현재 디렉토리(/2025) 기준으로 매핑
+      const baseDir = location.pathname.replace(/\/[^/]*$/, '');
+      const toURL = (file) => `${baseDir}/${file}`.replace(/\/{2,}/g, '/');
+      const linkMap = {
+        'home': toURL('Main.html'),
+        'about': toURL('About.html'),
+        'project': toURL('Project.html'),
+        'designer': toURL('Designer.html'),
+        'guest': toURL('Guest.html'),
+        'guest book': toURL('Guest.html'),
+        'guestbook': toURL('Guest.html'),
+      };
+
+      const logoLink = doc.querySelector('a.logo, .logo a');
+      if (logoLink) logoLink.setAttribute('href', linkMap['home']);
+
+      doc.querySelectorAll('a[href]').forEach(a => {
+        const text = (a.textContent || '').trim().toLowerCase();
+        const href = (a.getAttribute('href') || '').trim();
+        if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
+        if (/about/i.test(href))          a.setAttribute('href', linkMap['about']);
+        else if (/project/i.test(href))   a.setAttribute('href', linkMap['project']);
+        else if (/designer/i.test(href))  a.setAttribute('href', linkMap['designer']);
+        else if (/guest(\s*book)?/i.test(href)) a.setAttribute('href', linkMap['guest']);
+        else if (/main|home|index/i.test(href))  a.setAttribute('href', linkMap['home']);
       });
+
+      // 현재 페이지 활성화 표시
+      const currentName = location.pathname.split('/').pop().toLowerCase();
+      doc.querySelectorAll('a[href]').forEach(a => {
+        const target = (a.getAttribute('href') || '').toLowerCase();
+        if (target.endsWith(currentName)) {
+          a.setAttribute('aria-current', 'page');
+          a.classList.add('is-active');
+        }
+      });
+
+      // DOM에 삽입
+      root.innerHTML = doc.body.innerHTML;
+
+      // Remove dropdown structures from the injected navigation
+      (function stripDropdowns(){
+        const navRoot = document.getElementById('nav-placeholder');
+        if (!navRoot) return;
+        // Remove submenu <ul>s
+        navRoot.querySelectorAll('nav ul ul, .dropdown, .submenu, .menu .sub, [aria-haspopup="true"] > ul').forEach(el=>{
+          try{ el.remove(); }catch(_){ el.parentNode && el.parentNode.removeChild(el); }
+        });
+        // Remove dropdown indicator classes to avoid CSS hooks
+        navRoot.querySelectorAll('.has-dropdown, .has-children, .dropdown-toggle').forEach(el=>{
+          el.classList.remove('has-dropdown','has-children','dropdown-toggle');
+          el.removeAttribute('aria-haspopup');
+          el.removeAttribute('aria-expanded');
+        });
+      })();
+
+      // --- 네비 높이만큼 스페이서 확보 (겹침 방지) ---
+      (function syncNavSpacer(){
+        const root = document.getElementById('nav-placeholder');
+        if (!root) return;
+        let spacer = document.querySelector('.nav-spacer');
+        if (!spacer) {
+          spacer = document.createElement('div');
+          spacer.className = 'nav-spacer';
+          root.after(spacer);
+        }
+        let header = root.querySelector('header') || root.firstElementChild;
+        function setSpacer(){
+          const ref = header || root.firstElementChild;
+          if (ref && spacer){ spacer.style.height = (ref.offsetHeight + 8) + 'px'; }
+        }
+        setSpacer();
+        window.addEventListener('resize', setSpacer, { passive:true });
+        setTimeout(setSpacer, 150);
+        setTimeout(setSpacer, 600);
+        try {
+          const ro = new ResizeObserver(setSpacer);
+          if (header) ro.observe(header);
+          const mo = new MutationObserver(()=>{ header = root.querySelector('header') || root.firstElementChild; setSpacer(); });
+          mo.observe(root, { childList:true, subtree:true, attributes:true });
+        } catch(_) {}
+        console.debug('[guest] nav spacer synced');
+      })();
+
+      // --- 스크롤 내릴 때 숨기고 올리면 보이기 ---
+      console.debug('[guest] hide-on-scroll binding');
+      (function hideNavOnScroll(){
+        if (window.__navHideBound) return;
+        window.__navHideBound = true;
+        let prevY = window.pageYOffset || 0;
+        window.addEventListener('scroll', function(){
+          const y = window.pageYOffset || 0;
+          if (y > prevY + 8 && y > 40) document.body.classList.add('nav-hidden');
+          else if (y < prevY - 8) document.body.classList.remove('nav-hidden');
+          prevY = y;
+        }, { passive:true });
+      })();
+    })();
     // 푸터 HTML 로드 + 고정 페이지네이션과 겹치지 않도록 안전 여백 계산
     fetch('../../2.PageElement/Footer/Footer.html')
       .then(res => res.text())
@@ -738,6 +900,7 @@
         return;
       }
     });
+    
 
     document.getElementById('messageList').addEventListener('submit', (e) => {
       const form = e.target.closest('.edit-form');

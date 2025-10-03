@@ -14,6 +14,72 @@
       --red:#ff3b3b; --red-600:#ff4d4d; --card:#121212; --card-2:#151515;
       --max:1280px;
     }
+    /* ===== Tob_nav: Project/Guest identical header style ===== */
+    /* Sticky container + hide-on-scroll */
+    #nav-placeholder{
+      position: sticky;
+      top: 0;
+      z-index: 1200;              /* above fixed footer (1000) */
+      transition: transform .3s ease;
+      will-change: transform;
+    }
+    body.nav-hidden #nav-placeholder{ transform: translateY(-100%); }
+    .nav-spacer{
+      height: 90px;                 /* equal to header height */
+      background: #000;             /* keep black band under the header */
+      border-bottom: 1px solid rgba(255,255,255,.12); /* same line as header */
+    }
+    @media (max-width: 900px){ .nav-spacer{ height: 90px; } }
+
+    /* Visuals: translucent black + blur + thin border */
+    #nav-placeholder header{
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      box-sizing: border-box;
+      width: 100%;
+      height: 90px;               /* keep rectangle height */
+      padding-left: 60px;
+      padding-right: 60px;
+    }
+
+    /* Typography & links */
+    #nav-placeholder header a{
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;            /* menu size */
+      font-weight: 700;
+      margin-left: -1px;
+      margin-right: 0;
+      letter-spacing: .2px;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 0;             /* tighter vertical hit area */
+    }
+    #nav-placeholder header a:hover{ color:#ff3b3b; }
+    #nav-placeholder header a.is-active{ color:#ff4d4d; font-weight:700; }
+    #nav-placeholder header .brand,
+    #nav-placeholder header .site-title{
+      font-size: 14px; line-height: 1;
+    }
+
+    /* Logo size */
+    #nav-placeholder header .logo img{
+      max-height: 38px;
+      transform: translateY(2px);
+    }
+    #nav-placeholder .logo .logo-main{ font-size:15px !important; }
+    #nav-placeholder .logo .logo-sub{ font-size:15px !important; }
+
+    /* Disable dropdown menus from Tob_nav */
+    #nav-placeholder nav ul li ul,
+    #nav-placeholder .dropdown,
+    #nav-placeholder .submenu,
+    #nav-placeholder .has-dropdown > ul,
+    #nav-placeholder .has-children > ul{
+      display: none !important;
+    }
+    #nav-placeholder nav ul li:hover > ul{ display:none !important; }
     /* Global font: keep Pretendard to match other pages */
     body{ font-family:'Pretendard', system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
 
@@ -303,34 +369,120 @@
             }
           }
         }
+        
 
         // base 태그 제거 (상대 경로 꼬임 방지)
         const baseEl = doc.querySelector('base');
         if (baseEl) baseEl.remove();
 
-        // 링크 정규화: 3.PageExhibition/* 어디서든 정상 동작
-        const logoLink = doc.querySelector('a.logo, .logo a');
-        if (logoLink) logoLink.setAttribute('href', '../1.MainPage/1.MainPage.html');
+        // ======== 링크 매핑 (2025 폴더 내 페이지끼리 정확히 연결) ========
+        // 현재 페이지가 위치한 디렉터리(예: /.../2025)를 기준으로 링크를 만든다.
+        const baseDir = location.pathname.replace(/\/[^/]*$/, ''); // /2025
+        const toURL = (file) => `${baseDir}/${file}`.replace(/\/{2,}/g, '/');
+
         const linkMap = {
-          'home': '../1.MainPage/1.MainPage.html',
-           'about': '../2.AboutPage/About.html',
-           'project': '../3.ProjectPage/project2.html',
-           'designer': '../4.DesignerPage/Designer.html',
-           'guest book': '../5.GuestBookPage/Guest.html',
-           'guestbook': '../5.GuestBookPage/Guest.html',
-           'gallery': '../6.GalleryPage/Gallery.html'
-         };
+          'home': toURL('Main.html'),
+          'about': toURL('About.html'),
+          'project': toURL('Project.html'),
+          'designer': toURL('Designer.html'),
+          'guest': toURL('Guest.html'),
+          'guest book': toURL('Guest.html'),
+          'guestbook': toURL('Guest.html'),
+        };
+
+        // 로고 링크도 홈으로 고정
+        const logoLink = doc.querySelector('a.logo, .logo a');
+        if (logoLink) logoLink.setAttribute('href', linkMap['home']);
+
+        // 모든 a 태그를 매핑 규칙에 맞춰 교체
         doc.querySelectorAll('a[href]').forEach(a => {
           const text = (a.textContent || '').trim().toLowerCase();
           const href = (a.getAttribute('href') || '').trim();
-          if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
-          if (/about/i.test(href)) a.setAttribute('href', linkMap['about']);
-          else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
+
+          if (linkMap[text]) {
+            a.setAttribute('href', linkMap[text]);
+            return;
+          }
+
+          if (/about/i.test(href))          a.setAttribute('href', linkMap['about']);
+          else if (/project/i.test(href))   a.setAttribute('href', linkMap['project']);
+          else if (/designer/i.test(href))  a.setAttribute('href', linkMap['designer']);
+          else if (/guest(\s*book)?/i.test(href)) a.setAttribute('href', linkMap['guest']);
           else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
+        });
+
+        // 현재 페이지 표시(활성 상태)
+        const currentName = location.pathname.split('/').pop().toLowerCase(); // about.html 등
+        doc.querySelectorAll('a[href]').forEach(a => {
+          const target = (a.getAttribute('href') || '').toLowerCase();
+          if (target.endsWith(currentName)) {
+            a.setAttribute('aria-current', 'page');
+            a.classList.add('is-active');
+          }
         });
 
         const navRoot = document.getElementById('nav-placeholder');
         if (navRoot) navRoot.innerHTML = doc.body.innerHTML;
+
+        // Remove dropdown structures to keep a flat top bar
+        (function stripDropdowns(){
+          const navRoot2 = document.getElementById('nav-placeholder');
+          if (!navRoot2) return;
+          // Remove submenu <ul>s
+          navRoot2.querySelectorAll('nav ul ul, .dropdown, .submenu, .menu .sub, [aria-haspopup="true"] > ul').forEach(el=>{
+            try{ el.remove(); }catch(_){ el.parentNode && el.parentNode.removeChild(el); }
+          });
+          // Remove dropdown indicator classes/attrs
+          navRoot2.querySelectorAll('.has-dropdown, .has-children, .dropdown-toggle').forEach(el=>{
+            el.classList.remove('has-dropdown','has-children','dropdown-toggle');
+            el.removeAttribute('aria-haspopup');
+            el.removeAttribute('aria-expanded');
+          });
+        })();
+
+        // Add a spacer equal to header height to avoid layout overlap
+        (function syncNavSpacer(){
+          const root = document.getElementById('nav-placeholder');
+          if (!root) return;
+          let spacer = document.querySelector('.nav-spacer');
+          if (!spacer) {
+            spacer = document.createElement('div');
+            spacer.className = 'nav-spacer';
+            root.after(spacer);
+          }
+          let header = root.querySelector('header') || root.firstElementChild;
+          function setSpacer(){
+            const ref = header || root.firstElementChild;
+            if (ref && spacer){
+              spacer.style.height = ref.offsetHeight + 'px';
+              spacer.style.background = '#000';
+              spacer.style.borderBottom = '1px solid rgba(255,255,255,.12)';
+            }
+          }
+          setSpacer();
+          window.addEventListener('resize', setSpacer, { passive:true });
+          setTimeout(setSpacer, 150);
+          setTimeout(setSpacer, 600);
+          try {
+            const ro = new ResizeObserver(setSpacer);
+            if (header) ro.observe(header);
+            const mo = new MutationObserver(()=>{ header = root.querySelector('header') || root.firstElementChild; setSpacer(); });
+            mo.observe(root, { childList:true, subtree:true, attributes:true });
+          } catch(_) {}
+        })();
+
+        // Hide the nav when scrolling down, show on scroll up
+        (function hideNavOnScroll(){
+          if (window.__navHideBound) return;
+          window.__navHideBound = true;
+          let prevY = window.pageYOffset || 0;
+          window.addEventListener('scroll', function(){
+            const y = window.pageYOffset || 0;
+            if (y > prevY + 8 && y > 40) document.body.classList.add('nav-hidden');
+            else if (y < prevY - 8) document.body.classList.remove('nav-hidden');
+            prevY = y;
+          }, { passive:true });
+        })();
       });
 
     // 푸터 HTML 삽입
@@ -339,6 +491,17 @@
       .then(data => {
         const root = document.getElementById('footer-placeholder');
         if (root) root.innerHTML = data;
+        // Expose footer height as CSS variable like Guest page
+        const setFooterSafe = () => {
+          const h = root.offsetHeight || 0;
+          document.documentElement.style.setProperty('--footer-safe', h + 'px');
+        };
+        setFooterSafe();
+        try{
+          const ro2 = new ResizeObserver(setFooterSafe);
+          ro2.observe(root);
+          window.addEventListener('resize', setFooterSafe, { passive:true });
+        }catch(_){}
       });
 
     // 커서 HTML 삽입

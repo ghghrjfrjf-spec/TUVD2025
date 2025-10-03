@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>TUVD 27th Graduate Exhibition - BLOOM</title>
+  <!-- 🔺 스타일시트 연결 -->
+  <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
+  <link rel="stylesheet" href="1.MainPage.css" />
+  <style>
+    /* Fallback styles for custom cursor (rose) */
+    /*
+    .cursor-dot{ position:fixed; left:-100px; top:-100px; width:12px; height:12px; border-radius:50%; background:#ff3b3b; box-shadow:0 0 0 2px rgba(255,59,59,.25); pointer-events:none; transform:translate(-50%,-50%); z-index:9999; }
+    .cursor-ring{ position:fixed; left:-100px; top:-100px; width:36px; height:36px; border-radius:50%; border:2px solid rgba(255,59,59,.35); pointer-events:none; transform:translate(-50%,-50%); z-index:9998; }
+    */
+    body{ cursor: none; }
+    /* Smooth rose cursor base styles (works with .cursor-dot or .rose-cursor) */
+    .cursor-dot, .rose-cursor, [data-rose-cursor]{
+      position: fixed;
+      left: -100px; top: -100px;         /* offscreen until first move */
+      transform: translate3d(-9999px, -9999px, 0); /* moved offscreen until we know size */
+      transform-origin: 50% 50%; /* center by default; JS will set exact px hotspot */
+      pointer-events: none;               /* never block clicks */
+      z-index: 99999;                     /* above everything */
+      will-change: transform;             /* GPU hint for smoothness */
+    }
+    :root{ --nav-safe: 0px; --line: rgba(255,255,255,.12); }
+
+    /* === Tob_nav style (match Guest page) === */
+    #nav-placeholder{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: transform .38s cubic-bezier(.22,.61,.36,1);
+      will-change: transform;
+    }
+    #nav-placeholder > header{
+      transition: transform .38s cubic-bezier(.22,.61,.36,1);
+      will-change: transform;
+    }
+    /* 숨김 상태: 래퍼/헤더 둘 다에 적용 */
+    body.nav-hidden #nav-placeholder,
+    body.nav-hidden #nav-placeholder > header{
+      transform: translateY(-110%);
+    }
+    @media (prefers-reduced-motion: reduce){
+      #nav-placeholder, #nav-placeholder > header{ transition: none; }
+    }
+    .nav-spacer{ height: 0; }
+
+    /* Visuals: black translucent + blur + thin divider */
+    #nav-placeholder header{
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      box-sizing: border-box;
+      width: 100%;
+      height: 90px;
+      padding-left: 59px;
+      padding-right: 60px;
+    }
+
+    /* Logo sizing */
+    #nav-placeholder header .logo img{
+      max-height: 38px;
+      transform: translateY(2px);
+    }
+    #nav-placeholder .logo .logo-main{ font-size: 15px !important; }
+    #nav-placeholder .logo .logo-sub { font-size: 15px !important; }
+
+    /* Link typography */
+    #nav-placeholder header a{
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      text-decoration: none;
+      color: #fff;
+      padding: 8px 0;
+    }
+    #nav-placeholder header a:hover{ color:#ff3b3b; }
+    #nav-placeholder header a.is-active{ color:#ff4d4d; font-weight:700; }
+
+    /* === Ensure identical internal layout: left logo / right menu === */
+    #nav-placeholder header .header-inner{
+      max-width: 1600px;
+      padding: 0;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+    #nav-placeholder nav{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; /* push menu to right */
+      height: 100%;
+    }
+    #nav-placeholder nav ul{
+      display: flex;
+      align-items: center;       /* vertical centering */
+      gap: 47px;                 /* match Project page spacing */
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    #nav-placeholder nav ul li a{
+      display: flex;
+      align-items: center;       /* vertical centering */
+      height: 90px;              /* equal to header height */
+      padding: 0;                /* rely on flex centering */
+    }
+
+    
+    /* Flatten: disable dropdown menus entirely on Main page (like Guest) */
+    #nav-placeholder nav ul li ul,
+    #nav-placeholder .dropdown,
+    #nav-placeholder .submenu,
+    #nav-placeholder .has-dropdown > ul,
+    #nav-placeholder .has-children > ul{
+      display: none !important;
+    }
+    #nav-placeholder nav ul li:hover > ul{ display:none !important; }
+
+    /* Full-viewport layout & sticky footer */
+    html, body { height: 100%; margin: 0; overflow-x:hidden; background:#000; }
+    .page { min-height: 100dvh; display: flex; flex-direction: column; background:#000; width:100%; }
+
+    /* Poster fills the screen without cropping */
+    .poster-stage{ flex:1; min-height:0; display:grid; place-items:center; background:#000; padding:var(--nav-safe) 0 0 0; box-sizing:border-box; overflow:hidden; width:100%; }
+    .poster-stage .poster-horizontal{
+      max-width:100%;   /* never exceed stage width */
+      max-height:100%;  /* never exceed stage height */
+      width:auto;       /* preserve aspect ratio */
+      height:auto;      /* preserve aspect ratio */
+      display:block;
+    }
+
+    /* Ensure footer stays at the bottom when content is short */
+    #footer-placeholder { margin-top:auto; background:#000; }
+
+    /* Top button: always on top */
+    .scroll-btn{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:99999; /* 맨 위 */
+      display:none;
+      align-items:center;
+      justify-content:center;
+      width:44px; height:44px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.18);
+      background:#000;
+      color:#fff; font-weight:900; letter-spacing:.3px;
+      box-shadow:0 6px 18px rgba(0,0,0,.35);
+      cursor:pointer;
+    }
+    .scroll-btn:hover{ border-color:#ff3b3b; box-shadow:0 6px 22px rgba(255,59,59,.25); }
+
+    footer, .site-footer, #footer{
+      position:relative !important; /* 이미지 위로 겹치지 않음 */
+      width:100%;
+      background:#000 !important;
+      border-top:1px solid var(--line);
+      z-index: 1;
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="page">
+    <!-- 🔺 네비게이션 영역 -->
+    <div id="nav-placeholder"></div>
+    <div id="cursor-placeholder"></div>
+
+    <!-- 🎬 메인 배경 (not used) -->
+    <!-- <div class="video-area"></div> -->
+
+    <!-- 🔻 전시 정보: poster fits exactly to the viewport */ -->
+    <div class="poster-stage">
+      <img class="poster-horizontal" src="../../1.Picture/1. 27th Graduation/BLOOM_Poster/가로.jpg" alt="가로" loading="lazy" />
+    </div>
+    
+
+    <!-- 🔻 푸터 영역 -->
+    <div id="footer-placeholder"></div>
+  </div>
+
+  <!-- Scroll to Top Button -->
+  <button onclick="scrollToTop()" id="scrollTopBtn" class="scroll-btn">▲</button>
+
+  
+  <!-- 📜 JavaScript -->
+  <script>
+    // 네비게이션 HTML 로드 (Project/Guest와 동일한 룩&필) + 로고 교체 + 링크 정규화 + 스크롤시 숨김
+    const __navPaths = [
+      '../../2.PageElement/Tob_nav/Tob_nav_project.html',
+      '../../2.PageElement/Tob_nav/Tob_nav.html'
+    ];
+    function fetchNav(paths){
+      const [first, ...rest] = paths;
+      return fetch(first, { cache: 'no-store' }).then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      }).catch(err => {
+        if (!rest.length) throw err;
+        return fetchNav(rest);
+      });
+    }
+    fetchNav(__navPaths)
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // 로고 이미지 교체
+        const logoContainer = doc.querySelector('.logo');
+        if (logoContainer) {
+          const imgs = logoContainer.querySelectorAll('img');
+          if (imgs.length > 0) {
+            imgs[0].outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+            if (imgs.length > 1) {
+              imgs[1].src = '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png';
+            }
+          }
+        } else {
+          // .logo 래퍼가 없다면 안전 교체
+          doc.querySelectorAll('img').forEach(img => {
+            const alt = img.getAttribute('alt') || '';
+            const src = img.getAttribute('src') || '';
+            if (alt.includes('장미') || /BLOOM_LOGO|대지\.png|대지\.png/.test(src)) {
+              img.outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+            }
+          });
+        }
+
+        // base 태그 제거 (상대경로 꼬임 방지)
+        const baseEl = doc.querySelector('base');
+        if (baseEl) baseEl.remove();
+
+        // 링크 정규화: 현재 디렉토리(/2025) 기준으로 매핑
+        const baseDir = location.pathname.replace(/\/[^/]*$/, '');
+        const toURL = (file) => `${baseDir}/${file}`.replace(/\/{2,}/g, '/');
+        const linkMap = {
+          'home': toURL('Main.html'),
+          'about': toURL('About.html'),
+          'project': toURL('Project.html'),
+          'designer': toURL('Designer.html'),
+          'guest': toURL('Guest.html'),
+          'guest book': toURL('Guest.html'),
+          'guestbook': toURL('Guest.html'),
+        };
+
+        const logoLink = doc.querySelector('a.logo, .logo a');
+        if (logoLink) logoLink.setAttribute('href', linkMap['home']);
+
+        doc.querySelectorAll('a[href]').forEach(a => {
+          const text = (a.textContent || '').trim().toLowerCase();
+          const href = (a.getAttribute('href') || '').trim();
+          if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
+          if (/about/i.test(href))          a.setAttribute('href', linkMap['about']);
+          else if (/project/i.test(href))   a.setAttribute('href', linkMap['project']);
+          else if (/designer/i.test(href))  a.setAttribute('href', linkMap['designer']);
+          else if (/guest(\s*book)?/i.test(href)) a.setAttribute('href', linkMap['guest']);
+          else if (/main|home|index/i.test(href))  a.setAttribute('href', linkMap['home']);
+        });
+
+        // 현재 페이지 활성화 표시
+        const currentName = location.pathname.split('/').pop().toLowerCase();
+        doc.querySelectorAll('a[href]').forEach(a => {
+          const target = (a.getAttribute('href') || '').toLowerCase();
+          if (target.endsWith(currentName)) {
+            a.setAttribute('aria-current', 'page');
+            a.classList.add('is-active');
+          }
+        });
+
+        // 헤더만 주입 (불필요한 래퍼 제거)
+        const headerEl = doc.querySelector('header');
+        const navRoot = document.getElementById('nav-placeholder');
+        if (navRoot && headerEl) {
+          navRoot.innerHTML = '';
+          navRoot.appendChild(headerEl);
+        }
+
+        // 드롭다운 구조/클래스 제거 (Guest와 동일한 flat bar)
+        (function stripDropdowns(){
+          const root = document.getElementById('nav-placeholder');
+          if (!root) return;
+          root.querySelectorAll('nav ul ul, .dropdown, .submenu, .menu .sub, [aria-haspopup="true"] > ul').forEach(el=>{
+            try{ el.remove(); }catch(_){ el.parentNode && el.parentNode.removeChild(el); }
+          });
+          root.querySelectorAll('.has-dropdown, .has-children, .dropdown-toggle').forEach(el=>{
+            el.classList.remove('has-dropdown','has-children','dropdown-toggle');
+            el.removeAttribute('aria-haspopup');
+            el.removeAttribute('aria-expanded');
+          });
+        })();
+
+
+        // 네비 높이만큼 스페이서/안전여백 확보 (포스터가 가려지지 않게)
+        (function syncNavOffset(){
+          function setSafe(){
+            const header = document.querySelector('#nav-placeholder header');
+            const h = header ? header.offsetHeight : 0;
+            document.documentElement.style.setProperty('--nav-safe', h + 'px');
+            // re-evaluate show/hide near the very top after layout changes
+            if ((window.pageYOffset || 0) <= 40){
+              document.body.classList.remove('nav-hidden');
+            }
+          }
+          setSafe();
+          window.addEventListener('resize', setSafe, { passive:true });
+          setTimeout(setSafe, 150);
+          setTimeout(setSafe, 600);
+        })();
+      })
+      .catch(err => console.warn('[main] nav load failed:', err));
+
+    // --- 스크롤 방향 감지해서 네비 숨김/표시 (전역 바인딩: fetch 성공/실패와 무관) ---
+    document.addEventListener("DOMContentLoaded", function () {
+      (function bindHideNavOnScroll(){
+        if (window.__navHideBound) return;
+        window.__navHideBound = true;
+
+        let lastY = window.pageYOffset || 0;
+        let ticking = false;
+        const THRESH = 8;    // 미세 스크롤 무시
+        const TOPSAFE = 40;  // 최상단 근처에서는 항상 표시
+
+        function applyState(y, dy){
+          if (y <= TOPSAFE){
+            document.body.classList.remove('nav-hidden');
+            return;
+          }
+          if (dy > 0){
+            document.body.classList.add('nav-hidden');     // 아래로 → 숨김
+          } else if (dy < 0){
+            document.body.classList.remove('nav-hidden');  // 위로 → 표시
+          }
+        }
+
+        function onScroll(){
+          const y = window.pageYOffset || 0;
+          const dy = y - lastY;
+          if (Math.abs(dy) >= THRESH){
+            applyState(y, dy);
+            lastY = y;
+          }
+          ticking = false;
+        }
+
+        function schedule(){ if (!ticking){ ticking = true; requestAnimationFrame(onScroll); } }
+
+        window.addEventListener('scroll', schedule, { passive:true });
+        ['wheel','keydown','touchmove','touchstart'].forEach(evt => {
+          window.addEventListener(evt, schedule, { passive:true });
+        });
+
+        // 초기 상태 보정
+        requestAnimationFrame(() => applyState(window.pageYOffset || 0, 0));
+      })();
+    });
+
+    // Load rose cursor (with smooth, natural follow motion using a light spring)
+    (function loadCursor(){
+      const root = document.getElementById('cursor-placeholder');
+      if (!root) return;
+
+      function initRoseCursor(){
+        // Accept only injected cursor element inside #cursor-placeholder
+        const el = document.querySelector('#cursor-placeholder .cursor-dot, #cursor-placeholder .rose-cursor, #cursor-placeholder [data-rose-cursor]');
+        if (!el) return false;
+        if (el.dataset.raf === 'on') return true; // prevent double-binding
+
+        // Base styles
+        el.style.pointerEvents = 'none';
+        el.style.position = 'fixed';
+        el.style.zIndex = '99999';
+        el.style.willChange = 'transform, opacity';
+        el.style.left = '0px';
+        el.style.top  = '0px';
+
+        // Target (mouse) and current (proxy) positions + velocities
+        let x = 0, y = 0;   // target (mouse)
+        let px = 0, py = 0; // current (proxy)
+        let vx = 0, vy = 0; // velocity (for spring)
+        // Spring parameters → natural, less “laggy” than simple lerp
+        const STIFF = 0.18; // spring stiffness (higher = snappier)
+        const DAMP  = 0.85; // damping factor 0~1 (lower = more bouncy)
+
+        // Anchor / Hotspot support
+        // - If data-hotspot-x / data-hotspot-y (px) are provided, use them directly.
+        // - Otherwise, fall back to data-anchor-x / data-anchor-y (0~1 ratio; default 0.5, 0.5).
+        const hotspotX = parseFloat(el.getAttribute('data-hotspot-x'));
+        const hotspotY = parseFloat(el.getAttribute('data-hotspot-y'));
+
+        let anchorX = parseFloat(el.getAttribute('data-anchor-x'));
+        let anchorY = parseFloat(el.getAttribute('data-anchor-y'));
+        if (!isFinite(anchorX)) anchorX = 0.5;
+        if (!isFinite(anchorY)) anchorY = 0.5;
+
+        // Optional per-page pixel calibration to exactly match the OS cursor
+        const calXAttr = parseFloat(el.getAttribute('data-cal-x'));
+        const calYAttr = parseFloat(el.getAttribute('data-cal-y'));
+        const CALX = Number.isFinite(calXAttr) ? calXAttr : 0;
+        const CALY = Number.isFinite(calYAttr) ? calYAttr : 0;
+
+        let offX = 0, offY = 0;
+        const updateOffset = () => {
+          const r = el.getBoundingClientRect();
+          const w = r.width  || el.offsetWidth  || 0;
+          const h = r.height || el.offsetHeight || 0;
+          offX = isFinite(hotspotX) ? hotspotX : w * anchorX;
+          offY = isFinite(hotspotY) ? hotspotY : h * anchorY;
+          // Keep the visual anchor (hotspot) locked to the real mouse even when scaling
+          el.style.transformOrigin = `${offX}px ${offY}px`;
+        };
+        updateOffset();
+        try { new ResizeObserver(updateOffset).observe(el); } catch(_) {}
+
+        // Click scale animation (composed, not concatenated to transform string)
+        let targetScale = 1;
+        let scale = 1;
+
+        function raf(){
+          // critically-damped-ish spring integration
+          vx += (x - px) * STIFF;  vx *= DAMP;  px += vx;
+          vy += (y - py) * STIFF;  vy *= DAMP;  py += vy;
+
+          // ease the scale
+          scale += (targetScale - scale) * 0.25;
+
+          // Compose transform once per frame
+          el.style.transform = `translate3d(${(px - offX + CALX)}px, ${(py - offY + CALY)}px, 0) scale(${scale})`;
+          requestAnimationFrame(raf);
+        }
+
+        // Track mouse (start at the first position to avoid jump)
+        document.addEventListener('mousemove', (e) => {
+          x = e.clientX; y = e.clientY;
+          if (el.dataset.started !== '1'){
+            px = x; py = y; vx = 0; vy = 0;
+            el.style.opacity = '1';
+            el.dataset.started = '1';
+          }
+        }, { passive: true });
+
+        // Click feedback
+        document.addEventListener('mousedown', () => { targetScale = 0.94; }, { passive: true });
+        document.addEventListener('mouseup',   () => { targetScale = 1;    }, { passive: true });
+
+        // Hide when leaving window; reset on re-enter
+        document.addEventListener('mouseleave', () => { el.style.opacity = '0'; }, { passive:true });
+        document.addEventListener('mouseenter', (e) => {
+          updateOffset();
+          x = px = e.clientX; y = py = e.clientY;
+          vx = vy = 0;
+          el.style.opacity = '1';
+        }, { passive:true });
+
+        // Quick dev helper to fine-tune calibration live
+        window.__setRoseCursorCal = (x = 0, y = 0) => {
+          el.setAttribute('data-cal-x', String(x));
+          el.setAttribute('data-cal-y', String(y));
+        };
+
+        el.dataset.raf = 'on';
+        requestAnimationFrame(raf);
+        return true;
+      }
+
+      fetch('../../2.PageElement/Cursor/cursor.html', { cache: 'no-store' })
+        .then(res => res.text())
+        .then(html => {
+          root.innerHTML = html;
+          if (!initRoseCursor()){
+            const mo = new MutationObserver(() => { if (initRoseCursor()) mo.disconnect(); });
+            mo.observe(root, { childList: true, subtree: true });
+          }
+        })
+        .catch(err => console.error('Cursor load failed:', err));
+    })();
+
+    // 푸터 HTML 로드
+    fetch('../../2.PageElement/Footer/Footer.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('footer-placeholder').innerHTML = data;
+      });
+
+    // Scroll to Top button functionality
+    document.addEventListener("DOMContentLoaded", function () {
+      const scrollBtn = document.getElementById("scrollTopBtn");
+      window.addEventListener("scroll", function () {
+        if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1) {
+          scrollBtn.style.display = "flex";
+        } else {
+          scrollBtn.style.display = "none";
+        }
+      });
+      window.scrollToTop = function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });  
+      };
+    });
+  </script>
+</body>
+</html>

@@ -4,18 +4,6 @@
       font-family: 'Noto Sans KR', sans-serif;
       background-color: #fff;
       color: #111;
-      line-height: 1.8;
-    }
-
-
-    header {
-      background: #111;
-      padding: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      position: relative;
     }
 
     .logo {

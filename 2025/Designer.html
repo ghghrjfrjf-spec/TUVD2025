@@ -87,7 +87,6 @@
   <div id="cursor-placeholder"></div>
   <div class="main"> 
     <h1 class="project-title">DESIGNER</h1>
-    <h3>으어엉엉 엄마보고싶어!!!아니 수정했는데 왜 안돼</h3>
     <div class="designer-toolbar">
       <div class="row">
         <div class="designer-tabs">
@@ -206,16 +205,10 @@
         <span>KIM MINJIN</span>
       </div>
       <div class="student-card">
-        <img src="../../1.Picture/1.%2027th%20Graduation/Profile/김서진.jpg" alt="김서진">
-        <strong>김서진</strong><br />
-        <span>KIM SEOJIN</span>
-      </div>
-      <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/김유빈.jpg" alt="김유빈">
         <strong>김유빈</strong><br />
         <span>KIM YUBIN</span>
       </div>
-  
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/김지우.jpg" alt="김지우">
         <strong>김지우</strong><br />
@@ -280,11 +273,6 @@
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/이수빈.jpg" alt="이수빈">
         <strong>이수빈</strong><br />
         <span>LEE SUBIN</span>
-      </div>
-      <div class="student-card">
-        <img src="../../1.Picture/1.%2027th%20Graduation/Profile/이우비.jpg" alt="이우비">
-        <strong>이우비</strong><br />
-        <span>[영문 이름]</span>
       </div>
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/이은경.jpg" alt="이은경">
@@ -386,28 +374,50 @@
          const baseEl = doc.querySelector('base');
          if (baseEl) baseEl.remove();
 
-         // 링크 정규화: 3.PageExhibition/* 어디서든 정상 동작
-         const logoLink = doc.querySelector('a.logo, .logo a');
-         if (logoLink) logoLink.setAttribute('href', '../1.MainPage/1.MainPage.html');
+         // ======== 링크 매핑 (2025 폴더 내 페이지끼리 정확히 연결) ========
+         // 현재 페이지가 위치한 디렉터리(예: /.../2025)를 기준으로 링크를 만든다.
+         const baseDir = location.pathname.replace(/\/[^/]*$/, ''); // /2025
+         const toURL = (file) => `${baseDir}/${file}`.replace(/\/{2,}/g, '/');
+
          const linkMap = {
-           'home': '../1.MainPage/1.MainPage.html',
-           'about': '../2.AboutPage/About.html',
-           'project': '../3.ProjectPage/project2.html',
-           'designer': '../4.DesignerPage/Designer.html',
-           'guest book': '../5.GuestBookPage/Guest.html',
-           'guestbook': '../5.GuestBookPage/Guest.html',
-           'gallery': '../6.GalleryPage/Gallery.html'
+           'home': toURL('Main.html'),
+           'about': toURL('About.html'),
+           'project': toURL('Project.html'),
+           'designer': toURL('Designer.html'),
+           'guest': toURL('Guest.html'),
+           'guest book': toURL('Guest.html'),
+           'guestbook': toURL('Guest.html'),
          };
+
+         // 로고 링크도 홈으로 고정
+         const logoLink = doc.querySelector('a.logo, .logo a');
+         if (logoLink) logoLink.setAttribute('href', linkMap['home']);
+
+         // 모든 a 태그를 매핑 규칙에 맞춰 교체
          doc.querySelectorAll('a[href]').forEach(a => {
            const text = (a.textContent || '').trim().toLowerCase();
            const href = (a.getAttribute('href') || '').trim();
-           if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
-           if (/about/i.test(href)) a.setAttribute('href', linkMap['about']);
-           else if (/project/i.test(href)) a.setAttribute('href', linkMap['project']);
-           else if (/designer/i.test(href)) a.setAttribute('href', linkMap['designer']);
-           else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
-           else if (/gallery/i.test(href)) a.setAttribute('href', linkMap['gallery']);
+
+           if (linkMap[text]) {
+             a.setAttribute('href', linkMap[text]);
+             return;
+           }
+
+           if (/about/i.test(href))          a.setAttribute('href', linkMap['about']);
+           else if (/project/i.test(href))   a.setAttribute('href', linkMap['project']);
+           else if (/designer/i.test(href))  a.setAttribute('href', linkMap['designer']);
+           else if (/guest(\s*book)?/i.test(href)) a.setAttribute('href', linkMap['guest']);
            else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
+         });
+
+         // 현재 페이지 표시(활성 상태)
+         const currentName = location.pathname.split('/').pop().toLowerCase(); // designer.html 등
+         doc.querySelectorAll('a[href]').forEach(a => {
+           const target = (a.getAttribute('href') || '').toLowerCase();
+           if (target.endsWith(currentName)) {
+             a.setAttribute('aria-current', 'page');
+             a.classList.add('is-active');
+           }
          });
 
          document.getElementById('nav-placeholder').innerHTML = doc.body.innerHTML;

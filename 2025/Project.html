@@ -4,22 +4,375 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  
   <!-- 🔺 스타일시트 연결 -->
-  <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
-  <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
-  <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
+  <link rel="stylesheet" href="../2.PageElement/Tob_nav/Tob_nav.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+
+  <link rel="stylesheet" href="../2.PageElement/Footer/Footer.css" />
+  <link rel="stylesheet" href="../2.PageElement/Cursor/cursor.css" />
   <link rel="stylesheet" href="project2.css" />
+  <style>
+    :root {
+      --page-max: 1280px;
+      --page-pad: 60px;
+    }
+:root{ --grid-gap-x: 28px; }
+:root{ --grid-gap-y: 16px; } /* ↓ 줄 간격(세로 간격)만 좁게 */
+:root{ --card-pad: 10px; }
+:root{ --card-min: 300px; } /* desktop 기본 카드 최소폭 → 이미지 더 크게 */
+    /* Keep nav above page content */
+    /* ───────── Project grid & secondary (filter) navigation polish ───────── */
+    main.content {
+    padding-top: 0; /* 헤더 높이는 .nav-spacer로 자동 보정 */
+    padding-bottom: calc(var(--footer-safe) + 24px);
+    }
+    /* === Nav: sticky, hide on scroll === */
+    #nav-placeholder {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      /* softer + longer easing for smoother feel */
+      transition: transform .50s cubic-bezier(.16,.84,.44,1),
+                  opacity   .50s cubic-bezier(.16,.84,.44,1),
+                  filter    .50s cubic-bezier(.16,.84,.44,1);
+      will-change: transform, opacity, filter;
+      transform: translate3d(0,0,0);
+      opacity: 1;
+      filter: none;
+    }
+    body.nav-hidden #nav-placeholder {
+      transform: translate3d(0,-110%,0);
+      opacity: 0;
+      filter: blur(4px);
+    }
+    body.nav-hidden #nav-placeholder > header{
+      transform: translate3d(0,-110%,0) !important;
+      opacity: 0 !important;
+      filter: blur(4px) !important;
+    }
+    @media (prefers-reduced-motion: reduce){
+      #nav-placeholder{ transition: none; }
+      body.nav-hidden #nav-placeholder{ transform: translate3d(0,-110%,0); opacity: 0; }
+    }
+    /* 헤더 높이만큼 자동 여백 확보용 스페이서 (JS가 실제 높이로 세팅) */
+    .nav-spacer { height: 0; }
+    /* 보조네비(필터 툴바)를 상단 고정. 네비 높이만큼 여백 계산 */
+
+
+    .project-toolbar{
+      position: static;
+      top: auto;
+      z-index: auto;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 40px var(--page-pad) 30px;
+      width: calc(var(--page-max) - 2 * var(--page-pad));
+    }
+    
+
+    /* 갤러리: 반응형 그리드 (240px 이상 카드가 자동으로 채워짐) */
+    .project-gallery{
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 32px var(--page-pad) 60px;
+      width: calc(var(--page-max) - 2 * var(--page-pad));
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
+      column-gap: var(--grid-gap-x);
+      row-gap: var(--grid-gap-y);
+    }
+
+    /* 카드: 동일한 비율, 공통 여백, 호버 인터랙션 */
+    .project-gridcard{
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0;                 /* 이미지가 더 크게 보이도록 카드 내부 여백 제거 */
+      background: #0e0e12;        /* Designer page card bg */
+      border: none;               /* 카드 테두리 제거 */
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform .18s ease, box-shadow .18s ease; /* border-color 트랜지션 제거 */
+    }
+    
+    .project-gridcard:hover{ 
+      transform: translateY(-4px); 
+      box-shadow: 0 8px 24px rgba(0,0,0,.35); 
+    }
+
+    /* PNG 썸네일 전체 표시 (잘림 방지) */
+    .project-gridcard img{
+      width: 100%;
+      height: auto;
+      aspect-ratio: 6/5;          /* 더 크게 보이도록 세로 공간 살짝 확대 */
+      object-fit: contain;        /* 크롭 없이 전체 보이게 */
+      padding: 0;
+      border-radius: 10px;
+      background: transparent;
+      display: block;
+    }
+    @media (max-width: 680px){
+      .project-gridcard img{ aspect-ratio: 5/4; }
+    }
+    /* Designer 페이지와 유사한 하단 여백(footer와 간격) */
+    .main{ padding-bottom: 160px; }
+
+    /* 프로젝트 수/검색 바 영역도 블랙 테마 톤으로 통일 */
+    .project-summarybar{
+      display:flex; justify-content:space-between; align-items:center;
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 12px var(--page-pad) 24px;
+      width: calc(var(--page-max) - 2 * var(--page-pad));
+      background: rgba(0,0,0,0.72);
+      border-bottom:1px solid rgba(255,255,255,0.12);
+    }
+
+    /* 텍스트 블록: 좌측 정렬, 계층 강조 */
+    .project-gridcard .title{ 
+      padding: 8px 12px 0; 
+      font-weight:700; 
+      font-size:16px; 
+      color:#fff !important; 
+    }
+    .project-gridcard .text{ 
+      padding: 0 12px 14px; 
+      font-size:13px; 
+      color:#bdbdbd; 
+      line-height:1.4; 
+    }
+    .project-gridcard .text strong{ 
+      color:#fff; 
+      font-weight:700; 
+    }
+
+    /* 기본 캡션은 숨김: 클릭 시 오버레이로만 표시 */
+    .project-gridcard .title,
+    .project-gridcard .text{
+      display: none !important;
+    }
+
+    /* Responsive grid gap tweaks */
+    @media (max-width: 980px){
+      :root{ --grid-gap: 24px; }
+    }
+    @media (min-width: 1440px){
+      :root{ --grid-gap: 32px; }
+    }
+    /* 카드 최소폭(이미지 크기) 반응형 조정 */
+    @media (max-width: 980px){
+      :root{ --card-min: 260px; }
+    }
+    @media (max-width: 680px){
+      :root{ --card-min: 220px; }
+    }
+    /* 모바일 간격 조정 */
+    @media (max-width: 680px){ 
+      .project-gallery{ padding: 20px 20px 40px; gap: 20px; } 
+    }
+    /* ===== Global Black Theme Overrides ===== */
+    html, body { background: #000; }
+    .project-title{ color:#fff; }
+
+    /* Toolbar on black bg */
+    .project-toolbar{
+      background: rgba(0,0,0,.72);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    /* Override inline-styled buttons for dark theme */
+    .project-toolbar button{
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.22);
+    }
+    .project-toolbar button:hover{
+      border-color:#fff;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.12);
+    }
+
+
+    /* Cards on deep black */
+    .project-gridcard{
+      background:#000 !important;
+      border:none !important; /* 테두리 완전 제거 */
+    }
+    .project-gridcard .text{ color:#c9c9c9; }
+
+    /* ===== Spacing like Designer page ===== */
+    .main{ padding-top: 62px; } /* top spacing to match Designer.html */
+
+    /* ===== Title wraps aligned with Designer page ===== */
+    .title-wrap{
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 24px var(--page-pad) 16px;
+      width: calc(var(--page-max) - 2 * var(--page-pad));
+    }
+    .project-title{
+      font-family: 'Playfair Display', serif;
+      font-weight: 800; /* ExtraBold for better balance */
+      font-size: 5rem;
+      line-height: 1.1;
+      text-align: center;
+      color: #fff;
+      margin: 0 0 3rem;
+    }
+
+    /* ===== Card proximity reveal ===== */
+    .project-gridcard .overlay{
+      position: absolute;
+      inset: var(--card-pad);
+      display: flex;
+      align-items: center;         /* ⬅ 가운데 정렬 */
+      justify-content: center;     /* ⬅ 가운데 정렬 */
+      padding: 14px 16px;
+      background: rgba(0,0,0,.38); /* 이미지 위에 살짝 어둡게 */
+      color: #fff;
+      text-align: center;          /* 텍스트 중앙정렬 */
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .25s ease, transform .25s ease, border-color .25s ease, background-color .25s ease, box-shadow .25s ease;
+      pointer-events: none;
+      border-radius: 10px;         /* match inner media radius */
+      z-index: 5;                  /* 이미지 위로 확실히 */
+      text-shadow: 0 1px 2px rgba(0,0,0,.55);
+      border: 1px solid transparent;            /* 기본은 라인 숨김 */
+      backdrop-filter: blur(8px) saturate(120%);
+      -webkit-backdrop-filter: blur(8px) saturate(120%);
+      box-shadow: inset 0 0 0 0 rgba(255,255,255,0.08); /* 트랜지션용 */
+    }
+    .project-gridcard .overlay .overlay-inner{
+      display: inline-block;
+      max-width: 90%;
+    }
+    .project-gridcard .overlay .overlay-title{
+      color:#fff !important;
+      font-weight: 900;
+      font-size: clamp(18px, 1.6vw, 22px);
+      line-height: 1.25;
+      letter-spacing: .2px;
+    }
+    .project-gridcard .overlay .overlay-meta{
+      margin-top: 8px;
+      font-size: clamp(13px, 1.2vw, 15px);
+      color: #eee;
+      opacity: .95;
+    }
+    .project-gridcard .overlay .overlay-meta span{
+      color: #d6d6d6;
+    }
+    /* 호버 시 오버레이 표시 및 glass line 효과 */
+    .project-gridcard:hover .overlay{
+      opacity: 1;
+      transform: translateY(0);
+      background: rgba(0,0,0,.48);              /* 살짝 더 진해짐 */
+      border-color: rgba(255,255,255,0.22);      /* 라인이 은은하게 나타남 */
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    /* === Tob_nav 룩&필 통일 오버라이드 (이 파일 전용) === */
+    /* ── Guest page identical Tob_nav look ── */
+
+    /* Header visuals */
+    #nav-placeholder header{
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      box-sizing: border-box;
+      width: 100%;
+      height: 90px;
+      padding-left: 59px;
+      padding-right: 60px;
+      transition: background-color .4s ease, border-color .4s ease, opacity .5s cubic-bezier(.16,.84,.44,1);
+      will-change: background-color, border-color, opacity;
+    }
+
+    /* Logo sizing */
+    #nav-placeholder header .logo img{
+      max-height: 38px;
+      transform: translateY(2px);
+    }
+    
+    #nav-placeholder .logo .logo-main{ font-size: 15px !important; }
+    #nav-placeholder .logo .logo-sub { font-size: 15px !important; }
+
+    /* Menu typography + states */
+    #nav-placeholder header a{
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      text-decoration: none;
+      color: #fff;
+      padding: 8px 0;
+    }
+    #nav-placeholder header a:hover{ color:#ff3b3b; }
+    #nav-placeholder header a.is-active{ color:#ff4d4d; font-weight:700; }
+    /* — nav 간격/패딩/수직정렬 — */
+    #nav-placeholder header .header-inner{
+      max-width: 1600px;
+      padding: 0;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+    #nav-placeholder nav{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+    }
+    #nav-placeholder nav ul{
+      display: flex;
+      align-items: center;
+      gap: 47px;      /* 동일 간격 */
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    #nav-placeholder nav ul li a{
+      display: flex;
+      align-items: center;  /* 수직 가운데 정렬 */
+      height: 90px;         /* 헤더 높이와 동일 */
+      padding: 0;           /* 수직 패딩 대신 flex 정렬 사용 */
+    }
+
+    /* Disable dropdowns (flat top bar) */
+    #nav-placeholder nav ul li ul,
+    #nav-placeholder .dropdown,
+    #nav-placeholder .submenu,
+    #nav-placeholder .has-dropdown > ul,
+    #nav-placeholder .has-children > ul{
+      display: none !important;
+    }
+    #nav-placeholder nav ul li:hover > ul{ display: none !important; }
+    /* Force Project title color on this page */
+    h1.project-title{ color:#fff !important; }
+   
+  </style>
 </head>
 <body>
+    <!-- Global Navigation -->
    <!-- 🔺 네비게이션 영역 -->
    <div id="nav-placeholder"></div>
+   <div class="nav-spacer"></div>
    <div id="cursor-placeholder"></div>
- 
+
 
   <div class="main">
-    <h1 class="project-title">PROJECT</h1>
+    <div class="title-wrap">
+      <h1 class="project-title">PROJECT</h1>
+    </div>
     <!-- 🔍 블랙&레드 필터/검색/정렬 영역 -->
-    <div class="project-toolbar" style="padding: 40px 60px 30px; margin: 0 auto; max-width: 1280px; border-bottom: 1px solid #ddd;">
+    <div class="project-toolbar">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <!-- 필터 탭 -->
         <div style="display: flex; gap: 36px; align-items: center;">
@@ -37,7 +390,7 @@
         </div>
       </div>
     </div>
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 60px 24px; border-bottom: 1px solid #ddd;">
+    <div class="project-summarybar">
       <div id="project-count" style="font-size: 48px; font-weight: 900; display: flex; justify-content: center; align-items: center; gap: 10px;">0 Project</div>
       <div>
         <input
@@ -60,232 +413,217 @@
           onfocus="this.style.boxShadow='inset 0 0 0 2px rgba(255, 255, 255, 0.4)'"
           onblur="this.style.boxShadow='inset 0 0 0 1px rgba(255, 255, 255, 0.2)'"
         />
-      </div>
+      </div> 
     </div>
 
     <div class="project-gallery"> 
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
-        <div class="title">Project Title</div>
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/김나연.png" alt="Project Title" />
+        <div class="title">OWINT</div>
         <div class="text"><strong>김나연</strong><br /><span>KIM NAYEON</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/김민진.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>김민진</strong><br /><span>KIM MINJIN</span></div>
       </div>
       <div class="project-gridcard" data-category="uxui">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/김사율.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>김사율</strong><br /><span>Kim Sayul</span></div>
          </div>
-      <div class="project-gridcard" data-category="uxui">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
-        <div class="title">Project Title</div>
-        <div class="text"><strong>김서진</strong><br /><span>KIM SEOJIN</span></div>
-      </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/김유빈.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>김유빈</strong><br /><span>KIM YUBIN</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/김준성.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>김준성</strong><br /><span>KIM JUNSEONG</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/김지우.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>김지우</strong><br /><span>KIM JIU</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-      <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+      <img src="../1.Picture/2.%20Graduate/Graduate_Logo/김혜림.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>김혜림</strong><br /><span>kim hyerim</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/김혜연.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>김혜연</strong><br /><span>kim hyeyeon</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/라영강.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>라영강</strong><br /><span>LUO YONGKANG</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/량역운.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>량역운</strong><br /><span>LIANG YIYUN</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/박은제.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>박은제</strong><br /><span>PARK EUN JE</span></div>
       </div>
-      <div class="project-gridcard" data-category="uxui">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
-        <div class="title">Project Title</div>
-        <div class="text"><strong>박진수</strong><br /><span>PARK JINSOO</span></div>
-      </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/배유진.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>배유진</strong><br /><span>BAE YUJIN</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/배주아.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>배주아</strong><br /><span>BAEJUA</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/범상우.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>범상우</strong><br /><span>FAN XIANGYU</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/서은선.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>서은선</strong><br /><span>SEO EUNSUN</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/설가심.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>설가심</strong><br /><span>XUE KEXIN</span></div>
       </div>
       <div class="project-gridcard" data-category="editorialvideo">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/안예진.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>안예진</strong><br /><span>AN YEJIN</span></div>
       </div>
-      <div class="project-gridcard" data-category="character" onclick="location.href='../../8.ProjectSection/안정연.html'" style="cursor: pointer;">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+      <div class="project-gridcard" data-category="character" onclick="location.href='../8.ProjectSection/안정연.html'" style="cursor: pointer;">
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/안정연.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>안정연</strong><br /><span>AN JEONG YEON</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/양유성.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>양유성</strong><br /><span>YANG YUSEONG</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/왕몽연.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>왕몽연</strong><br /><span>WANG MENGRAN</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/윤민주.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>윤민주</strong><br /><span>YOON MINJU</span></div>
       </div>
       <div class="project-gridcard" data-category="uxui">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/이다현.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>이다현</strong><br /><span>RHIE DAHYEON</span></div>
       </div>
       <div class="project-gridcard" data-category="uxui">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/이서진.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>이서진</strong><br /><span>LEE SEOJIN</span></div>
       </div>
       <div class="project-gridcard" data-category="editorialvideo">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/이수빈.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>이수빈</strong><br /><span>LEE SUBIN</span></div>
       </div>
-      <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
-        <div class="title">Project Title</div>
-        <div class="text"><strong>이우비</strong><br /><span>빈칸</span></div>
-      </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/이은경.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>이은경</strong><br /><span>LEE EUNGYEONG</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/이주영.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>이주영</strong><br /><span>LEE JU YEONG</span></div>
       </div>
       <div class="project-gridcard" data-category="uxui">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/이혜주.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>이혜주</strong><br /><span>LEE HYEJU</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/장세희.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>장세희</strong><br /><span>JANG SEHEE</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/장주아.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>장주아</strong><br /><span>JANG JU AH(or JANG JUA)</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/장청청.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>장청청</strong><br /><span>ZHANG QINGQING</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/전우곤.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>전우곤</strong><br /><span>빈칸</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/주하우.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>주하우</strong><br /><span>빈칸</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/지영헌.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>지영현</strong><br /><span>JI YEONGHYEON</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/차은지.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>차은지</strong><br /><span>CHA EUNJI</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/최민원.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>최민원</strong><br /><span>CHOI MINWON</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/최순주.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>최순주</strong><br /><span>CHOI SOONJU</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/최영인.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>최영인</strong><br /><span>CHOI YOUNGIN</span></div>
       </div>
       <div class="project-gridcard" data-category="character">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/최자연.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>최자연</strong><br /><span>CHOI JAYEON</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/한패달.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>한패달</strong><br /><span>HAN PEIDA</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/홍화정.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>홍화정</strong><br /><span>HWAJUNG HONG</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/황만규.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>황만규</strong><br /><span>HWANG MANGYU</span></div>
       </div>
       <div class="project-gridcard" data-category="ci-bi-package">
-        <img src="../../1.Picture/2.%20Graduate/Graduate_Logo/봉투예시.png" alt="Project Title" />
+        <img src="../1.Picture/2.%20Graduate/Graduate_Logo/황예빈.png" alt="Project Title" />
         <div class="title">Project Title</div>
         <div class="text"><strong>황예빈</strong><br /><span>HWANG YEBIN</span></div>
       </div>
@@ -298,34 +636,24 @@
    <!-- 📜 JavaScript -->
    <script>
      // 네비게이션 HTML 로드 (로고 교체 + 링크 정규화 + 스크롤시 숨김)
-     function initHeaderHideOnScroll() {
-       const root = document.getElementById('nav-placeholder');
-       if (!root) return;
-       const header = root.querySelector('header');
-       if (!header) {
-         const obs = new MutationObserver(() => {
-           const h = root.querySelector('header');
-           if (h) {
-             obs.disconnect();
-             applyHideOnScroll(h);
-           }
-         });
-         obs.observe(root, { childList: true, subtree: true });
-         return;
-       }
-       applyHideOnScroll(header);
-     }
-     function applyHideOnScroll(header) {
-       header.style.transition = 'transform .3s ease';
-       let prev = window.pageYOffset || document.documentElement.scrollTop;
-       window.addEventListener('scroll', () => {
-         const y = window.pageYOffset || document.documentElement.scrollTop;
-         header.style.transform = (y > prev) ? 'translateY(-100%)' : 'translateY(0)';
-         prev = y;
-       }, { passive: true });
-     }
-     fetch('../../2.PageElement/Tob_nav/Tob_nav.html')
-       .then(res => res.text())
+     const __navPaths = [
+       // Prefer the project-style nav first (matches Guest page look) then fallback
+       '../2.PageElement/Tob_nav/Tob_nav_project.html',
+       '../../2.PageElement/Tob_nav/Tob_nav_project.html',
+       '../2.PageElement/Tob_nav/Tob_nav.html',
+       '../../2.PageElement/Tob_nav/Tob_nav.html'
+     ];
+     function fetchNav(paths){
+       const [first, ...rest] = paths;
+       return fetch(first, { cache: 'no-store' }).then(r => {
+         if (!r.ok) throw new Error('HTTP ' + r.status);
+         return r.text();
+       }).catch(err => {
+         if (!rest.length) throw err;    
+         return fetchNav(rest);
+       }); 
+     } 
+     fetchNav(__navPaths)
        .then(html => {
          const parser = new DOMParser();
          const doc = parser.parseFromString(html, 'text/html');
@@ -335,9 +663,9 @@
          if (logoContainer) {
            const imgs = logoContainer.querySelectorAll('img');
            if (imgs.length > 0) {
-             imgs[0].outerHTML = '<img src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+             imgs[0].outerHTML = '<img src="../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
              if (imgs.length > 1) {
-               imgs[1].setAttribute('src', '../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
+               imgs[1].setAttribute('src', '../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
              }
            }
          } else {
@@ -346,7 +674,7 @@
              const alt = img.getAttribute('alt') || '';
              const src = img.getAttribute('src') || '';
              if (alt.includes('장미') || /BLOOM_LOGO|대지\.png|대지\.png/.test(src)) {
-               img.outerHTML = '<img src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
+               img.outerHTML = '<img src="../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
              }
            });
          }
@@ -354,35 +682,167 @@
          // 링크 정규화 (어느 페이지에서든 동작)
          const baseEl = doc.querySelector('base');
          if (baseEl) baseEl.remove();
-         const logoLink = doc.querySelector('a.logo, .logo a');
-         if (logoLink && logoLink.setAttribute) {
-           logoLink.setAttribute('href', '../1.MainPage/1.MainPage.html');
-         }
+
+         // ======== 링크 매핑 (2025 폴더 내 페이지끼리 정확히 연결) ========
+         // 현재 페이지가 위치한 디렉터리(예: /.../2025)를 기준으로 링크를 만든다.
+         const baseDir = location.pathname.replace(/\/[^/]*$/, ''); // /2025
+         const toURL = (file) => `${baseDir}/${file}`.replace(/\/{2,}/g, '/');
+
          const linkMap = {
-           'home': '../1.MainPage/1.MainPage.html',
-           'about': '../2.AboutPage/About.html',
-           'project': '../3.ProjectPage/project2.html',
-           'designer': '../4.DesignerPage/Designer.html',
-           'guest book': '../5.GuestBookPage/Guest.html',
-           'guestbook': '../5.GuestBookPage/Guest.html',
-           'gallery': '../6.GalleryPage/Gallery.html'
+           'home': toURL('Main.html'),
+           'about': toURL('About.html'),
+           'project': toURL('Project.html'),
+           'designer': toURL('Designer.html'),
+           'guest': toURL('Guest.html'),
+           'guest book': toURL('Guest.html'),
+           'guestbook': toURL('Guest.html'),
          };
+
+         // 로고 링크도 홈으로 고정
+         const logoLink = doc.querySelector('a.logo, .logo a');
+         if (logoLink) logoLink.setAttribute('href', linkMap['home']);
+
+         // 모든 a 태그를 매핑 규칙에 맞춰 교체
          doc.querySelectorAll('a[href]').forEach(a => {
            const text = (a.textContent || '').trim().toLowerCase();
            const href = (a.getAttribute('href') || '').trim();
-           if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
-           if (/about/i.test(href)) a.setAttribute('href', linkMap['about']);
-           else if (/project/i.test(href)) a.setAttribute('href', linkMap['project']);
-           else if (/designer/i.test(href)) a.setAttribute('href', linkMap['designer']);
-           else if (/guest.?book/i.test(href)) a.setAttribute('href', linkMap['guest book']);
-           else if (/gallery/i.test(href)) a.setAttribute('href', linkMap['gallery']);
+
+           if (linkMap[text]) {
+             a.setAttribute('href', linkMap[text]);
+             return;
+           }
+
+           if (/about/i.test(href))          a.setAttribute('href', linkMap['about']);
+           else if (/project/i.test(href))   a.setAttribute('href', linkMap['project']);
+           else if (/designer/i.test(href))  a.setAttribute('href', linkMap['designer']);
+           else if (/guest(\s*book)?/i.test(href)) a.setAttribute('href', linkMap['guest']);
            else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
          });
 
-         document.getElementById('nav-placeholder').innerHTML = doc.body.innerHTML;
-         initHeaderHideOnScroll();
-       });
-     fetch('../../2.PageElement/Cursor/cursor.html')
+         // 현재 페이지 표시(활성 상태)
+         const currentName = location.pathname.split('/').pop().toLowerCase(); // project.html 등
+         doc.querySelectorAll('a[href]').forEach(a => {
+           const target = (a.getAttribute('href') || '').toLowerCase();
+           if (target.endsWith(currentName)) {
+             a.setAttribute('aria-current', 'page');
+             a.classList.add('is-active');
+           }
+         });
+
+         // === inject ONLY the <header> from Tob_nav to avoid extra wrappers ===
+         const navRoot = document.getElementById('nav-placeholder');
+         const headerEl = doc.querySelector('header');
+         if (navRoot && headerEl) {
+           navRoot.innerHTML = '';
+           navRoot.appendChild(headerEl);
+         }
+
+         // Remove dropdown structures and classes (flat menu like Guest)
+         (function stripDropdowns(){
+           const navRootEl = document.getElementById('nav-placeholder');
+           if (!navRootEl) return;
+           navRootEl.querySelectorAll('nav ul ul, .dropdown, .submenu, .menu .sub, [aria-haspopup="true"] > ul').forEach(el=>{
+             try{ el.remove(); }catch(_){ el.parentNode && el.parentNode.removeChild(el); }
+           });
+           navRootEl.querySelectorAll('.has-dropdown, .has-children, .dropdown-toggle').forEach(el=>{
+             el.classList.remove('has-dropdown','has-children','dropdown-toggle');
+             el.removeAttribute('aria-haspopup');
+             el.removeAttribute('aria-expanded');
+           });
+         })();
+
+         // Single scroll listener: hide nav on scroll down, show on scroll up
+         (function bindHideShowNav(){
+           let prevY = window.pageYOffset || 0;
+           window.addEventListener('scroll', function(){
+             const y = window.pageYOffset || 0;
+             const delta = y - prevY;
+             if (y > 40 && delta > 6) {
+               document.body.classList.add('nav-hidden');
+             } else if (delta < -6) {
+               document.body.classList.remove('nav-hidden');
+             }
+             prevY = y;
+           }, { passive:true });
+         })();
+        // —— Global safety bind: always toggle, and also set inline transform ——
+        (function hardBindHideShow(){
+          if (window.__navSmoothBind) return; // prevent duplicate binding
+          window.__navSmoothBind = true;
+
+          let prevY = window.pageYOffset || 0;
+          let accDown = 0;   // accumulate downward scroll distance
+          let accUp   = 0;   // accumulate upward scroll distance
+          const root  = document.getElementById('nav-placeholder');
+
+          function apply(hide){
+            document.body.classList.toggle('nav-hidden', hide);
+            if (!root) return;
+            // inline styles as a safety net against external CSS overrides
+            root.style.transform = hide ? 'translate3d(0,-110%,0)' : '';
+            root.style.opacity   = hide ? '0' : '';
+            root.style.filter    = hide ? 'blur(4px)' : '';
+          }
+
+          window.addEventListener('scroll', function(){
+            const y  = window.pageYOffset || 0;
+            const dy = y - prevY;
+
+            if (dy > 0){
+              accDown += dy; // scrolling down
+              accUp = 0;
+            } else if (dy < 0){
+              accUp += -dy;  // scrolling up
+              accDown = 0;
+            }
+
+            // thresholds tuned for smoother feel
+            // hide after a meaningful downward travel, show on slight upward intent
+            if (y > 40 && accDown > 60) {
+              apply(true);
+            } else if (accUp > 12) {
+              apply(false);
+            }
+
+            prevY = y;
+          }, { passive: true });
+
+          // quick reveal when user wheels upward or swipes down
+          window.addEventListener('wheel', (e)=>{ if (e.deltaY < 0) apply(false); }, { passive:true });
+          let touchStartY = 0;
+          window.addEventListener('touchstart', (e)=>{ touchStartY = e.touches[0]?.clientY || 0; }, { passive:true });
+          window.addEventListener('touchmove',  (e)=>{
+            const y = e.touches[0]?.clientY || 0;
+            if (y - touchStartY > 8) apply(false);
+          }, { passive:true });
+        })();
+
+         // --- dynamically match spacer to header height ---
+         (function syncNavSpacer(){
+           const root = document.getElementById('nav-placeholder');
+           let spacer = document.querySelector('.nav-spacer');
+           if (!spacer && root) {
+             spacer = document.createElement('div');
+             spacer.className = 'nav-spacer';
+             root.after(spacer);
+           }
+           function setSpacer(){
+             if (spacer){
+               const header = document.querySelector('#nav-placeholder header');
+               const h = header ? header.offsetHeight : 0;
+               spacer.style.height = h + 'px';
+             }
+           }
+           setSpacer();
+           window.addEventListener('resize', setSpacer, { passive:true });
+           setTimeout(setSpacer, 150);
+           setTimeout(setSpacer, 600);
+         })();
+       })
+       .catch(err => console.warn('[guest] nav load failed:', err));
+     
+  
+     fetch('../2.PageElement/Cursor/cursor.html', { cache: 'no-store' })
        .then(res => res.text())
        .then(data => {
          document.getElementById('cursor-placeholder').innerHTML = data;
@@ -437,11 +897,45 @@
        });
        mo.observe(document.body, { childList: true, subtree: true });
      })();
-     fetch('../../2.PageElement/Footer/Footer.html')
+     fetch('../2.PageElement/Footer/Footer.html', { cache: 'no-store' })
        .then(res => res.text())
        .then(data => {
          document.getElementById('footer-placeholder').innerHTML = data;
        });
+
+     // === Build overlays from existing title/name blocks ===
+     (function buildCardOverlays(){
+       const cards = document.querySelectorAll('.project-gridcard');
+       cards.forEach(card => {
+         const titleEl = card.querySelector('.title');
+         const textEl  = card.querySelector('.text');
+
+         let title = card.getAttribute('data-title') || (titleEl ? titleEl.textContent.trim() : 'Project');
+         let name  = card.getAttribute('data-name')  || (textEl ? (textEl.querySelector('strong')?.textContent.trim() || '') : '');
+         let eng   = card.getAttribute('data-eng')   || (textEl ? (textEl.querySelector('span')?.textContent.trim()   || '') : '');
+
+         if (!name){
+           const alt = card.querySelector('img')?.getAttribute('alt') || '';
+           name = alt.replace(/\bProject Title\b/i,'').trim() || name;
+         }
+
+         card.setAttribute('data-title', title);
+         if (name) card.setAttribute('data-name', name);
+         if (eng)  card.setAttribute('data-eng', eng);
+
+         if (!card.querySelector('.overlay')){
+           const overlay = document.createElement('div');
+           overlay.className = 'overlay';
+           overlay.innerHTML = `
+             <div class="overlay-inner">
+               <div class="overlay-title">${title}</div>
+               <div class="overlay-meta">${name || ''}${eng ? ` · <span>${eng}</span>` : ''}</div>
+             </div>`;
+           card.appendChild(overlay);
+         }
+       });
+     })();
+
 
      // 필터 버튼 클릭 시 필터링 기능
      document.querySelectorAll('[data-filter]').forEach(button => {
@@ -467,7 +961,6 @@
          button.style.fontWeight = '700';
        });
      });
-
      function updateProjectCount() {
        const selectedCategory = document.querySelector('[data-filter][style*="color: red"]')?.getAttribute('data-filter') || 'all';
        const cards = document.querySelectorAll('.project-gridcard');
@@ -506,10 +999,12 @@
 
      // 필터 적용 후 개수 업데이트
      document.querySelectorAll('[data-filter]').forEach(button => {
-       button.addEventListener('click', () => {
+       button.addEventListener('click', () => {  
          setTimeout(updateProjectCount, 100);
        });
      });
+
+    /* removed redundant ensureHideShowNavHard block */
    </script>
 </body>
 </html>

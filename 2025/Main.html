@@ -27,7 +27,43 @@
     }
     :root{ --nav-safe: 0px; --line: rgba(255,255,255,.12); }
 
+    body.nav-show-ul #nav-placeholder nav ul{
+      display:flex; flex-direction:column; gap:0;
+      position:fixed; top:90px; left:0; right:0; bottom:0;
+      padding:0; margin:0; overflow-y:auto;
+      background:#fff; color:#111; border-bottom:none;
+      z-index:1001; animation:menuSlide .24s ease-out;
+    }
+    @keyframes menuSlide{ from{transform:translateY(-8px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+    body.nav-show-ul #nav-placeholder nav ul li{ list-style:none; }
+    body.nav-show-ul #nav-placeholder nav ul li a{
+      display:flex; align-items:center;
+      height:88px; padding:0 24px; border-top:1px solid #111;
+      font-family:'Pretendard',sans-serif; font-size:28px; font-weight:800; letter-spacing:.3px;
+      color:#111; text-decoration:none; background:#fff;
+    }
+    body.nav-show-ul #nav-placeholder nav ul li:first-child a{ border-top:none; }
+    body.nav-show-ul #nav-placeholder nav ul li a:active{ background:#f3f3f3; }
     /* === Tob_nav style (match Guest page) === */
+    /* 햄버거→X 전환(이미지 불필요) */
+.mobile-menu-btn{ position:fixed; overflow:hidden; }
+.mobile-menu-btn::before,.mobile-menu-btn::after{
+  content:''; position:absolute; inset:0; margin:auto;
+  width:22px; height:2px; background:#fff;
+  transform-origin:center; opacity:0; transition:transform .2s,opacity .2s;
+}
+body.nav-show-ul .mobile-menu-btn img{ opacity:0; }
+body.nav-show-ul .mobile-menu-btn::before,
+body.nav-show-ul .mobile-menu-btn::after{ opacity:1; }
+body.nav-show-ul .mobile-menu-btn::before{ transform:rotate(45deg); }
+body.nav-show-ul .mobile-menu-btn::after{ transform:rotate(-45deg); }
+/* 화이트 패널 열릴 때 버튼도 진한 톤으로 */
+body.nav-show-ul .mobile-menu-btn{ background:#111; border-color:#111; }
+    
+/* 오버레이 오픈 시 헤더 화이트/링크 다크 */
+body.nav-show-ul #nav-placeholder header{ background:#fff; border-bottom:1px solid #111; }
+body.nav-show-ul #nav-placeholder header a{ color:#111; }
+body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
     #nav-placeholder{
       position: sticky;
       top: 0;
@@ -115,6 +151,51 @@
     }
 
     
+    /* ===== Utility visibility helpers for responsive content ===== */
+    .mobile-only{ display:none !important; }
+    .desktop-only{ display:block !important; }
+    @media (max-width: 768px){
+      .mobile-only{ display:block !important; }
+      .desktop-only{ display:none !important; }
+    }
+
+    /* ===== Small phones (iPhone SE/mini class ≤375px) fine-tuning ===== */
+    @media (max-width: 375px){
+      /* Shorter header */
+      #nav-placeholder header{
+        height: 72px;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      /* Nav link row height matches header */
+      #nav-placeholder nav ul li a{
+        height: 72px;
+        font-size: 13px;
+        letter-spacing: .1px;
+      }
+      /* Mobile menu button a bit smaller and closer to top-right */
+      .mobile-menu-btn{
+        top: 8px; right: 10px;
+        width: 36px; height: 36px; border-radius: 9px;
+      }
+      .mobile-menu-btn img{ max-width: 22px; max-height: 22px; }
+
+      /* Chips bar sits directly under the shorter header */
+      .mobile-cats{ top: 72px; }
+      .mobile-cats .cats-inner{ gap: 8px; padding: 8px 10px; }
+      .mobile-cats .cat-chip{
+        height: 30px; padding: 0 10px; font-size: 12px;
+      }
+
+      /* UL overlay also starts under 72px header */
+      body.nav-show-ul #nav-placeholder nav ul{
+        top: 72px;
+        max-height: calc(100svh - 72px); /* safe viewport on mobile */
+      }
+
+      /* Poster stage padding accounts for shorter header/chips */
+      .poster-stage{ padding-top: calc(var(--nav-safe) + var(--cats-safe)); }
+    }
     /* Flatten: disable dropdown menus entirely on Main page (like Guest) */
     #nav-placeholder nav ul li ul,
     #nav-placeholder .dropdown,
@@ -137,6 +218,109 @@
       width:auto;       /* preserve aspect ratio */
       height:auto;      /* preserve aspect ratio */
       display:block;
+    }
+
+    /* === Mobile category chips (phone only) === */
+    .mobile-cats{ display:none; }
+    /* === Mobile menu button & backdrop (phones) === */
+    .mobile-menu-btn{ display:none; }
+    .nav-backdrop{ display:none; }
+    @media (max-width: 768px){
+      :root{ --cats-safe: 0px; }
+      .mobile-cats{
+        position: sticky; top: 90px; /* stays under header */ z-index: 999; /* sits right under the 90px header */
+        background: rgba(0,0,0,.72);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border-bottom: 1px solid var(--line);
+        width:100%;
+        overflow-x:auto; -webkit-overflow-scrolling: touch;
+      }
+      .mobile-cats .cats-inner{ display:flex; gap:10px; padding:10px 12px; min-width:max-content; }
+      .mobile-cats .cat-chip{
+        display:inline-flex; align-items:center; justify-content:center;
+        height:34px; padding:0 12px; border-radius:999px; white-space:nowrap;
+        font: 700 13px/1 'Pretendard', sans-serif; letter-spacing:.2px; text-decoration:none; color:#fff;
+        border:1px solid rgba(255,255,255,.18); background:rgba(0,0,0,.35);
+      }
+      .mobile-cats .cat-chip:hover{ border-color:#ff3b3b; }
+      .mobile-cats .cat-chip.is-active{ border-color:#ff4d4d; color:#ff4d4d; }
+
+      /* Chips z-index: visible when closed, under UL when opened */
+      .mobile-cats{ position: sticky; top: 90px; z-index: 999; }
+      body.nav-show-ul .mobile-cats{ z-index: 1000; }
+
+      /* Hide header menu UL by default on phones */
+      #nav-placeholder nav ul{
+        display:none;
+      }
+      /* When user requests categories, show the UL as an overlay list */
+      body.nav-show-ul #nav-placeholder nav ul{
+        display:flex;
+        flex-direction:column;
+        gap:0;
+        position:fixed;
+        top:90px; left:0; right:0;
+        max-height:calc(100dvh - 90px);
+        overflow-y:auto;
+        background:rgba(0,0,0,.86);
+        backdrop-filter:blur(8px);
+        -webkit-backdrop-filter:blur(8px);
+        border-bottom:1px solid var(--line);
+        z-index:1001; /* above backdrop */
+      }
+      body.nav-show-ul #nav-placeholder nav ul li a{
+        height:56px; padding:0 20px; border-top:1px solid rgba(255,255,255,.06);
+      }
+      body.nav-show-ul #nav-placeholder nav ul li:first-child a{ border-top:none; }
+
+      /* === Mobile menu button & backdrop (phones) === */
+      .mobile-menu-btn{
+        position: fixed;
+        top: 14px; right: 16px;
+        z-index: 1002; /* above header (1000) and chips (999) */
+        display: inline-flex;
+        align-items: center; justify-content: center;
+        width: 40px; height: 40px;
+        border-radius: 10px;
+        border:1px solid rgba(255,255,255,.18);
+        background: rgba(0,0,0,.72);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        cursor: pointer;
+      }
+      .mobile-menu-btn img{
+        display:block; max-width:24px; max-height:24px;
+      }
+      /* Dim backdrop when nav is open */
+      .nav-backdrop{
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.45);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        z-index: 1001; /* under the menu button but over content */
+        display: none;
+      }
+      body.nav-open .nav-backdrop{ display:block; }
+
+      /* Force nav bar visible & fixed when open on phones */
+      body.nav-open #nav-placeholder{
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 1000;
+        transform: translateY(0) !important;
+      }
+      body.nav-open #nav-placeholder > header{
+        transform: translateY(0) !important;
+      }
+      /* Prevent background scroll when menu open */
+      body.nav-open{
+        overflow: hidden;
+        touch-action: none;
+      }
+
+      /* Give poster stage extra top padding to avoid overlap with chips on phones */
+      .poster-stage{ padding-top: calc(var(--nav-safe) + var(--cats-safe)); }
     }
 
     /* Ensure footer stays at the bottom when content is short */
@@ -168,6 +352,8 @@
       border-top:1px solid var(--line);
       z-index: 1;
     }
+
+    
   </style>
   
 </head>
@@ -175,6 +361,21 @@
   <div class="page">
     <!-- 🔺 네비게이션 영역 -->
     <div id="nav-placeholder"></div>
+    <!-- 🔘 Mobile Menu (phones only): tap to open/close nav -->
+    <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="메뉴 열기/닫기">
+      <img src="../../1.Picture/Another/Menu.png" alt="메뉴 아이콘" loading="lazy" />
+    </button>
+    <div id="nav-backdrop" class="nav-backdrop" hidden></div>
+    <!-- 🔻 Mobile Categories (shown only on phones) -->
+    <nav id="mobile-cats" class="mobile-cats" aria-label="모바일 카테고리">
+      <div class="cats-inner">
+        <a class="cat-chip" data-key="home">Home</a>
+        <a class="cat-chip" data-key="about">About</a>
+        <a class="cat-chip" data-key="project">Project</a>
+        <a class="cat-chip" data-key="designer">Designer</a>
+        <a class="cat-chip" data-key="guest">Guest Book</a>
+      </div>
+    </nav>
     <div id="cursor-placeholder"></div>
 
     <!-- 🎬 메인 배경 (not used) -->
@@ -196,6 +397,35 @@
   
   <!-- 📜 JavaScript -->
   <script>
+// === 모바일 오버레이 메뉴: About/Project/Designer/Guest book 순서로 강제 구성 ===
+(function buildMobileOverlayMenu(){
+  const isPhone = window.matchMedia('(max-width: 768px)').matches;
+  if (!isPhone) return;
+  const nav = document.querySelector('#nav-placeholder nav');
+  if (!nav) return;
+  let ul = nav.querySelector('ul');
+  if (!ul){ ul = document.createElement('ul'); nav.appendChild(ul); }
+
+  const baseDir = location.pathname.replace(/\/[^/]*$/, '');
+  const toURL = (f)=>`${baseDir}/${f}`.replace(/\/{2,}/g,'/');
+  const items = [
+    ['ABOUT',      toURL('About.html')],
+    ['PROJECT',    toURL('Project.html')],
+    ['DESIGNER',   toURL('Designer.html')],
+    ['GUEST BOOK', toURL('Guest.html')],
+  ];
+  ul.innerHTML = '';
+  items.forEach(([label,href])=>{
+    const li=document.createElement('li'); const a=document.createElement('a');
+    a.textContent=label; a.href=href; li.appendChild(a); ul.appendChild(li);
+  });
+
+  // 현재 페이지 표기(옅게)
+  const current = location.pathname.split('/').pop().toLowerCase();
+  ul.querySelectorAll('a').forEach(a=>{
+    if ((a.getAttribute('href')||'').toLowerCase().endsWith(current)){ a.style.opacity=.6; }
+  });
+})();
     // 네비게이션 HTML 로드 (Project/Guest와 동일한 룩&필) + 로고 교체 + 링크 정규화 + 스크롤시 숨김
     const __navPaths = [
       '../../2.PageElement/Tob_nav/Tob_nav_project.html',
@@ -254,6 +484,23 @@
           'guestbook': toURL('Guest.html'),
         };
 
+        // === Wire mobile category chips to the same linkMap ===
+        (function setupMobileCats(){
+          const wrap = document.getElementById('mobile-cats');
+          if (!wrap) return;
+          wrap.querySelectorAll('a.cat-chip').forEach(a => {
+            const key = (a.dataset.key || '').toLowerCase();
+            if (linkMap[key]) a.setAttribute('href', linkMap[key]);
+          });
+
+          // Active state based on current file name
+          const currentName = location.pathname.split('/').pop().toLowerCase();
+          wrap.querySelectorAll('a.cat-chip').forEach(a => {
+            const href = (a.getAttribute('href')||'').toLowerCase();
+            if (href.endsWith(currentName)) a.classList.add('is-active');
+          });
+        })();
+
         const logoLink = doc.querySelector('a.logo, .logo a');
         if (logoLink) logoLink.setAttribute('href', linkMap['home']);
 
@@ -307,6 +554,14 @@
             const header = document.querySelector('#nav-placeholder header');
             const h = header ? header.offsetHeight : 0;
             document.documentElement.style.setProperty('--nav-safe', h + 'px');
+            // --- Also set --cats-safe for mobile bar
+            const cats = document.getElementById('mobile-cats');
+            let ch = 0;
+            if (cats) {
+              const isPhone = window.matchMedia('(max-width: 768px)').matches;
+              ch = isPhone ? (cats.offsetHeight || 0) : 0;
+            }
+            document.documentElement.style.setProperty('--cats-safe', ch + 'px');
             // re-evaluate show/hide near the very top after layout changes
             if ((window.pageYOffset || 0) <= 40){
               document.body.classList.remove('nav-hidden');
@@ -316,6 +571,19 @@
           window.addEventListener('resize', setSafe, { passive:true });
           setTimeout(setSafe, 150);
           setTimeout(setSafe, 600);
+        })();
+
+        // Keep nav visible if mobile menu is open at injection time
+        (function ensureOpenState(){
+          if (document.body.classList.contains('nav-open')){
+            document.body.classList.remove('nav-hidden');
+          }
+        })();
+        // If user requested the UL before nav finished loading, ensure it's visible now
+        (function ensureUlState(){
+          if (document.body.classList.contains('nav-show-ul')){
+            document.body.classList.remove('nav-hidden');
+          }
         })();
       })
       .catch(err => console.warn('[main] nav load failed:', err));
@@ -364,6 +632,18 @@
         requestAnimationFrame(() => applyState(window.pageYOffset || 0, 0));
       })();
     });
+
+    // 기존 closeMenu를 아래로 교체
+function closeMenu(){
+  document.body.classList.remove('nav-open');
+  document.body.classList.remove('nav-show-ul');
+}
+// 기존 openMenu를 아래로 교체
+function openMenu(){
+  document.body.classList.add('nav-open');
+  document.body.classList.add('nav-show-ul'); // 오버레이 즉시 표시
+  document.body.classList.remove('nav-hidden');
+}
 
     // Load rose cursor (with smooth, natural follow motion using a light spring)
     (function loadCursor(){
@@ -505,6 +785,85 @@
       window.scrollToTop = function () {
         window.scrollTo({ top: 0, behavior: "smooth" });  
       };
+
+      // === Mobile menu toggle (phones) ===
+      (function mobileMenuToggle(){
+        const btn = document.getElementById('mobileMenuBtn');
+        const backdrop = document.getElementById('nav-backdrop');
+        if (!btn || !backdrop) return;
+
+        // Helper to close
+        function closeMenu(){ document.body.classList.remove('nav-open'); }
+        function openMenu(){ 
+          document.body.classList.add('nav-open'); 
+          // ensure nav is revealed even if previously hidden due to scroll
+          document.body.classList.remove('nav-hidden');
+        }
+
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          if (document.body.classList.contains('nav-open')) closeMenu(); else openMenu();
+        });
+
+        backdrop.addEventListener('click', function(){ closeMenu(); });
+
+        // Close menu when navigating away via any nav link
+        document.addEventListener('click', function(e){
+          const a = e.target.closest('#nav-placeholder a');
+          if (a){ closeMenu(); }
+        }, { passive:true });
+
+        // Auto-reset on resize to desktop
+        window.addEventListener('resize', function(){
+          const isPhone = window.matchMedia('(max-width: 768px)').matches;
+          if (!isPhone){ closeMenu(); }
+        }, { passive:true });
+      })();
+
+      // === Mobile: category chip must be tapped to reveal header UL (mobile only) ===
+      (function mobileShowUlOnChipTap(){
+        const chipsWrap = document.getElementById('mobile-cats');
+        if (!chipsWrap) return;
+
+        function openUl(){
+          // ensure header is visible and fixed
+          document.body.classList.add('nav-open');
+          document.body.classList.add('nav-show-ul');
+          document.body.classList.remove('nav-hidden');
+        }
+        function closeUl(){
+          document.body.classList.remove('nav-show-ul');
+        }
+
+        // First tap on any chip opens the header UL instead of navigating
+        chipsWrap.addEventListener('click', function(e){
+          const chip = e.target.closest('a.cat-chip');
+          if (!chip) return;
+          const isPhone = window.matchMedia('(max-width: 768px)').matches;
+          if (!isPhone) return;
+
+          if (!document.body.classList.contains('nav-show-ul')){
+            e.preventDefault(); // intercept first tap
+            openUl();
+          }
+          // If UL already open, allow normal navigation
+        }, { passive:false });
+
+        // Close when backdrop tapped or when clicking any header nav link
+        const backdrop = document.getElementById('nav-backdrop');
+        if (backdrop){ backdrop.addEventListener('click', closeUl); }
+        document.addEventListener('click', function(e){
+          const navLink = e.target.closest('#nav-placeholder nav a');
+          if (navLink){ closeUl(); }
+        }, { passive:true });
+
+        // Reset state when moving to desktop
+        window.addEventListener('resize', function(){
+          if (!window.matchMedia('(max-width: 768px)').matches){
+            closeUl();
+          }
+        }, { passive:true });
+      })();
     });
   </script>
 </body>

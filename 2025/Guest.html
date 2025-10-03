@@ -534,10 +534,12 @@
             <button id="toggleWriteForm">✍ 글쓰기</button>
           </div>
           <div class="guestbook-form-container hidden">
-            <form id="guestForm">
-              <input type="text" id="name" placeholder="To" required />
-              <textarea id="message" placeholder="메시지를 남겨주세요" required></textarea>
-              <input type="text" id="from" placeholder="From" required />
+            <form id="guestForm" name="guestbook" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+              <input type="hidden" name="form-name" value="guestbook" />
+              <input type="text" id="name" name="name" placeholder="To" required />
+              <textarea id="message" name="message" placeholder="메시지를 남겨주세요" required></textarea>
+              <input type="text" id="from" name="from" placeholder="From" required />
+              <input class="hidden" type="text" name="bot-field" tabindex="-1" autocomplete="off" />
               <button type="submit">남기기</button>
             </form>
           </div>
@@ -550,10 +552,12 @@
     </main>
     <div id="footer-placeholder"></div>
   </div>
-  <form name="guestbook" method="POST" data-netlify="true">
+  <form name="guestbook" method="POST" data-netlify="true" netlify-honeypot="bot-field" style="position:absolute;left:-9999px;opacity:0;pointer-events:none;">
     <input type="hidden" name="form-name" value="guestbook" />
-    <input name="name" placeholder="이름" required>
-    <textarea name="message" placeholder="메시지" required></textarea>
+    <input name="name" />
+    <textarea name="message"></textarea>
+    <input name="from" />
+    <input type="text" name="bot-field" />
     <button type="submit">남기기</button>
   </form>
   <script> 
@@ -850,15 +854,44 @@
       document.documentElement.style.setProperty('--footer-safe', (document.getElementById('footer-placeholder').offsetHeight || 0) + 'px');
     }
 
-    document.getElementById("guestForm").addEventListener("submit", function (e) {
+    document.getElementById("guestForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const name = document.getElementById("name").value;
-      const message = document.getElementById("message").value;
-      const from = document.getElementById("from").value;
-      messages.unshift({ name, message, from });
-      currentPage = 1;
-      renderMessages();
-      this.reset();
+      const form = e.currentTarget;
+      const formData = new FormData(form);
+      // Netlify requires the `form-name` key in the encoded body
+      if (!formData.get("form-name")) formData.set("form-name", "guestbook");
+
+      // Encode as application/x-www-form-urlencoded
+      const body = new URLSearchParams();
+      for (const [k, v] of formData.entries()) body.append(k, v);
+
+      try {
+        await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: body.toString()
+        });
+
+        const name = formData.get("name");
+        const message = formData.get("message");
+        const from = formData.get("from");
+
+        // Optimistic UI + local cache as fallback
+        messages.unshift({ name, message, from });
+        try {
+          const cached = JSON.parse(localStorage.getItem("guestbook-cache") || "[]");
+          cached.unshift({ name, message, from, _ts: Date.now() });
+          localStorage.setItem("guestbook-cache", JSON.stringify(cached.slice(0, 200)));
+        } catch (_) {}
+
+        currentPage = 1;
+        renderMessages();
+        form.reset();
+        alert("작성되었습니다! 승인 후 목록에 표시됩니다.");
+      } catch (err) {
+        console.error("Netlify submit failed", err);
+        alert("제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      }
     });
 
     document.getElementById("toggleWriteForm").addEventListener("click", function () {
@@ -922,7 +955,35 @@
       renderMessages();
     });
 
-    renderMessages();
+    async function loadInitialMessages(){
+      // 1) Try server endpoint (you will add a Netlify Function named `guestbook` that returns JSON)
+      try {
+        const res = await fetch("/api/guestbook", { cache: "no-store" });
+        if (res.ok) {
+          const rows = await res.json();
+          // Expecting an array of { name, message, from }
+          messages = Array.isArray(rows) ? rows.map(r => ({
+            name: r.name || "",
+            message: r.message || "",
+            from: r.from || (r.name || ""),
+          })) : [];
+          currentPage = 1;
+          renderMessages();
+          return;
+        }
+      } catch(_) { /* ignore and try local */ }
+
+      // 2) Fallback: local cache so at least this device keeps messages
+      try {
+        const cached = JSON.parse(localStorage.getItem("guestbook-cache") || "[]");
+        messages = cached.map(r => ({ name: r.name, message: r.message, from: r.from }));
+      } catch(_) { messages = []; }
+      currentPage = 1;
+      renderMessages();
+    }
+
+    // Replace the original direct call
+    loadInitialMessages();
   </script>
 </body>
 </html>

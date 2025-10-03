@@ -550,6 +550,12 @@
     </main>
     <div id="footer-placeholder"></div>
   </div>
+  <form name="guestbook" method="POST" data-netlify="true">
+    <input type="hidden" name="form-name" value="guestbook" />
+    <input name="name" placeholder="이름" required>
+    <textarea name="message" placeholder="메시지" required></textarea>
+    <button type="submit">남기기</button>
+  </form>
   <script> 
     // 네비게이션 HTML 로드 (Project.page 스타일 우선 적용) + 로고 교체 + 링크 정규화
     (async function loadProjectNav(){
@@ -643,6 +649,7 @@
           el.removeAttribute('aria-expanded');
         });
       })();
+
 
       // --- 네비 높이만큼 스페이서 확보 (겹침 방지) ---
       (function syncNavSpacer(){

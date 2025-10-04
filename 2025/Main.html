@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TUVD 27th Graduate Exhibition - BLOOM</title>
   <!-- 🔺 스타일시트 연결 -->
+  <!-- // 네비게이션 스타일 -->
   <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
+  <!-- // 푸터 스타일 -->
   <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
+  <!-- // 커서 스타일 -->
   <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
-  <link rel="stylesheet" href="1.MainPage.css" />
   <style>
-    /* Fallback styles for custom cursor (rose) */
-    /*
-    .cursor-dot{ position:fixed; left:-100px; top:-100px; width:12px; height:12px; border-radius:50%; background:#ff3b3b; box-shadow:0 0 0 2px rgba(255,59,59,.25); pointer-events:none; transform:translate(-50%,-50%); z-index:9999; }
-    .cursor-ring{ position:fixed; left:-100px; top:-100px; width:36px; height:36px; border-radius:50%; border:2px solid rgba(255,59,59,.35); pointer-events:none; transform:translate(-50%,-50%); z-index:9998; }
-    */
-    body{ cursor: none; }
-    /* Smooth rose cursor base styles (works with .cursor-dot or .rose-cursor) */
+    /* 장미 커서 기본 스타일( .cursor-dot / .rose-cursor 공통 ) */
     .cursor-dot, .rose-cursor, [data-rose-cursor]{
       position: fixed;
       left: -100px; top: -100px;         /* offscreen until first move */
@@ -27,65 +23,15 @@
     }
     :root{ --nav-safe: 0px; --line: rgba(255,255,255,.12); }
 
-    body.nav-show-ul #nav-placeholder nav ul{
-      display:flex; flex-direction:column; gap:0;
-      position:fixed; top:90px; left:0; right:0; bottom:0;
-      padding:0; margin:0; overflow-y:auto;
-      background:#fff; color:#111; border-bottom:none;
-      z-index:1001; animation:menuSlide .24s ease-out;
-    }
-    @keyframes menuSlide{ from{transform:translateY(-8px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-    body.nav-show-ul #nav-placeholder nav ul li{ list-style:none; }
-    body.nav-show-ul #nav-placeholder nav ul li a{
-      display:flex; align-items:center;
-      height:88px; padding:0 24px; border-top:1px solid #111;
-      font-family:'Pretendard',sans-serif; font-size:28px; font-weight:800; letter-spacing:.3px;
-      color:#111; text-decoration:none; background:#fff;
-    }
-    body.nav-show-ul #nav-placeholder nav ul li:first-child a{ border-top:none; }
-    body.nav-show-ul #nav-placeholder nav ul li a:active{ background:#f3f3f3; }
-    /* === Tob_nav style (match Guest page) === */
-    /* 햄버거→X 전환(이미지 불필요) */
-.mobile-menu-btn{ position:fixed; overflow:hidden; }
-.mobile-menu-btn::before,.mobile-menu-btn::after{
-  content:''; position:absolute; inset:0; margin:auto;
-  width:22px; height:2px; background:#fff;
-  transform-origin:center; opacity:0; transition:transform .2s,opacity .2s;
-}
-body.nav-show-ul .mobile-menu-btn img{ opacity:0; }
-body.nav-show-ul .mobile-menu-btn::before,
-body.nav-show-ul .mobile-menu-btn::after{ opacity:1; }
-body.nav-show-ul .mobile-menu-btn::before{ transform:rotate(45deg); }
-body.nav-show-ul .mobile-menu-btn::after{ transform:rotate(-45deg); }
-/* 화이트 패널 열릴 때 버튼도 진한 톤으로 */
-body.nav-show-ul .mobile-menu-btn{ background:#111; border-color:#111; }
-    
-/* 오버레이 오픈 시 헤더 화이트/링크 다크 */
-body.nav-show-ul #nav-placeholder header{ background:#fff; border-bottom:1px solid #111; }
-body.nav-show-ul #nav-placeholder header a{ color:#111; }
-body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
     #nav-placeholder{
       position: sticky;
       top: 0;
       z-index: 1000;
-      transition: transform .38s cubic-bezier(.22,.61,.36,1);
+      transition: transform 0.6s ease-in-out; /* 시간 늘리고 부드러운 곡선 적용 */
       will-change: transform;
     }
-    #nav-placeholder > header{
-      transition: transform .38s cubic-bezier(.22,.61,.36,1);
-      will-change: transform;
-    }
-    /* 숨김 상태: 래퍼/헤더 둘 다에 적용 */
-    body.nav-hidden #nav-placeholder,
-    body.nav-hidden #nav-placeholder > header{
-      transform: translateY(-110%);
-    }
-    @media (prefers-reduced-motion: reduce){
-      #nav-placeholder, #nav-placeholder > header{ transition: none; }
-    }
-    .nav-spacer{ height: 0; }
 
-    /* Visuals: black translucent + blur + thin divider */
+    /* 헤더 비주얼: 반투명 블랙 + 블러 + 얇은 구분선 */
     #nav-placeholder header{
       background: rgba(0,0,0,.72);
       backdrop-filter: blur(6px);
@@ -96,17 +42,21 @@ body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
       height: 90px;
       padding-left: 59px;
       padding-right: 60px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+      transition: transform .38s cubic-bezier(.22,.61,.36,1), box-shadow .24s ease;
     }
 
-    /* Logo sizing */
+    /* 로고 크기 조정 */
     #nav-placeholder header .logo img{
       max-height: 38px;
       transform: translateY(2px);
     }
+
     #nav-placeholder .logo .logo-main{ font-size: 15px !important; }
     #nav-placeholder .logo .logo-sub { font-size: 15px !important; }
 
-    /* Link typography */
+
+    /* 네비 링크 타이포그래피 */
     #nav-placeholder header a{
       font-family: 'Pretendard', sans-serif;
       font-size: 14px;
@@ -116,217 +66,53 @@ body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
       color: #fff;
       padding: 8px 0;
     }
+    
     #nav-placeholder header a:hover{ color:#ff3b3b; }
     #nav-placeholder header a.is-active{ color:#ff4d4d; font-weight:700; }
 
-    /* === Ensure identical internal layout: left logo / right menu === */
-    #nav-placeholder header .header-inner{
-      max-width: 1600px;
-      padding: 0;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 100%;
-    }
-    #nav-placeholder nav{
-      display: flex;
-      align-items: center;
-      justify-content: flex-end; /* push menu to right */
-      height: 100%;
-    }
     #nav-placeholder nav ul{
       display: flex;
-      align-items: center;       /* vertical centering */
-      gap: 47px;                 /* match Project page spacing */
+      align-items: center;       /* 세로 가운데 정렬 */
+      gap: 47px;                 /* Project 페이지 간격과 동일하게 */
       list-style: none;
       margin: 0;
       padding: 0;
     }
-    #nav-placeholder nav ul li a{
-      display: flex;
-      align-items: center;       /* vertical centering */
-      height: 90px;              /* equal to header height */
-      padding: 0;                /* rely on flex centering */
-    }
 
+    /* 스크롤 시 네비게이션 숨김 */
+    body.nav-hidden #nav-placeholder,
+    body.nav-hidden #nav-placeholder > header {
+      transform: translateY(-110%) !important;
+    }
     
-    /* ===== Utility visibility helpers for responsive content ===== */
-    .mobile-only{ display:none !important; }
-    .desktop-only{ display:block !important; }
-    @media (max-width: 768px){
-      .mobile-only{ display:block !important; }
-      .desktop-only{ display:none !important; }
+    /* 전체 화면 레이아웃 + 푸터 하단 고정 */
+    html, body { background:#000; }
+    .page { background:#000; width:100%; }
+    
+    /* 포스터: 자르지 않고 화면에 맞춰 표시 */
+    .poster-stage{
+      /* 이미지가 끝나면 바로 푸터가 닿도록: 그리드/센터링 제거 */
+      display:block;
+      background:#000;
+      padding:var(--nav-safe) 0 0 0;
+      box-sizing:border-box;
+      overflow:hidden;
+      width:100%;
+      line-height:0; /* 인라인 공백 제거(혹시 모를 갭 방지) */
     }
-
-    /* ===== Small phones (iPhone SE/mini class ≤375px) fine-tuning ===== */
-    @media (max-width: 375px){
-      /* Shorter header */
-      #nav-placeholder header{
-        height: 72px;
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-      /* Nav link row height matches header */
-      #nav-placeholder nav ul li a{
-        height: 72px;
-        font-size: 13px;
-        letter-spacing: .1px;
-      }
-      /* Mobile menu button a bit smaller and closer to top-right */
-      .mobile-menu-btn{
-        top: 8px; right: 10px;
-        width: 36px; height: 36px; border-radius: 9px;
-      }
-      .mobile-menu-btn img{ max-width: 22px; max-height: 22px; }
-
-      /* Chips bar sits directly under the shorter header */
-      .mobile-cats{ top: 72px; }
-      .mobile-cats .cats-inner{ gap: 8px; padding: 8px 10px; }
-      .mobile-cats .cat-chip{
-        height: 30px; padding: 0 10px; font-size: 12px;
-      }
-
-      /* UL overlay also starts under 72px header */
-      body.nav-show-ul #nav-placeholder nav ul{
-        top: 72px;
-        max-height: calc(100svh - 72px); /* safe viewport on mobile */
-      }
-
-      /* Poster stage padding accounts for shorter header/chips */
-      .poster-stage{ padding-top: calc(var(--nav-safe) + var(--cats-safe)); }
-    }
-    /* Flatten: disable dropdown menus entirely on Main page (like Guest) */
-    #nav-placeholder nav ul li ul,
-    #nav-placeholder .dropdown,
-    #nav-placeholder .submenu,
-    #nav-placeholder .has-dropdown > ul,
-    #nav-placeholder .has-children > ul{
-      display: none !important;
-    }
-    #nav-placeholder nav ul li:hover > ul{ display:none !important; }
-
-    /* Full-viewport layout & sticky footer */
-    html, body { height: 100%; margin: 0; overflow-x:hidden; background:#000; }
-    .page { min-height: 100dvh; display: flex; flex-direction: column; background:#000; width:100%; }
-
-    /* Poster fills the screen without cropping */
-    .poster-stage{ flex:1; min-height:0; display:grid; place-items:center; background:#000; padding:var(--nav-safe) 0 0 0; box-sizing:border-box; overflow:hidden; width:100%; }
     .poster-stage .poster-horizontal{
-      max-width:100%;   /* never exceed stage width */
-      max-height:100%;  /* never exceed stage height */
-      width:auto;       /* preserve aspect ratio */
-      height:auto;      /* preserve aspect ratio */
+      margin: -50px auto 0; /* 위로 50px, 좌우 중앙 정렬, 하단 여백 0 */
+      max-width:100%;   /* 스테이지 너비를 넘지 않음 */
+      height:auto;      /* 비율 유지 */
       display:block;
     }
+    .poster-stage{ padding-bottom:0; margin-bottom:0; }
+    .poster-stage .poster-horizontal{ margin-bottom:0; }
 
-    /* === Mobile category chips (phone only) === */
-    .mobile-cats{ display:none; }
-    /* === Mobile menu button & backdrop (phones) === */
-    .mobile-menu-btn{ display:none; }
-    .nav-backdrop{ display:none; }
-    @media (max-width: 768px){
-      :root{ --cats-safe: 0px; }
-      .mobile-cats{
-        position: sticky; top: 90px; /* stays under header */ z-index: 999; /* sits right under the 90px header */
-        background: rgba(0,0,0,.72);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        border-bottom: 1px solid var(--line);
-        width:100%;
-        overflow-x:auto; -webkit-overflow-scrolling: touch;
-      }
-      .mobile-cats .cats-inner{ display:flex; gap:10px; padding:10px 12px; min-width:max-content; }
-      .mobile-cats .cat-chip{
-        display:inline-flex; align-items:center; justify-content:center;
-        height:34px; padding:0 12px; border-radius:999px; white-space:nowrap;
-        font: 700 13px/1 'Pretendard', sans-serif; letter-spacing:.2px; text-decoration:none; color:#fff;
-        border:1px solid rgba(255,255,255,.18); background:rgba(0,0,0,.35);
-      }
-      .mobile-cats .cat-chip:hover{ border-color:#ff3b3b; }
-      .mobile-cats .cat-chip.is-active{ border-color:#ff4d4d; color:#ff4d4d; }
+    /* 컨텐츠가 짧아도 푸터가 하단에 머무르도록 */
+    #footer-placeholder { margin-top:0; background:#000; }
 
-      /* Chips z-index: visible when closed, under UL when opened */
-      .mobile-cats{ position: sticky; top: 90px; z-index: 999; }
-      body.nav-show-ul .mobile-cats{ z-index: 1000; }
-
-      /* Hide header menu UL by default on phones */
-      #nav-placeholder nav ul{
-        display:none;
-      }
-      /* When user requests categories, show the UL as an overlay list */
-      body.nav-show-ul #nav-placeholder nav ul{
-        display:flex;
-        flex-direction:column;
-        gap:0;
-        position:fixed;
-        top:90px; left:0; right:0;
-        max-height:calc(100dvh - 90px);
-        overflow-y:auto;
-        background:rgba(0,0,0,.86);
-        backdrop-filter:blur(8px);
-        -webkit-backdrop-filter:blur(8px);
-        border-bottom:1px solid var(--line);
-        z-index:1001; /* above backdrop */
-      }
-      body.nav-show-ul #nav-placeholder nav ul li a{
-        height:56px; padding:0 20px; border-top:1px solid rgba(255,255,255,.06);
-      }
-      body.nav-show-ul #nav-placeholder nav ul li:first-child a{ border-top:none; }
-
-      /* === Mobile menu button & backdrop (phones) === */
-      .mobile-menu-btn{
-        position: fixed;
-        top: 14px; right: 16px;
-        z-index: 1002; /* above header (1000) and chips (999) */
-        display: inline-flex;
-        align-items: center; justify-content: center;
-        width: 40px; height: 40px;
-        border-radius: 10px;
-        border:1px solid rgba(255,255,255,.18);
-        background: rgba(0,0,0,.72);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        cursor: pointer;
-      }
-      .mobile-menu-btn img{
-        display:block; max-width:24px; max-height:24px;
-      }
-      /* Dim backdrop when nav is open */
-      .nav-backdrop{
-        position: fixed; inset: 0;
-        background: rgba(0,0,0,.45);
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
-        z-index: 1001; /* under the menu button but over content */
-        display: none;
-      }
-      body.nav-open .nav-backdrop{ display:block; }
-
-      /* Force nav bar visible & fixed when open on phones */
-      body.nav-open #nav-placeholder{
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        z-index: 1000;
-        transform: translateY(0) !important;
-      }
-      body.nav-open #nav-placeholder > header{
-        transform: translateY(0) !important;
-      }
-      /* Prevent background scroll when menu open */
-      body.nav-open{
-        overflow: hidden;
-        touch-action: none;
-      }
-
-      /* Give poster stage extra top padding to avoid overlap with chips on phones */
-      .poster-stage{ padding-top: calc(var(--nav-safe) + var(--cats-safe)); }
-    }
-
-    /* Ensure footer stays at the bottom when content is short */
-    #footer-placeholder { margin-top:auto; background:#000; }
-
-    /* Top button: always on top */
+    /* 맨 위로 버튼: 항상 최상단 표시 */
     .scroll-btn{
       position:fixed;
       right:16px;
@@ -345,6 +131,7 @@ body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
     }
     .scroll-btn:hover{ border-color:#ff3b3b; box-shadow:0 6px 22px rgba(255,59,59,.25); }
 
+    
     footer, .site-footer, #footer{
       position:relative !important; /* 이미지 위로 겹치지 않음 */
       width:100%;
@@ -353,35 +140,24 @@ body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
       z-index: 1;
     }
 
-    
   </style>
-  
 </head>
+
+
 <body>
+  <!-- 
+    // 본문 주요 섹션 안내
+    // 1) #nav-placeholder : 네비게이션
+    // 2) #cursor-placeholder : 커서
+    // 3) .poster-stage : 메인 포스터 영역
+    // 4) #footer-placeholder : 푸터
+  -->
   <div class="page">
     <!-- 🔺 네비게이션 영역 -->
     <div id="nav-placeholder"></div>
-    <!-- 🔘 Mobile Menu (phones only): tap to open/close nav -->
-    <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="메뉴 열기/닫기">
-      <img src="../../1.Picture/Another/Menu.png" alt="메뉴 아이콘" loading="lazy" />
-    </button>
-    <div id="nav-backdrop" class="nav-backdrop" hidden></div>
-    <!-- 🔻 Mobile Categories (shown only on phones) -->
-    <nav id="mobile-cats" class="mobile-cats" aria-label="모바일 카테고리">
-      <div class="cats-inner">
-        <a class="cat-chip" data-key="home">Home</a>
-        <a class="cat-chip" data-key="about">About</a>
-        <a class="cat-chip" data-key="project">Project</a>
-        <a class="cat-chip" data-key="designer">Designer</a>
-        <a class="cat-chip" data-key="guest">Guest Book</a>
-      </div>
-    </nav>
     <div id="cursor-placeholder"></div>
 
-    <!-- 🎬 메인 배경 (not used) -->
-    <!-- <div class="video-area"></div> -->
-
-    <!-- 🔻 전시 정보: poster fits exactly to the viewport */ -->
+    <!-- 🔻 전시 정보: 화면에 딱 맞게 포스터 표시 -->
     <div class="poster-stage">
       <img class="poster-horizontal" src="../../1.Picture/1. 27th Graduation/BLOOM_Poster/가로.jpg" alt="가로" loading="lazy" />
     </div>
@@ -397,40 +173,13 @@ body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
   
   <!-- 📜 JavaScript -->
   <script>
-// === 모바일 오버레이 메뉴: About/Project/Designer/Guest book 순서로 강제 구성 ===
-(function buildMobileOverlayMenu(){
-  const isPhone = window.matchMedia('(max-width: 768px)').matches;
-  if (!isPhone) return;
-  const nav = document.querySelector('#nav-placeholder nav');
-  if (!nav) return;
-  let ul = nav.querySelector('ul');
-  if (!ul){ ul = document.createElement('ul'); nav.appendChild(ul); }
-
-  const baseDir = location.pathname.replace(/\/[^/]*$/, '');
-  const toURL = (f)=>`${baseDir}/${f}`.replace(/\/{2,}/g,'/');
-  const items = [
-    ['ABOUT',      toURL('About.html')],
-    ['PROJECT',    toURL('Project.html')],
-    ['DESIGNER',   toURL('Designer.html')],
-    ['GUEST BOOK', toURL('Guest.html')],
-  ];
-  ul.innerHTML = '';
-  items.forEach(([label,href])=>{
-    const li=document.createElement('li'); const a=document.createElement('a');
-    a.textContent=label; a.href=href; li.appendChild(a); ul.appendChild(li);
-  });
-
-  // 현재 페이지 표기(옅게)
-  const current = location.pathname.split('/').pop().toLowerCase();
-  ul.querySelectorAll('a').forEach(a=>{
-    if ((a.getAttribute('href')||'').toLowerCase().endsWith(current)){ a.style.opacity=.6; }
-  });
-})();
-    // 네비게이션 HTML 로드 (Project/Guest와 동일한 룩&필) + 로고 교체 + 링크 정규화 + 스크롤시 숨김
+    // [네비게이션] 경로 후보(우선: Tob_nav_project.html → 실패 시 Tob_nav.html)
     const __navPaths = [
-      '../../2.PageElement/Tob_nav/Tob_nav_project.html',
       '../../2.PageElement/Tob_nav/Tob_nav.html'
     ];
+    
+    
+    // [네비게이션] HTML 가져오기(fetch) - 실패 시 다음 후보로 재귀 시도
     function fetchNav(paths){
       const [first, ...rest] = paths;
       return fetch(first, { cache: 'no-store' }).then(r => {
@@ -441,35 +190,12 @@ body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
         return fetchNav(rest);
       });
     }
+
+    // [네비게이션] 주입 +  링크 정규화 + 네비 높이 보정(--nav-safe)
     fetchNav(__navPaths)
       .then(html => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-
-        // 로고 이미지 교체
-        const logoContainer = doc.querySelector('.logo');
-        if (logoContainer) {
-          const imgs = logoContainer.querySelectorAll('img');
-          if (imgs.length > 0) {
-            imgs[0].outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
-            if (imgs.length > 1) {
-              imgs[1].src = '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png';
-            }
-          }
-        } else {
-          // .logo 래퍼가 없다면 안전 교체
-          doc.querySelectorAll('img').forEach(img => {
-            const alt = img.getAttribute('alt') || '';
-            const src = img.getAttribute('src') || '';
-            if (alt.includes('장미') || /BLOOM_LOGO|대지\.png|대지\.png/.test(src)) {
-              img.outerHTML = '<img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
-            }
-          });
-        }
-
-        // base 태그 제거 (상대경로 꼬임 방지)
-        const baseEl = doc.querySelector('base');
-        if (baseEl) baseEl.remove();
 
         // 링크 정규화: 현재 디렉토리(/2025) 기준으로 매핑
         const baseDir = location.pathname.replace(/\/[^/]*$/, '');
@@ -484,26 +210,6 @@ body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
           'guestbook': toURL('Guest.html'),
         };
 
-        // === Wire mobile category chips to the same linkMap ===
-        (function setupMobileCats(){
-          const wrap = document.getElementById('mobile-cats');
-          if (!wrap) return;
-          wrap.querySelectorAll('a.cat-chip').forEach(a => {
-            const key = (a.dataset.key || '').toLowerCase();
-            if (linkMap[key]) a.setAttribute('href', linkMap[key]);
-          });
-
-          // Active state based on current file name
-          const currentName = location.pathname.split('/').pop().toLowerCase();
-          wrap.querySelectorAll('a.cat-chip').forEach(a => {
-            const href = (a.getAttribute('href')||'').toLowerCase();
-            if (href.endsWith(currentName)) a.classList.add('is-active');
-          });
-        })();
-
-        const logoLink = doc.querySelector('a.logo, .logo a');
-        if (logoLink) logoLink.setAttribute('href', linkMap['home']);
-
         doc.querySelectorAll('a[href]').forEach(a => {
           const text = (a.textContent || '').trim().toLowerCase();
           const href = (a.getAttribute('href') || '').trim();
@@ -515,15 +221,6 @@ body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
           else if (/main|home|index/i.test(href))  a.setAttribute('href', linkMap['home']);
         });
 
-        // 현재 페이지 활성화 표시
-        const currentName = location.pathname.split('/').pop().toLowerCase();
-        doc.querySelectorAll('a[href]').forEach(a => {
-          const target = (a.getAttribute('href') || '').toLowerCase();
-          if (target.endsWith(currentName)) {
-            a.setAttribute('aria-current', 'page');
-            a.classList.add('is-active');
-          }
-        });
 
         // 헤더만 주입 (불필요한 래퍼 제거)
         const headerEl = doc.querySelector('header');
@@ -533,130 +230,31 @@ body.nav-show-ul #nav-placeholder header a:hover{ color:#111; opacity:.7; }
           navRoot.appendChild(headerEl);
         }
 
-        // 드롭다운 구조/클래스 제거 (Guest와 동일한 flat bar)
-        (function stripDropdowns(){
-          const root = document.getElementById('nav-placeholder');
-          if (!root) return;
-          root.querySelectorAll('nav ul ul, .dropdown, .submenu, .menu .sub, [aria-haspopup="true"] > ul').forEach(el=>{
-            try{ el.remove(); }catch(_){ el.parentNode && el.parentNode.removeChild(el); }
-          });
-          root.querySelectorAll('.has-dropdown, .has-children, .dropdown-toggle').forEach(el=>{
-            el.classList.remove('has-dropdown','has-children','dropdown-toggle');
-            el.removeAttribute('aria-haspopup');
-            el.removeAttribute('aria-expanded');
-          });
-        })();
-
-
         // 네비 높이만큼 스페이서/안전여백 확보 (포스터가 가려지지 않게)
         (function syncNavOffset(){
           function setSafe(){
             const header = document.querySelector('#nav-placeholder header');
             const h = header ? header.offsetHeight : 0;
             document.documentElement.style.setProperty('--nav-safe', h + 'px');
-            // --- Also set --cats-safe for mobile bar
-            const cats = document.getElementById('mobile-cats');
-            let ch = 0;
-            if (cats) {
-              const isPhone = window.matchMedia('(max-width: 768px)').matches;
-              ch = isPhone ? (cats.offsetHeight || 0) : 0;
-            }
-            document.documentElement.style.setProperty('--cats-safe', ch + 'px');
-            // re-evaluate show/hide near the very top after layout changes
-            if ((window.pageYOffset || 0) <= 40){
-              document.body.classList.remove('nav-hidden');
-            }
           }
           setSafe();
           window.addEventListener('resize', setSafe, { passive:true });
           setTimeout(setSafe, 150);
           setTimeout(setSafe, 600);
-        })();
+        })()});
 
-        // Keep nav visible if mobile menu is open at injection time
-        (function ensureOpenState(){
-          if (document.body.classList.contains('nav-open')){
-            document.body.classList.remove('nav-hidden');
-          }
-        })();
-        // If user requested the UL before nav finished loading, ensure it's visible now
-        (function ensureUlState(){
-          if (document.body.classList.contains('nav-show-ul')){
-            document.body.classList.remove('nav-hidden');
-          }
-        })();
-      })
-      .catch(err => console.warn('[main] nav load failed:', err));
-
-    // --- 스크롤 방향 감지해서 네비 숨김/표시 (전역 바인딩: fetch 성공/실패와 무관) ---
-    document.addEventListener("DOMContentLoaded", function () {
-      (function bindHideNavOnScroll(){
-        if (window.__navHideBound) return;
-        window.__navHideBound = true;
-
-        let lastY = window.pageYOffset || 0;
-        let ticking = false;
-        const THRESH = 8;    // 미세 스크롤 무시
-        const TOPSAFE = 40;  // 최상단 근처에서는 항상 표시
-
-        function applyState(y, dy){
-          if (y <= TOPSAFE){
-            document.body.classList.remove('nav-hidden');
-            return;
-          }
-          if (dy > 0){
-            document.body.classList.add('nav-hidden');     // 아래로 → 숨김
-          } else if (dy < 0){
-            document.body.classList.remove('nav-hidden');  // 위로 → 표시
-          }
-        }
-
-        function onScroll(){
-          const y = window.pageYOffset || 0;
-          const dy = y - lastY;
-          if (Math.abs(dy) >= THRESH){
-            applyState(y, dy);
-            lastY = y;
-          }
-          ticking = false;
-        }
-
-        function schedule(){ if (!ticking){ ticking = true; requestAnimationFrame(onScroll); } }
-
-        window.addEventListener('scroll', schedule, { passive:true });
-        ['wheel','keydown','touchmove','touchstart'].forEach(evt => {
-          window.addEventListener(evt, schedule, { passive:true });
-        });
-
-        // 초기 상태 보정
-        requestAnimationFrame(() => applyState(window.pageYOffset || 0, 0));
-      })();
-    });
-
-    // 기존 closeMenu를 아래로 교체
-function closeMenu(){
-  document.body.classList.remove('nav-open');
-  document.body.classList.remove('nav-show-ul');
-}
-// 기존 openMenu를 아래로 교체
-function openMenu(){
-  document.body.classList.add('nav-open');
-  document.body.classList.add('nav-show-ul'); // 오버레이 즉시 표시
-  document.body.classList.remove('nav-hidden');
-}
-
-    // Load rose cursor (with smooth, natural follow motion using a light spring)
+    // [커서] 장미 커서 로드 및 스프링 모션 적용
     (function loadCursor(){
       const root = document.getElementById('cursor-placeholder');
       if (!root) return;
 
       function initRoseCursor(){
-        // Accept only injected cursor element inside #cursor-placeholder
+        // #cursor-placeholder 내부에 주입된 커서 요소만 사용
         const el = document.querySelector('#cursor-placeholder .cursor-dot, #cursor-placeholder .rose-cursor, #cursor-placeholder [data-rose-cursor]');
         if (!el) return false;
         if (el.dataset.raf === 'on') return true; // prevent double-binding
 
-        // Base styles
+        // 기본 스타일
         el.style.pointerEvents = 'none';
         el.style.position = 'fixed';
         el.style.zIndex = '99999';
@@ -664,17 +262,29 @@ function openMenu(){
         el.style.left = '0px';
         el.style.top  = '0px';
 
-        // Target (mouse) and current (proxy) positions + velocities
+        // 사용자가 모션 축소를 선호하면 즉시 추종 모드로 전환
+        try{
+          const prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (prefersReduce){
+            document.addEventListener('mousemove', (e)=>{
+              el.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+              el.style.opacity = '1';
+            }, { passive:true });
+            return true;
+          }
+        }catch(_){ /* ignore */ }
+
+        // 마우스 좌표(목표)와 현재 좌표(프록시) 및 속도
         let x = 0, y = 0;   // target (mouse)
         let px = 0, py = 0; // current (proxy)
         let vx = 0, vy = 0; // velocity (for spring)
-        // Spring parameters → natural, less “laggy” than simple lerp
-        const STIFF = 0.18; // spring stiffness (higher = snappier)
-        const DAMP  = 0.85; // damping factor 0~1 (lower = more bouncy)
+        // 스프링 파라미터 (더 빠르고 경쾌하게)
+        const STIFF = 0.20; // 강성 ↑ : 더 빨리 목표를 따라감
+        const DAMP  = 0.88; // 감쇠 ↓ : 반응성 향상(잔떨림은 적당히 유지)
 
-        // Anchor / Hotspot support
-        // - If data-hotspot-x / data-hotspot-y (px) are provided, use them directly.
-        // - Otherwise, fall back to data-anchor-x / data-anchor-y (0~1 ratio; default 0.5, 0.5).
+        // 앵커/핫스팟 지원
+        // - data-hotspot-x / data-hotspot-y(px)가 있으면 그대로 사용
+        // - 없으면 data-anchor-x / data-anchor-y(0~1 비율, 기본 0.5, 0.5) 사용
         const hotspotX = parseFloat(el.getAttribute('data-hotspot-x'));
         const hotspotY = parseFloat(el.getAttribute('data-hotspot-y'));
 
@@ -683,7 +293,7 @@ function openMenu(){
         if (!isFinite(anchorX)) anchorX = 0.5;
         if (!isFinite(anchorY)) anchorY = 0.5;
 
-        // Optional per-page pixel calibration to exactly match the OS cursor
+        // 선택: 페이지별 픽셀 보정(시스템 커서 위치와 정확히 맞춤)
         const calXAttr = parseFloat(el.getAttribute('data-cal-x'));
         const calYAttr = parseFloat(el.getAttribute('data-cal-y'));
         const CALX = Number.isFinite(calXAttr) ? calXAttr : 0;
@@ -696,30 +306,35 @@ function openMenu(){
           const h = r.height || el.offsetHeight || 0;
           offX = isFinite(hotspotX) ? hotspotX : w * anchorX;
           offY = isFinite(hotspotY) ? hotspotY : h * anchorY;
-          // Keep the visual anchor (hotspot) locked to the real mouse even when scaling
+          // 스케일 변화에도 시각적 앵커(핫스팟)가 실제 마우스 위치에 고정되도록
           el.style.transformOrigin = `${offX}px ${offY}px`;
         };
         updateOffset();
         try { new ResizeObserver(updateOffset).observe(el); } catch(_) {}
 
-        // Click scale animation (composed, not concatenated to transform string)
+        // 클릭 시 스케일 애니메이션(변환 문자열에 덧붙이지 않고 구성)
         let targetScale = 1;
         let scale = 1;
 
-        function raf(){
-          // critically-damped-ish spring integration
-          vx += (x - px) * STIFF;  vx *= DAMP;  px += vx;
-          vy += (y - py) * STIFF;  vy *= DAMP;  py += vy;
+        let lastTs = performance.now();
+        function raf(now){
+          const dt = Math.min((now - lastTs) / 16.67, 3); // 60fps 기준 배수, 과도한 프레임 간격 상한
+          lastTs = now;
 
-          // ease the scale
-          scale += (targetScale - scale) * 0.25;
+          // 시간 기반 스프링 적분 (dt 반영)
+          const dampPow = Math.pow(DAMP, dt);
+          vx = (vx + (x - px) * STIFF * dt) * dampPow;
+          vy = (vy + (y - py) * STIFF * dt) * dampPow;
+          px += vx; py += vy;
 
-          // Compose transform once per frame
+          // 스케일 점진 변화 (조금 더 빠르게)
+          scale += (targetScale - scale) * 0.28 * dt;
+
           el.style.transform = `translate3d(${(px - offX + CALX)}px, ${(py - offY + CALY)}px, 0) scale(${scale})`;
           requestAnimationFrame(raf);
         }
 
-        // Track mouse (start at the first position to avoid jump)
+        // 마우스 추적(초기 점프 방지를 위해 첫 지점부터 시작)
         document.addEventListener('mousemove', (e) => {
           x = e.clientX; y = e.clientY;
           if (el.dataset.started !== '1'){
@@ -729,27 +344,19 @@ function openMenu(){
           }
         }, { passive: true });
 
-        // Click feedback
+        // 클릭 피드백
         document.addEventListener('mousedown', () => { targetScale = 0.94; }, { passive: true });
         document.addEventListener('mouseup',   () => { targetScale = 1;    }, { passive: true });
 
-        // Hide when leaving window; reset on re-enter
-        document.addEventListener('mouseleave', () => { el.style.opacity = '0'; }, { passive:true });
-        document.addEventListener('mouseenter', (e) => {
-          updateOffset();
-          x = px = e.clientX; y = py = e.clientY;
-          vx = vy = 0;
-          el.style.opacity = '1';
-        }, { passive:true });
-
-        // Quick dev helper to fine-tune calibration live
+      
+        // 보정값을 빠르게 조절하기 위한 개발 보조 함수
         window.__setRoseCursorCal = (x = 0, y = 0) => {
           el.setAttribute('data-cal-x', String(x));
           el.setAttribute('data-cal-y', String(y));
         };
 
         el.dataset.raf = 'on';
-        requestAnimationFrame(raf);
+        requestAnimationFrame((t)=>{ lastTs = t; raf(t); });
         return true;
       }
 
@@ -765,6 +372,7 @@ function openMenu(){
         .catch(err => console.error('Cursor load failed:', err));
     })();
 
+    // [푸터] HTML 주입
     // 푸터 HTML 로드
     fetch('../../2.PageElement/Footer/Footer.html')
       .then(res => res.text())
@@ -772,7 +380,8 @@ function openMenu(){
         document.getElementById('footer-placeholder').innerHTML = data;
       });
 
-    // Scroll to Top button functionality
+    // [UI] 맨 위로 버튼(노출/숨김 + 스무스 스크롤)
+    // 맨 위로 버튼 동작
     document.addEventListener("DOMContentLoaded", function () {
       const scrollBtn = document.getElementById("scrollTopBtn");
       window.addEventListener("scroll", function () {
@@ -782,89 +391,119 @@ function openMenu(){
           scrollBtn.style.display = "none";
         }
       });
+      // 스무스 스크롤로 최상단 이동 함수 노출
       window.scrollToTop = function () {
         window.scrollTo({ top: 0, behavior: "smooth" });  
       };
+    });
 
-      // === Mobile menu toggle (phones) ===
-      (function mobileMenuToggle(){
-        const btn = document.getElementById('mobileMenuBtn');
-        const backdrop = document.getElementById('nav-backdrop');
-        if (!btn || !backdrop) return;
+    // [네비게이션] 스크롤 방향 감지 → 숨김/표시
+      (function bindHideNavOnScroll(){
+        const THRESH = 6;   // 조금 더 내려가야 반응 (불필요한 깜빡임 방지)
+        const TOPSAFE = 48;  // 상단에서는 좀 더 오래 보이게
 
-        // Helper to close
-        function closeMenu(){ document.body.classList.remove('nav-open'); }
-        function openMenu(){ 
-          document.body.classList.add('nav-open'); 
-          // ensure nav is revealed even if previously hidden due to scroll
-          document.body.classList.remove('nav-hidden');
+        let lastY = window.pageYOffset || 0;
+        let ticking = false;
+
+        function applyState(y, dy){
+          if (y <= TOPSAFE){
+            document.body.classList.remove('nav-hidden');
+            return;
+          }
+          if (Math.abs(dy) < THRESH) return;
+          if (dy > 0){
+            document.body.classList.add('nav-hidden');   // 아래로 → 숨김
+          }else{
+            document.body.classList.remove('nav-hidden'); // 위로 → 표시
+          }
         }
 
-        btn.addEventListener('click', function(e){
-          e.preventDefault();
-          if (document.body.classList.contains('nav-open')) closeMenu(); else openMenu();
+        function onScroll(){
+          const y = window.pageYOffset || 0;
+          const dy = y - lastY;
+          lastY = y;
+          if (!ticking){
+            ticking = true;
+            requestAnimationFrame(() => { applyState(y, dy); ticking = false; });
+          }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive:true });
+        ['wheel','touchmove','touchstart','keydown'].forEach(evt => {
+          window.addEventListener(evt, onScroll, { passive:true });
         });
 
-        backdrop.addEventListener('click', function(){ closeMenu(); });
-
-        // Close menu when navigating away via any nav link
-        document.addEventListener('click', function(e){
-          const a = e.target.closest('#nav-placeholder a');
-          if (a){ closeMenu(); }
-        }, { passive:true });
-
-        // Auto-reset on resize to desktop
-        window.addEventListener('resize', function(){
-          const isPhone = window.matchMedia('(max-width: 768px)').matches;
-          if (!isPhone){ closeMenu(); }
-        }, { passive:true });
+        // 초기 상태
+        requestAnimationFrame(() => applyState(window.pageYOffset || 0, 0));
       })();
 
-      // === Mobile: category chip must be tapped to reveal header UL (mobile only) ===
-      (function mobileShowUlOnChipTap(){
-        const chipsWrap = document.getElementById('mobile-cats');
-        if (!chipsWrap) return;
+    // [라우팅] 화면 너비 기준 페이지 전환 // (>=640: Main.html, <=639: Main-mobile.html)
+    (function responsiveRoute(){
+      const DESKTOP_BASE = 'Main';          // 확장자 없이 베이스명으로 비교
+      const MOBILE_BASE  = 'Main-mobile';   // 확장자 없이 베이스명으로 비교
 
-        function openUl(){
-          // ensure header is visible and fixed
-          document.body.classList.add('nav-open');
-          document.body.classList.add('nav-show-ul');
-          document.body.classList.remove('nav-hidden');
-        }
-        function closeUl(){
-          document.body.classList.remove('nav-show-ul');
-        }
+      function isOnBase(base){
+        const p = location.pathname.toLowerCase().replace(/\/+$/, '');
+        const b = base.toLowerCase().replace(/\.html?$/, '');
+        return (
+          p.endsWith('/'+b) ||            // .../Main
+          p.endsWith('/'+b+'.html') ||    // .../Main.html
+          p.endsWith('/'+b+'/') ||        // .../Main/
+          p.endsWith('/'+b+'/index.html') // .../Main/index.html
+        );
+      }
+      function goToBase(base){
+        const baseDir = location.pathname.replace(/[^/]*$/, '');
+        const file = base + '.html';
+        location.replace(baseDir + file);
+      }
 
-        // First tap on any chip opens the header UL instead of navigating
-        chipsWrap.addEventListener('click', function(e){
-          const chip = e.target.closest('a.cat-chip');
-          if (!chip) return;
-          const isPhone = window.matchMedia('(max-width: 768px)').matches;
-          if (!isPhone) return;
+      const mq = window.matchMedia('(max-width: 639px)');
+      let ticking = false;
+      function check(){
+        if (ticking) return; ticking = true;
+        requestAnimationFrame(() => {
+          const isMobile = mq.matches;
+          if (isMobile && isOnBase(DESKTOP_BASE)) goToBase(MOBILE_BASE);
+          else if (!isMobile && isOnBase(MOBILE_BASE)) goToBase(DESKTOP_BASE);
+          ticking = false;
+        });
+      }
 
-          if (!document.body.classList.contains('nav-show-ul')){
-            e.preventDefault(); // intercept first tap
-            openUl();
-          }
-          // If UL already open, allow normal navigation
-        }, { passive:false });
-
-        // Close when backdrop tapped or when clicking any header nav link
-        const backdrop = document.getElementById('nav-backdrop');
-        if (backdrop){ backdrop.addEventListener('click', closeUl); }
-        document.addEventListener('click', function(e){
-          const navLink = e.target.closest('#nav-placeholder nav a');
-          if (navLink){ closeUl(); }
-        }, { passive:true });
-
-        // Reset state when moving to desktop
-        window.addEventListener('resize', function(){
-          if (!window.matchMedia('(max-width: 768px)').matches){
-            closeUl();
-          }
-        }, { passive:true });
-      })();
-    });
+      if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
+      else if (mq.addListener) mq.addListener(check);
+      window.addEventListener('resize', check, {passive:true});
+      window.addEventListener('orientationchange', check, {passive:true});
+      document.addEventListener('DOMContentLoaded', check);
+      setTimeout(check, 120);
+      // iOS/Safari에서 주소창 숨김 등으로 viewport 보고가 늦는 경우 대비한 킥 타이머(약 2초)
+      let kicks = 0;
+      const kickTimer = setInterval(()=>{ kicks++; check(); if (kicks > 10) clearInterval(kickTimer); }, 200);
+      // 페이지 복귀/가시성 변화에도 재검사
+      window.addEventListener('pageshow', check, {passive:true});
+      document.addEventListener('visibilitychange', check, {passive:true});
+    })();
   </script>
+</script>
+<script>
+// [모바일 네비] Home/Main 링크는 항상 데스크탑 메인으로 고정
+(function fixMobileHomeLink(){
+  function toDesktop(file){
+    const baseDir = location.pathname.replace(/\/[^/]*$/, '');
+    return (baseDir + '/' + file).replace(/\/\/{2,}/g, '/');
+  }
+  function remap(){
+    document.querySelectorAll('a[href]').forEach(a => {
+      const text = (a.textContent || '').trim().toLowerCase();
+      const href = (a.getAttribute('href') || '').trim().toLowerCase();
+      if (text === 'home' || /\b(main|home|index)\b/.test(text) || /main|home|index/.test(href)){
+        a.setAttribute('href', toDesktop('Main.html'));
+      }
+    });
+  }
+  document.addEventListener('DOMContentLoaded', remap);
+  setTimeout(remap, 200); // 동적 네비 주입 지연 대비
+})();
+</script>
 </body>
 </html>

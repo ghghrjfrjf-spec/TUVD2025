@@ -14,6 +14,7 @@
       --red:#ff3b3b; --red-600:#ff4d4d; --card:#121212; --card-2:#151515;
       --max:1280px;
     }
+    
     /* ===== Tob_nav: Project/Guest identical header style ===== */
     /* Sticky container + hide-on-scroll */
     #nav-placeholder{
@@ -228,6 +229,31 @@
     /* Responsive */
     @media (max-width: 1000px){ .info-grid{grid-template-columns:1fr 1fr} .split{grid-template-columns:1fr} .venue{grid-template-columns:1fr} .cards{grid-template-columns:1fr 1fr} .stats{grid-template-columns:1fr 1fr} .hero{padding:96px 0 56px} .hero .title{font-size:40px} }
     @media (max-width: 520px){ .info-grid{grid-template-columns:1fr} .cards{grid-template-columns:1fr} .stats{grid-template-columns:1fr 1fr} .hero .title{font-size:34px} }
+
+    /* ========== 지도교수 사진 갤러리 ========== */
+    .faculty{ padding:56px 0; }
+    .faculty .container{ max-width:var(--max); margin:0 auto; padding:0 24px; }
+    .faculty h2{ font-size:28px; margin:0 0 16px; font-weight:900; color:#fff !important; }
+
+    .faculty-gallery{ list-style:none; margin:0; padding:0; display:grid; gap:16px; grid-template-columns:repeat(4, minmax(0,1fr)); }
+    @media (max-width:1000px){ .faculty-gallery{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
+    @media (max-width:720px){ .faculty-gallery{ grid-template-columns:repeat(2, minmax(0,1fr)); } }
+    @media (max-width:480px){ .faculty-gallery{ grid-template-columns:1fr; } }
+
+    .faculty-card{ position:relative; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; aspect-ratio:1/1; display:flex; align-items:flex-end; }
+    .faculty-card img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* 이미지가 없을 때(로드 실패 시) 카드에 플레이스홀더 */
+    .faculty-card.no-photo{ background:linear-gradient(180deg, #1b1b1b, #101010); }
+    .faculty-card.no-photo::before{ content:attr(data-name); position:absolute; inset:auto 12px 46px 12px; color:#fff; font-weight:900; font-size:18px; letter-spacing:.3px; opacity:.9; }
+
+    .faculty-card .cap{ position:relative; z-index:1; width:100%; padding:10px 12px; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border-top:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:8px; }
+    .faculty-card .cap .dot{ width:8px; height:8px; border-radius:999px; background:var(--red); flex:none; }
+    .faculty-card .cap .name{ color:#fff; font-weight:800; letter-spacing:.2px; }
+
+    /* 살짝 떠오르는 효과 */
+    .faculty-card{ transition: transform .22s ease, box-shadow .22s ease; }
+    .faculty-card:hover{ transform: translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.28); }
   </style>
 </head>
 <body>
@@ -253,6 +279,8 @@
         </div>
       </div>
     </section>
+
+    
 
     <!-- Info stripe -->
     <section class="stripe">
@@ -311,7 +339,9 @@
       <div class="container venue">
         <div class="panel">
           <h2>오시는 길</h2>
-          <p class="lead">서울시 OO구 OO로 00, OO대학교 디자인관 전시홀 A<br>지하철 2호선 OO역 3번 출구 도보 7분</p>
+          <p class="lead">부산광역시 해운대구 센텀동로 57 부산디자인진흥원<br>지하철 2호선 센텀시티역 2,4번 출구 도보 10분
+            2번출구 : 스타벅스앞 - 좌회전 - 300m직진 
+            4번출구 : 대우트럼프월드센텀앞 - 우회전 - 300m직진</p>
           <div class="cta-row">
             <a class="btn" href="#">네이버 지도</a>
             <a class="btn outline" href="#">카카오맵</a>
@@ -325,19 +355,79 @@
     <section class="section">
       <div class="container panel">
         <h2>Thanks to</h2>
-        <p class="lead" style="margin-bottom:8px">지도교수 · 운영스태프 · 도슨트 여러분께 감사드립니다.</p>
+        <p class="lead" style="margin-bottom:8px">지도교수 · 운영스태프 .</p>
         <div class="people">
           <div class="people-group">
             <h3 class="people-title"><span class="pill">Advisor</span> 지도교수님</h3>
             <ul class="people-list">
-              <li>정원준 교수님</li>
-              <li>김재익 교수님</li>
-              <li>박규태 교수님</li>
-              <li>장경숙 교수님</li>
-              <li>김정은 교수님</li>
-              <li>원종윤 교수님</li>
-              <li>선정훈 교수님</li>
-            </ul>
+              <!-- ========== 지도교수 사진 갤러리 ========== -->
+    <section class="faculty">
+      <div class="container">
+        <ul class="faculty-gallery">
+          <!--
+            예시 파일명: 정원준.jpg, 김재익.jpg, 박규태.jpg, 장경숙.jpg, 김정은.jpg, 원종윤.jpg, 선정훈.jpg
+            👉 파일명이 다르면 아래 src만 해당 파일명으로 바꿔주세요.
+            👉 이미지 로드에 실패하면 자동으로 "이름" 플레이스홀더가 보입니다.
+          -->
+          <li class="faculty-card" data-name="정원준" data-filename="정원준교수님.jpeg">
+            <img loading="lazy" alt="정원준 교수님" src="" onerror="handleFacultyError(this)" />
+            <div class="cap">
+              <span class="dot"></span>
+              <span class="name">정원준 교수님</span>
+            </div>
+          </li>
+
+          <li class="faculty-card" data-name="김재익" data-filename="김재익교수님1.png">
+            <img loading="lazy" alt="김재익 교수님" src="" onerror="handleFacultyError(this)" />
+            <div class="cap">
+              <span class="dot"></span>
+              <span class="name">김재익 교수님</span>
+            </div>
+          </li>
+
+          <li class="faculty-card" data-name="박규태" data-filename="박규태교수님.jpeg">
+            <img loading="lazy" alt="박규태 교수님" src="" onerror="handleFacultyError(this)" />
+            <div class="cap">
+              <span class="dot"></span>
+              <span class="name">박규태 교수님</span>
+            </div>
+          </li>
+
+          <li class="faculty-card" data-name="장경숙" data-filename="장경숙교수님.jpeg">
+            <img loading="lazy" alt="장경숙 교수님" src="" onerror="handleFacultyError(this)" />
+            <div class="cap">
+              <span class="dot"></span>
+              <span class="name">장경숙 교수님</span>
+            </div>
+          </li>
+
+          <li class="faculty-card" data-name="김정은">
+            <img loading="lazy" alt="김정은 교수님" src="" onerror="handleFacultyError(this)" />
+            <div class="cap">
+              <span class="dot"></span>
+              <span class="name">김정은 교수님</span>
+            </div>
+          </li>
+
+          <li class="faculty-card" data-name="원종윤" data-filename="원종윤교수님.jpeg">
+            <img loading="lazy" alt="원종윤 교수님" src="" onerror="handleFacultyError(this)" />
+            <div class="cap">
+              <span class="dot"></span>
+              <span class="name">원종윤 교수님</span>
+            </div>
+          </li>
+
+          <li class="faculty-card" data-name="선정훈" data-filename="선정훈교수님.jpeg">
+            <img loading="lazy" alt="선정훈 교수님" src="" onerror="handleFacultyError(this)" />
+            <div class="cap">
+              <span class="dot"></span>
+              <span class="name">선정훈 교수님</span>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </section>
           </div>
           <div class="cta-row">
             <a class="btn outline" href="#">Operation</a>
@@ -524,5 +614,97 @@
     });
   </script>
 
-  <!-- Firebase SDK --></body>
+  <!-- Firebase SDK -->
+<script>
+  // Faculty image loader with fallback extensions + encoded folder
+  (function(){
+    // Try multiple BASE folder variants to be robust to spacing/encoding differences
+    const BASES = [
+      '../../1.Picture/3.%20Graduate_Propasser/',
+      '../../1.Picture/3. Graduate_Propasser/',
+      '../../1.Picture/3.Graduate_Propasser/'
+    ];
+    const EXTS = ['.jpg', '.JPG', '.jpeg', '.png', '.webp'];
+    const SUFFIXES = ["", "교수", "교수님", " 교수", " 교수님"]; // common suffix variants
+
+    function stemsFor(img){
+      const specified = (img.closest('.faculty-card')?.getAttribute('data-filename') || '').trim();
+      if (specified){
+        // If explicit filename (with or without extension) is provided, prefer it
+        const dot = specified.lastIndexOf('.');
+        const base = dot > 0 ? specified.slice(0, dot) : specified;
+        return [base];
+      }
+      const raw = (img.closest('.faculty-card')?.getAttribute('data-name') || '').trim();
+      const noSpace = raw.replace(/\s+/g, '');
+      // Try raw, raw+suffix, no-space, no-space+suffix
+      const variants = new Set();
+      SUFFIXES.forEach(s => { variants.add(raw + s); variants.add(noSpace + s); });
+      return Array.from(variants);
+    }
+
+    function nextCandidate(img){
+      const idxBase = +(img.getAttribute('data-base-idx') || '0');
+      const idxExt  = +(img.getAttribute('data-ext-idx')  || '0');
+      const idxStem = +(img.getAttribute('data-stem-idx') || '0');
+      const stems = stemsFor(img);
+      const stemRaw = stems[Math.min(idxStem, stems.length - 1)];
+      const stemEnc = encodeURIComponent(stemRaw);
+      const base = BASES[Math.min(idxBase, BASES.length - 1)];
+      const ext  = EXTS[Math.min(idxExt,  EXTS.length  - 1)];
+      const candidate = base + (idxBase === 0 ? stemRaw : stemEnc) + ext;
+      return { candidate, stemsLen: stems.length };
+    }
+
+    function advancePointer(img){
+      let idxBase = +(img.getAttribute('data-base-idx') || '0');
+      let idxExt  = +(img.getAttribute('data-ext-idx')  || '0');
+      let idxStem = +(img.getAttribute('data-stem-idx') || '0');
+      const stemsLen = stemsFor(img).length;
+      idxExt++;
+      if(idxExt >= EXTS.length){ idxExt = 0; idxStem++; }
+      if(idxStem >= stemsLen){ idxStem = 0; idxBase++; }
+      img.setAttribute('data-base-idx', String(idxBase));
+      img.setAttribute('data-ext-idx',  String(idxExt));
+      img.setAttribute('data-stem-idx', String(idxStem));
+      return (idxBase < BASES.length);
+    }
+
+    function tryNext(img){
+      const idxBase = +(img.getAttribute('data-base-idx') || '0');
+      if(idxBase >= BASES.length){
+        img.remove();
+        img.closest('.faculty-card')?.classList.add('no-photo');
+        return;
+      }
+      const { candidate } = nextCandidate(img);
+      img.src = candidate;
+    }
+
+    window.handleFacultyError = function(img){
+      if(!advancePointer(img)){
+        img.remove();
+        img.closest('.faculty-card')?.classList.add('no-photo');
+        return;
+      }
+      tryNext(img);
+    };
+
+    document.addEventListener('DOMContentLoaded', function(){
+      document.querySelectorAll('.faculty-card img').forEach(img => {
+        // Initialize pointers
+        img.setAttribute('data-base-idx', '0');
+        img.setAttribute('data-ext-idx',  '0');
+        img.setAttribute('data-stem-idx', '0');
+
+        const current = img.getAttribute('src') || '';
+        if(!current || /3\.\sGraduate_Propasser\//.test(current)){
+          img.removeAttribute('src');
+          tryNext(img);
+        }
+      });
+    });
+  })();
+</script>
+</body>
 </html>

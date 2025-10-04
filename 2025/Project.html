@@ -358,18 +358,6 @@
     h1.project-title{ color:#fff !important; }
    
 </style>
-    /* ===== Gallery image progressive reveal ===== */
-    .project-gridcard img[data-lazy]{
-      opacity: 0;            /* start invisible */
-      filter: blur(8px);     /* subtle blur until loaded */
-      transition: opacity .35s ease, filter .35s ease;
-      will-change: opacity, filter;
-      contain: content;
-    }
-    .project-gridcard img.is-loaded{
-      opacity: 1;
-      filter: blur(0);
-    }
 </head>
 <body>
     <!-- Global Navigation -->

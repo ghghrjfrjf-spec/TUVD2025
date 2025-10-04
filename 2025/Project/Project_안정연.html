@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>개인프로젝트페이지</title><!-- 🔺 스타일시트 연결 -->
-  <link rel="stylesheet" href="../2.PageElement/Tob_nav/Tob_nav.css" />
-  <link rel="stylesheet" href="../2.PageElement/Footer/Footer.css" />
-  <link rel="stylesheet" href="../2.PageElement/Cursor/cursor.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
 
   <style>
     /* Hide-on-scroll for Tob_nav */
@@ -20,7 +20,7 @@
     body { background: var(--bg); color: var(--text); font-family: 'Pretendard', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
 
     /* prevent overlap with sticky nav */
-    .nav-spacer { height: 72px; }
+    .nav-spacer { height:72px; }
     .hero { display:block; width:100%; height:auto; margin-top: 0; }
     @media (max-width: 900px) { .nav-spacer { height: 56px; } }
 
@@ -110,7 +110,7 @@
   <!-- 🔺 네비게이션 영역 -->
   <div id="nav-placeholder"></div>
   <div class="nav-spacer"></div>
-  <img class="hero" src="/Before_Work3/8.ProjectSection/안정연/3번->디자인 소개-100.jpg" alt="메인">
+  <img class="hero" src="../../8.ProjectSection/안정연/3번->디자인 소개-100.jpg" alt="메인">
   <section class="marquee" aria-label="프로젝트 미리보기">
     <div class="marquee-track">
       <!-- Set A -->
@@ -159,7 +159,7 @@ function initHeaderHideOnScroll() {
 
 // 📜 JavaScript
   // 네비게이션 HTML 로드 (주입 + 경로 정규화 + 스크롤시 숨김)
-fetch('../2.PageElement/Tob_nav/Tob_nav.html')
+fetch('../../2.PageElement/Tob_nav/Tob_nav.html')
   .then(res => res.text())
   .then(html => {
     const root = document.getElementById('nav-placeholder');
@@ -174,20 +174,23 @@ fetch('../2.PageElement/Tob_nav/Tob_nav.html')
     // Fix logo image(s) inside nav for this page depth
     const logoImg = root.querySelector('#tuvd-logo, .tob-nav__logo img, .logo img');
     if (logoImg) {
-      logoImg.src = '../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png';
+      logoImg.src = '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png';
       logoImg.alt = '장미로고';
-      logoImg.onerror = function(){ this.onerror=null; this.src = '../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png'; };
+      logoImg.onerror = function(){ this.onerror=null; this.src = '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png'; };
     }
 
     // Normalize any image paths that incorrectly start with ../../ inside the injected fragment
     root.querySelectorAll('img[src]').forEach(img => {
-      const s = img.getAttribute('src');
-      if (s.startsWith('../../1.Picture/')) img.setAttribute('src', s.replace('../../1.Picture/', '../1.Picture/'));
-      if (s.startsWith('../../2.PageElement/')) img.setAttribute('src', s.replace('../../2.PageElement/', '../2.PageElement/'));
+      const s = img.getAttribute('src') || '';
+      // If injected fragment used one-level-up paths, promote them to two-levels-up for this page depth
+      if (s.startsWith('../1.Picture/')) img.setAttribute('src', s.replace('../1.Picture/', '../../1.Picture/'));
+      if (s.startsWith('../2.PageElement/')) img.setAttribute('src', s.replace('../2.PageElement/', '../../2.PageElement/'));
+      // Also normalize accidental absolute root paths
+      if (s.startsWith('/Before_Work3/')) img.setAttribute('src', s.replace('/Before_Work3/', '../../'));
     });
 
     // Normalize nav links to this depth
-    const BASE = '../3.PageExhibition';
+    const BASE = '../../3.PageExhibition';
     const map = {
       about: `${BASE}/2.AboutPage/About.html`,
       project: `${BASE}/3.ProjectPage/project2.html`,
@@ -225,15 +228,16 @@ fetch('../2.PageElement/Tob_nav/Tob_nav.html')
   });
 
 // 푸터 HTML 로드 (주입 + 경로 정규화)
-fetch('../2.PageElement/Footer/Footer.html')
+fetch('../../2.PageElement/Footer/Footer.html')
   .then(res => res.text())
   .then(html => {
     const foot = document.getElementById('footer-placeholder');
     foot.innerHTML = html;
     foot.querySelectorAll('img[src]').forEach(img => {
-      const s = img.getAttribute('src');
-      if (s.startsWith('../../1.Picture/')) img.setAttribute('src', s.replace('../../1.Picture/', '../1.Picture/'));
-      if (s.startsWith('../../2.PageElement/')) img.setAttribute('src', s.replace('../../2.PageElement/', '../2.PageElement/'));
+      const s = img.getAttribute('src') || '';
+      if (s.startsWith('../1.Picture/')) img.setAttribute('src', s.replace('../1.Picture/', '../../1.Picture/'));
+      if (s.startsWith('../2.PageElement/')) img.setAttribute('src', s.replace('../2.PageElement/', '../../2.PageElement/'));
+      if (s.startsWith('/Before_Work3/')) img.setAttribute('src', s.replace('/Before_Work3/', '../../'));
     });
   });
   </script>

@@ -484,26 +484,5 @@
       document.addEventListener('visibilitychange', check, {passive:true});
     })();
   </script>
-</script>
-<script>
-// [모바일 네비] Home/Main 링크는 항상 데스크탑 메인으로 고정
-(function fixMobileHomeLink(){
-  function toDesktop(file){
-    const baseDir = location.pathname.replace(/\/[^/]*$/, '');
-    return (baseDir + '/' + file).replace(/\/\/{2,}/g, '/');
-  }
-  function remap(){
-    document.querySelectorAll('a[href]').forEach(a => {
-      const text = (a.textContent || '').trim().toLowerCase();
-      const href = (a.getAttribute('href') || '').trim().toLowerCase();
-      if (text === 'home' || /\b(main|home|index)\b/.test(text) || /main|home|index/.test(href)){
-        a.setAttribute('href', toDesktop('Main.html'));
-      }
-    });
-  }
-  document.addEventListener('DOMContentLoaded', remap);
-  setTimeout(remap, 200); // 동적 네비 주입 지연 대비
-})();
-</script>
 </body>
 </html>

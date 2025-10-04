@@ -357,7 +357,19 @@
     /* Force Project title color on this page */
     h1.project-title{ color:#fff !important; }
    
-  </style>
+</style>
+    /* ===== Gallery image progressive reveal ===== */
+    .project-gridcard img[data-lazy]{
+      opacity: 0;            /* start invisible */
+      filter: blur(8px);     /* subtle blur until loaded */
+      transition: opacity .35s ease, filter .35s ease;
+      will-change: opacity, filter;
+      contain: content;
+    }
+    .project-gridcard img.is-loaded{
+      opacity: 1;
+      filter: blur(0);
+    }
 </head>
 <body>
     <!-- Global Navigation -->
@@ -1007,4 +1019,63 @@
     /* removed redundant ensureHideShowNavHard block */
    </script>
 </body>
+<script>
+// === Image loading performance optimization for Project gallery ===
+(function optimizeProjectImages(){
+  const gallery = document.querySelector('.project-gallery');
+  if (!gallery) return;
+  const imgs = Array.from(gallery.querySelectorAll('img'));
+
+  // Mark all gallery images as lazy by default
+  imgs.forEach(img => {
+    // Add progressive reveal styling hook
+    img.setAttribute('data-lazy', '1');
+    // Native lazy-loading & async decode
+    if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+    img.setAttribute('decoding', 'async');
+    // Default lower priority until near viewport
+    img.setAttribute('fetchpriority', 'low');
+    // Fade-in when loaded
+    if (!img.__boundLoad){
+      img.addEventListener('load', () => { img.classList.add('is-loaded'); }, { once:true });
+      img.__boundLoad = true;
+    }
+  });
+
+  // Eager-load top N images above the fold (improve initial paint)
+  const ABOVE_THE_FOLD = 6; // tune as needed
+  imgs.slice(0, ABOVE_THE_FOLD).forEach(img => {
+    img.setAttribute('loading', 'eager');
+    img.setAttribute('fetchpriority', 'high');
+  });
+
+  // Upgrade priority as images approach the viewport (preload-in-view)
+  const io = ('IntersectionObserver' in window) ? new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting || entry.intersectionRatio > 0){
+        const el = entry.target;
+        // Upgrade request priority right before it becomes visible
+        el.setAttribute('fetchpriority', 'high');
+        io.unobserve(el);
+      }
+    });
+  }, { root: null, rootMargin: '600px 0px', threshold: 0.01 }) : null;
+
+  if (io){ imgs.forEach(img => io.observe(img)); }
+
+  // Preload a few critical images to speed LCP (insert into <head>)
+  (function preloadCritical(){
+    const head = document.head || document.getElementsByTagName('head')[0];
+    imgs.slice(0, 3).forEach(img => {
+      const href = img.currentSrc || img.getAttribute('src');
+      if (!href) return;
+      const link = document.createElement('link');
+      link.setAttribute('rel', 'preload');
+      link.setAttribute('as', 'image');
+      link.setAttribute('href', href);
+      head.appendChild(link);
+    });
+  })();
+})();
+</script>
 </html>

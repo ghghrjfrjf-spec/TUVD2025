@@ -1,1 +1,19 @@
 /api/guestbook  /.netlify/functions/guestbook  200
+# 2025 루트로 들어오면 메인으로
+/2025        /2025/Main.html   200
+
+# 확장자 없는 경로 -> 같은 이름의 .html (대소문자 정확히 맞는 파일만 작동)
+/2025/:page  /2025/:page.html  200
+
+# 자주 쓰는 소문자 경로를 실제 파일로 강제 매핑 (대/소문자 섞임 해결)
+ /2025/home       /2025/Main.html      200
+ /2025/main       /2025/Main.html      200
+ /2025/about      /2025/About.html     200
+ /2025/project    /2025/Project.html   200
+ /2025/designer   /2025/Designer.html  200
+ /2025/guest      /2025/Guest.html     200
+ /2025/design-mobile   /2025/Design-mobile.html   200
+ /2025/about-mobile    /2025/About-mobile.html    200
+ /2025/main-mobile     /2025/Main-mobile.html     200
+ /2025/project-mobile  /2025/Project-mobile.html  200
+ /2025/guest-mobile    /2025/Guest-mobile.html    200

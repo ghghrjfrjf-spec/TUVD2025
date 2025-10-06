@@ -371,19 +371,43 @@
     }
     .message .edit-form textarea { min-height: 80px; resize: vertical; }
 
-    /* Guest message text: clamp to 2 lines by default, no inner scroll */
+    /* Guest message text: scroll inside the card (no page jump) */
     .message p.msg-text {
-      line-height: 1.45;
+      line-height: 1.5;
       margin: 0;
       color: #000;
       background: transparent;
       font-size: 1rem;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      line-clamp: 2;
-      max-height: calc(1.45em * 2);
       white-space: normal;
+      max-height: 160px;      /* visible area */
+      overflow-y: auto;       /* vertical scroll for long text */
+      -webkit-overflow-scrolling: touch; /* smooth on iOS */
+    }
+    /* 모바일(800px 이하)에서 guestbook-title 중앙정렬 및 레이아웃 정돈 */
+    @media (max-width: 800px) {
+      .guestbook-title {
+        text-align: center;
+        margin: 0 auto 1.5rem auto;
+        font-size: 3rem;
+      }
+      .guestbook-container {
+        flex-direction: column;
+        gap: 20px;
+        padding: 16px;
+      }
+      .guestbook-left {
+        position: static;   /* 스티키 해제 */
+        top: auto;
+        align-items: center;
+      }
+      .guestbook-left form { 
+        width: 100%;
+        max-width: 520px;
+      }
+      .guestbook-right { 
+        width: 100%;
+        max-width: 100%;
+      }
     }
 
 
@@ -1008,11 +1032,3 @@
   </script>
 </body>
 </html>
-    /* 모바일(800px 이하)에서 guestbook-title 중앙정렬 및 스타일 적용 */
-    @media (max-width: 800px) {
-      .guestbook-title {
-        text-align: center;
-        margin: 0 auto 1.5rem auto;
-        font-size: 3rem;
-      }
-    }

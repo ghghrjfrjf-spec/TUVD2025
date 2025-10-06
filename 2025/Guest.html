@@ -558,12 +558,11 @@
             <button id="toggleWriteForm">✍ 글쓰기</button>
           </div>
           <div class="guestbook-form-container hidden">
-            <form id="guestForm" name="guestbook" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+            <form id="guestForm" name="guestbook" method="POST" data-netlify="true">
               <input type="hidden" name="form-name" value="guestbook" />
               <input type="text" id="name" name="name" placeholder="To" required />
               <textarea id="message" name="message" placeholder="메시지를 남겨주세요" required></textarea>
               <input type="text" id="from" name="from" placeholder="From" required />
-              <input class="hidden" type="text" name="bot-field" tabindex="-1" autocomplete="off" />
               <button type="submit">남기기</button>
             </form>
           </div>

@@ -4,82 +4,331 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Designer Page</title>
-  <link rel="stylesheet" href="Designer.css"/>
   <!-- 공통 요소 CSS (상대경로) -->
   <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css">
   <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css">
   <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css">
   <style>
-    /* 네비게이션: 스크롤 내리면 숨기고, 올리면 나타나도록 (레이아웃 점프 방지) */
-    #nav-placeholder { position: sticky; top: 0; z-index: 1000; transition: transform .3s ease; }
-    body.nav-hidden #nav-placeholder { transform: translateY(-110%); }
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap');
 
-    /* 메인 컨텐츠 상/하 여백 (푸터와 간격 포함) */
-    .main { padding-top: 62px; padding-bottom: 160px; }
-    /* nav height spacer so content never hides under the header */
-    .nav-spacer { height: 72px; }
-    @media (max-width: 900px){ .nav-spacer { height: 56px; } }
+  /* ===== Reset & Base ===== */
+  *{margin:0; padding:0; box-sizing:border-box;}
+  html, body{height:100%;}
+  body{ font-family:'Pretendard', sans-serif; background:#000; color:#fff; }
 
-    /* 좌우 동일 여백 래퍼 */
-    .gallery-wrap { max-width: 1280px; margin: 0 auto; padding: 0 60px; }
+  /* ===== Variables ===== */
+  :root{
+    --page-max:1280px;
+    --page-pad:60px;
+    --cols:5;            /* grid columns */
+    --card-w:200px;      /* card width (reduced from 220px) */
+    --gap:24px;          /* grid gap: 보기 좋은 기본 간격 */
+    --card-pad:10px;     /* inner padding */
+    --line: rgba(255,255,255,.12);
+  }
 
-    /* 변수 기반 레이아웃: 카드 폭·간격·열 수를 한 번에 제어 */
-    :root{ --cols:5; --card-w:220px; --gap:12px; }
+  /* ===== Top Nav (sticky, blur) ===== */
+  #nav-placeholder{ position:sticky; top:0; z-index:1000; transition:transform .3s ease; }
+  body.nav-hidden #nav-placeholder{ transform: translateY(-110%); }
+  #nav-placeholder header{
+    background: rgba(0,0,0,.72);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    border-bottom:1px solid var(--line);
+    width:100%; height:90px; padding:0 60px 0 59px;
+  }
+  #nav-placeholder header .header-inner{ max-width:1600px; margin:0 auto; padding:0; }
+  #nav-placeholder nav{ display:flex; align-items:center; justify-content:center; height:100%; }
+  #nav-placeholder nav ul{ display:flex; gap:48px; list-style:none; }
+  #nav-placeholder header a{ font-size:14px; font-weight:700; letter-spacing:.2px; color:#fff; text-decoration:none; padding:8px 0; }
+  #nav-placeholder header a:hover{ color:#ff3b3b; }
+  #nav-placeholder header a.is-active{ color:#ff4d4d; }
+  #nav-placeholder header .logo img{ max-height:38px; transform: translateY(2px); }
+  #nav-placeholder .logo .logo-main, #nav-placeholder .logo .logo-sub{ font-size:15px !important; }
+  /* disable dropdowns */
+  #nav-placeholder nav ul li ul, #nav-placeholder .dropdown, #nav-placeholder .submenu, #nav-placeholder .has-dropdown > ul, #nav-placeholder .has-children > ul{ display:none !important; }
 
-    .studentstaff-grid{
-      display:grid;
-      grid-template-columns: repeat(var(--cols), var(--card-w));
-      gap: var(--gap);
-      justify-content:start;
-      /* 그리드 총폭을 타이틀/보조네비의 선과 동일하게 고정 → 이미지가 선 밖으로 안 벗어남 */
-      width: calc(var(--cols) * var(--card-w) + (var(--cols) - 1) * var(--gap));
+  /* ===== Page Structure ===== */
+  .nav-spacer{ height:64px; }
+  @media (max-width:900px){ .nav-spacer{ height:56px; } }
+  .main{ padding:62px 0 160px; }
+  .gallery-wrap{ max-width:var(--page-max); margin:0 auto; padding:0 var(--page-pad); }
+
+  /* ===== Designer Toolbar (line style) ===== */
+  .designer-toolbar{
+    padding:40px 0 30px;               /* 좌우 패딩 제거 → 내부 .row가 그리드 폭과 정확히 일치 */
+    margin:0 auto;
+    max-width:var(--page-max);
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .designer-toolbar .row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width: calc(var(--cols) * var(--card-w) + (var(--cols) - 1) * var(--gap)); /* 그리드와 동일 폭 */
+    margin: 0 auto; /* 그리드처럼 중앙 정렬 */
+    margin-top: 25px;
+  }
+  .designer-tabs{ display:flex; gap:18px; align-items:center; }
+  .designer-tabs .tab{ font-size:18px; font-weight:500; color:#aaa; cursor:pointer; }
+  .designer-tabs .tab.is-active{ font-weight:800; color:red; }
+  .designer-tabs .sep{
+    font-size:18px;
+    font-weight:500;
+    color:#aaa;
+    pointer-events:none;
+    user-select:none;
+    display:inline-block;
+    margin:0 20px;    /* visual space around the vertical bar */
+    line-height:1;
+  }
+
+  /* ===== Title ===== */
+h1.project-title{
+  font-size:5rem;
+  color:#ffffff;
+  font-family:'Playfair Display', serif;
+  width:100%;                 /* 항상 전체 폭 차지 */
+  max-width:none;             /* 어떤 상한도 두지 않음 */
+  margin:0 auto 4rem;         /* 좌우 자동 → 중앙 정렬 */
+  text-align:center;          /* 텍스트 중앙 */
+  display:block;
+  clear:both;                 /* 주변 플로트 영향 제거(예방) */
+}
+
+  /* ===== Grid & Cards ===== */
+  .studentstaff-grid{
+    display:grid;
+    grid-template-columns: repeat(var(--cols), var(--card-w));
+    gap: var(--gap);
+    justify-content:start;
+    /* 그리드 총폭을 타이틀/보조네비의 선과 동일하게 고정 → 이미지가 선 밖으로 안 벗어남 */
+    width: calc(var(--cols) * var(--card-w) + (var(--cols) - 1) * var(--gap));
+    margin: 0 auto; /* center the fixed-width grid */
+
+  }
+  .student-card{
+    display:block;
+    width: var(--card-w);
+    margin-top: 10px;
+    text-align:center;
+    text-decoration:none;
+    color:inherit;
+    cursor:pointer;
+    /* 성능 최적화: content-visibility는 브라우저별 렌더 지연에 오버헤드가 있어 제거 */
+    /* contain-intrinsic-size도 제거 (사파리에서 과도한 페인트 유발 가능) */
+  }
+  .student-card img {
+    width: 100%;
+    height: 240px; /* 썸네일 높이 소폭 축소 → 페인트/디코드 비용 절감 */
+    object-fit: cover; /* 넘치는 부분은 잘라내기 */
+    border-radius: 8px;
+  }
+  .student-card img.is-loading{
+    filter: blur(6px);            /* 살짝 더 또렷하게 */
+    transform: translateZ(0);
+  }
+  .student-card img.is-loaded{
+    filter: none;
+    transition: filter .25s ease;
+  }
+  .student-card br{ display:none; }
+  .student-card strong, .student-card span{ display:block; text-align:left; margin:0; }
+  .student-card strong {
+    display:flex;
+    align-items:baseline;
+    gap:5px;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid rgba(255,255,255,0.18);
+    font-weight:700;
+    font-size:18px;
+    line-height:1.22;
+    color:#fff;
+  }
+  .student-card strong .role-badge{
+    font-size:12px;
+    font-weight:600;
+    color:rgba(255,255,255,0.6);
+    letter-spacing:.15px;
+    white-space:nowrap;
+  }
+  .student-card span {
+    margin-top:6px;                        /* 한글-영문 간격 살짝 좁힘 */
+    font-weight:400;
+    color:#ccc;
+    font-size:14px;
+    letter-spacing:.2px;
+  }
+  .student-card strong .name {
+    color: #fff;
+  }
+  .student-card span.english, .student-card span:not([class]) {
+    color: #ccc;
+  }
+
+  /* ===== Alpha nav/section ===== */
+  .alpha-nav{ position:sticky; top:84px; z-index:10; display:flex; gap:8px; flex-wrap:wrap; padding:12px 0 16px; margin-top:14px; background:rgba(0,0,0,.6); backdrop-filter:blur(4px); border-bottom:1px solid rgba(255,255,255,.06); }
+  .alpha-nav a{ display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:999px; text-decoration:none; font-weight:700; font-size:14px; color:#aaa; border:1px solid rgba(255,255,255,.18);} 
+  .alpha-nav a:hover{ color:#fff; border-color:#747474; }
+ 
+  /* 기존 .alpha-title 교체 */
+  .alpha-title{
+    margin:48px 0 14px;                    /* 제목-그리드 수직 리듬 정렬 */
+    font-size:20px;
+    font-weight:900;
+    color:red;
+    scroll-margin-top:140px;
+    display:block;             /* 블록 보장 */
+    text-align:left;           /* 왼쪽 정렬 */
+    padding-left:0 !important; /* 여백 일치 */
+    box-sizing:content-box;    /* 폭 계산 안정화 */
+  } .alpha-nav, .alpha-title, .team-nav, .team-title{
+    width: calc(var(--cols) * var(--card-w) + (var(--cols) - 1) * var(--gap));
+    margin-left:auto; margin-right:auto; /* 그리드 기준선과 라인 일치 */
+  }
+
+  /* Staff 섹션 내부: 제목과 그리드를 동일 폭/정렬로 고정 */
+  .team-group > .team-title,
+  .team-group > .studentstaff-grid{
+    width: calc(var(--cols) * var(--card-w) + (var(--cols) - 1) * var(--gap));
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ===== Staff Team nav/section ===== */
+  .team-nav{ position:sticky; top:84px; z-index:10; display:flex; gap:8px; flex-wrap:wrap; padding:12px 0 16px; margin-top:14px; background:rgba(0,0,0,.6); backdrop-filter:blur(4px); border-bottom:1px solid rgba(255,255,255,.06); }
+  .team-nav a{ display:inline-flex; align-items:center; justify-content:center; height:32px; padding:0 12px; border-radius:10px; text-decoration:none; font-weight:700; font-size:14px; color:#aaa; border:1px solid rgba(255,255,255,.18);} 
+  .team-nav a:hover{ color:red; border-color:#747474; }
+
+  /* 기존 .team-title 교체 */
+  h2.team-title{
+    margin:48px 0 14px;                    /* Staff 섹션도 동일 리듬 */
+    font-size:20px;
+    font-weight:600;
+    color:rgb(255, 42, 42);
+    scroll-margin-top:140px;
+    display:block;             /* 블록 보장 */
+    text-align:left;           /* 왼쪽 정렬 명시 */
+    padding-left:0 !important; /* 숨은 좌측 패딩 제거 */
+    box-sizing:content-box;    /* 폭 계산이 패딩 영향 안 받게 */
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width:1200px){ :root{ --cols:4; --card-w:200px; --gap:20px; } }
+  @media (max-width:980px){  :root{ --cols:3; --card-w:180px; --gap:16px; } .student-card{ width:180px; } }
+  @media (max-width:680px){  :root{ --cols:2; --card-w:160px; --gap:12px; } .student-card{ width:160px; } }
+  @media (max-width:420px){  :root{ --cols:1; --card-w:88%; --gap:10px; } .student-card{ width:88%; max-width:320px; } .studentstaff-grid, .alpha-nav, .alpha-title{ width:min(88%,320px); }
+    .team-nav, .team-title{ width: min(88%, 320px); }
+    .team-group > .team-title,
+    .team-group > .studentstaff-grid{ width: min(88%, 320px); }
+    .nav-spacer{ height:56px; }
+  }
+
+   /* === Tob_nav 룩&필 통일 오버라이드 (이 파일 전용) === */
+   #nav-placeholder{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: transform 0.6s ease-in-out; /* 시간 늘리고 부드러운 곡선 적용 */
+      will-change: transform;
     }
-    .student-card{ display:block; width: var(--card-w); text-align:center; text-decoration:none; color:inherit; cursor:pointer; }
-    .student-card img{ width:100%; height:auto; display:block; border-radius:8px; }
 
-    /* 이미지 아래 캡션(이름/영문) 정렬 및 구분선 - 이미지 폭과 동일하게 */
-    .student-card br{ display:none; }
-    .student-card strong, .student-card span{ display:block; text-align:left; margin:0; }
-    .student-card strong{ margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.18); font-weight:700; }
-    .student-card span{ margin-top:4px; font-weight:400; color:#bbb; }
-
-    /* 반응형: 열 수/카드폭/간격을 변수만 바꿔 동일 정렬 유지 */
-    @media (max-width:1200px){ :root{ --cols:4; --card-w:220px; --gap:12px; } }
-    @media (max-width:980px){  :root{ --cols:3; --card-w:200px; --gap:12px; } }
-    @media (max-width:680px){  :root{ --cols:2; --card-w:160px; --gap:10px; } }
-    @media (max-width:420px){
-      :root{ --cols:1; --card-w:88%; --gap:10px; }
-      .student-card{ max-width:320px; }
-      /* 단일열에서도 선/그리드 폭을 동일 기준으로 */
-      .studentstaff-grid, .alpha-nav, .alpha-title{ width: min(88%, 320px); }
+    /* 헤더 비주얼: 반투명 블랙 + 블러 + 얇은 구분선 */
+    #nav-placeholder header{
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      box-sizing: border-box;
+      width: 100%;
+      height: 90px;
+      padding-left: 59px;
+      padding-right: 60px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+      transition: transform .38s cubic-bezier(.22,.61,.36,1), box-shadow .24s ease;
     }
 
-    /* 초성 보조 네비 + 그룹 타이틀 */
-    .alpha-nav{ position: sticky; top: 84px; z-index: 10; display:flex; gap:8px; flex-wrap:wrap; padding:12px 0 16px; background:rgba(0,0,0,0.6); backdrop-filter: blur(4px); border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .alpha-nav a{ display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:999px; text-decoration:none; font-weight:700; font-size:14px; color:#aaa; border:1px solid rgba(255,255,255,0.18);} 
-    .alpha-nav a:hover{ color:#fff; border-color:#fff; }
-    /* JS에서 오프셋 스크롤을 처리하므로 아래 값은 폴백용 */
-    .alpha-title{ margin:48px 0 12px; font-size:20px; font-weight:900; color:#ff3b3b; scroll-margin-top: 140px; }
-
-    /* 초성 보조 네비/타이틀 폭 = (열수×카드폭) + (간격×(열수-1)) → 이미지 그리드와 라인 일치 */
-    .alpha-nav, .alpha-title{
-      width: calc(var(--cols) * var(--card-w) + (var(--cols) - 1) * var(--gap));
-      margin-left:0; margin-right:0;
-    }
-    /* 단일열 구간은 카드 폭 퍼센트/최대폭 규칙에 맞춰 조정 */
-    @media (max-width:420px){
-      .alpha-nav, .alpha-title{ width: min(88%, 320px); }
+    /* 로고 크기 조정 */
+    #nav-placeholder header .logo img{
+      max-height: 38px;
+      transform: translateY(2px);
     }
 
-    /* ── Designer 상단 탭 영역: Project 페이지와 동일 폭/패딩/라인 ── */
-    .designer-toolbar{ padding: 40px 60px 30px; margin: 0 auto; max-width: 1280px; border-bottom: 1px solid #ddd; }
-    .designer-toolbar .row{ display:flex; justify-content: space-between; align-items: center; }
-    .designer-tabs{ display:flex; gap:16px; align-items:center; }
-    .designer-tabs [data-filter]{ font-size:18px; cursor:pointer; }
-    .designer-tabs [data-filter="all"]{ font-weight:700; color:red; }
-    .designer-tabs [data-filter="staff"]{ font-weight:500; color:#aaa; }
+    #nav-placeholder .logo .logo-main{ font-size: 15px !important; }
+    #nav-placeholder .logo .logo-sub { font-size: 15px !important; }
+
+
+    /* 네비 링크 타이포그래피 */
+    #nav-placeholder header a{
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      text-decoration: none;
+      color: #fff;
+      padding: 8px 0;
+    }
+    
+    #nav-placeholder header a:hover{ color:#ff3b3b; }
+    #nav-placeholder header a.is-active{ color:#ff4d4d; font-weight:700; }
+
+    #nav-placeholder nav ul{
+      display: flex;
+      align-items: center;       /* 세로 가운데 정렬 */
+      gap: 47px;                 /* Project 페이지 간격과 동일하게 */
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 스크롤 시 네비게이션 숨김 */
+    body.nav-hidden #nav-placeholder,
+    body.nav-hidden #nav-placeholder > header {
+      transform: translateY(-300%) !important;
+    }
+    
+
+    footer, .site-footer, #footer{
+      position:relative !important;
+      width:100%;
+      background:#000 !important;
+      border-top:1px solid var(--line);
+      z-index: 1;
+      margin-top: 100px !important; /* 하단과 약간의 여백 추가 */
+    }
+
+    /* 상단 이동 버튼 */
+    #scrollTopBtn {
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:99999; /* 맨 위 */
+      display:flex;               /* ▼ 보여질 때 flex 정렬 적용 */
+      align-items:center;
+      justify-content:center;
+      width:44px; height:44px;
+      border-radius:30px;
+      background:#000;
+      color:#fff; font-weight:900; letter-spacing:.3px;
+      box-shadow:0 6px 18px rgba(0,0,0,.35);
+      cursor:pointer;
+      opacity:0;                  /* 처음엔 안 보이게 */
+      visibility:hidden;          /* 접근성/포커스 방지 */
+      transition: opacity .25s ease, visibility .25s ease, box-shadow .25s ease, color .25s ease;
+    }
+    #scrollTopBtn.show {          /* 스크롤 조건 충족 시 노출 */
+      opacity:1;
+      visibility:visible;
+    }
+    #scrollTopBtn:hover {
+      color:#ff3b3b; 
+      box-shadow:0 6px 22px rgba(255,59,59,.25); 
+    }
+    
   </style>
 </head>
+
 <body>
   <!-- 네비게이션 HTML 삽입 -->
   <div id="nav-placeholder"></div>
@@ -90,107 +339,111 @@
     <div class="designer-toolbar">
       <div class="row">
         <div class="designer-tabs">
-          <span data-filter="all">All</span>
-          <span id="tab-staff" data-filter="staff">Staff</span>
+    <span id="tab-all" data-filter="all" class="tab is-active">All</span>
+    <span class="sep" aria-hidden="true">|</span>
+    <span id="tab-staff" data-filter="staff" class="tab">Staff</span>
+  </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="sort-asc"  style="padding: 10px 18px; border: 1px solid #424242; background-color: #000; font-size: 14px; font-weight: 600; color: rgb(159, 159, 159); border-radius: 6px; cursor: pointer;" aria-pressed="false">오름차순</button>
+          <button id="sort-desc" style="padding: 10px 18px; border: 1px solid #424242; background-color: #000; font-size: 14px; font-weight: 600; color: rgb(159, 159, 159); border-radius: 6px; cursor: pointer;" aria-pressed="false">내림차순</button>
         </div>
-        <div></div>
       </div>
     </div>
     <div class="gallery-wrap" id="staff">
       <div class="studentstaff-grid">
-    <div class="student-card" data-group="staff">
-        <img src="../../1.Picture/1.%2027th%20Graduation/Profile/김사율.jpg" alt="김사율">
-        <strong>김사율</strong><br />
-        <span>Kim Sayul</span>
+    <div class="student-card" data-group="staff" data-team="전시팀">
+        <img src="../../1.Picture/1.%2027th%20Graduation/Profile/김사율.jpg" alt="김준성">
+        <strong><span class="name">김사율</span><span class="role-badge">전시팀</span></strong>
+        <span>KIM SAYUL</span>
       </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="편집팀" data-lead="true">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/김준성.jpg" alt="김준성">
-        <strong>김준성</strong><br />
+        <strong><span class="name">김준성</span><span class="role-badge">편집팀 팀장</span></strong>
         <span>KIM JUNSEONG</span>
       </div>
         
-      <div class="student-card" data-group="staff">
+    <div class="student-card" data-group="staff" data-team="홍보팀">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/김혜림.jpg" alt="김혜림">
-        <strong>김혜림</strong><br />
-        <span>kim hyerim</span>
+        <strong><span class="name">김혜림</span><span class="role-badge">홍보팀</span></strong>
+        <span>KIM HYERIM</span>
       </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="편집팀">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/김혜연.png" alt="김혜연">
-        <strong>김혜연</strong><br />
-        <span>kim hyeyeon</span>
+        <strong><span class="name">김혜연</span><span class="role-badge">편집팀</span></strong>
+        <span>KIM HYEYEON</span>
       </div>
 
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/남예주.png" alt="남예주">
         <strong>남예주</strong><br />
-        <span>[영문 이름]</span>
+        <span>NAM YE JU</span>
       </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="홍보팀" data-role="부위원장">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/박은제.jpg" alt="박은제">
-        <strong>박은제</strong><br />
+        <strong><span class="name">박은제</span><span class="role-badge">부위원장</span></strong>
         <span>PARK EUN JE</span>
       </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="홍보팀">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/배유진.jpg" alt="배유진">
-        <strong>배유진</strong><br />
+        <strong><span class="name">배유진</span><span class="role-badge">홍보팀</span></strong>
         <span>BAE YUJIN</span>
       </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="총무&감사">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/안예진.jpg" alt="안예진">
-        <strong>안예진</strong><br />
+        <strong><span class="name">안예진</span><span class="role-badge">총무</span></strong>
         <span>AN YEJIN</span>
       </div>
 
-     <a class="student-card" data-group="staff" href="../7.DeisgnerSection/안정연.html" aria-label="안정연 상세 페이지로 이동">
+     <div class="student-card" data-group="staff" data-team="홍보팀" data-lead="true">
        <img src="../../1.Picture/1.%2027th%20Graduation/Profile/안졍연.jpg" alt="안정연">
-       <strong>안정연</strong><br />
+       <strong><span class="name">안정연</span><span class="role-badge">홍보팀 팀장</span></strong>
        <span>AN JEONG YEON</span>
-     </a>
+     </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="전시팀">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/이다현.jpg" alt="이다현">
-        <strong>이다현</strong><br />
-        <span>RHIE DAHYEON</span>
+        <strong><span class="name">이다현</span><span class="role-badge">전시팀</span></strong>
+        <span>LEE DAHYEON</span>
       </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="전시팀">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/이혜주.jpg" alt="이혜주">
-        <strong>이혜주</strong><br />
+        <strong><span class="name">이혜주</span><span class="role-badge">전시팀</span></strong>
         <span>LEE HYEJU</span>
       </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="편집팀">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/지영현.jpg" alt="지영현">
-        <strong>지영현</strong><br />
+        <strong><span class="name">지영현</span><span class="role-badge">편집팀</span></strong>
         <span>JI YEONGHYEON</span>
       </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="편집팀">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/차은지.jpg" alt="차은지">
-        <strong>차은지</strong><br />
+        <strong><span class="name">차은지</span><span class="role-badge">편집팀</span></strong>
         <span>CHA EUNJI</span>
       </div>
 
-      <div class="student-card" data-group="staff">
-        <img src="../../1.Picture/1.%2027th%20Graduation/Profile/최자연.jpg" alt="최자연">
-        <strong>최자연</strong><br />
+      <div class="student-card" data-group="staff" data-team="전시팀" data-role="위원장">
+        <img src="/1.Picture/1. 27th Graduation/Profile/최자연.jpg" alt="최자연">
+        <strong><span class="name">최자연</span><span class="role-badge">위원장</span></strong>
         <span>CHOI JAYEON</span>
       </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="총무&감사">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/홍화정.jpg" alt="홍화정">
-        <strong>홍화정</strong><br />
-        <span>HWAJUNG HONG</span>
+        <strong><span class="name">홍화정</span><span class="role-badge">감사</span></strong>
+        <span>HONG HWAJUNG</span>
       </div>
 
-      <div class="student-card" data-group="staff">
+      <div class="student-card" data-group="staff" data-team="편집팀">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/황만규.jpg" alt="황만규">
-        <strong>황만규</strong><br />
+        <strong><span class="name">황만규</span><span class="role-badge">편집팀</span></strong>
         <span>HWANG MANGYU</span>
       </div>
 
@@ -218,24 +471,18 @@
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/라영강.jpg" alt="라영강">
         <strong>라영강</strong><br />
-        <span>LUO YONGKANG</span>
-      </div>
-      <div class="student-card">
-        <img src="../../1.Picture/1.%2027th%20Graduation/Profile/량역운.jpg" alt="량역운">
-        <strong>량역운</strong><br />
-        <span>LIANG YIYUN</span>
+        <span>LUO YONGKANG / 罗永康</span>
       </div>
     
-      
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/배주아.jpg" alt="배주아">
         <strong>배주아</strong><br />
-        <span>BAEJUA</span>
+        <span>BA EJUA</span>
       </div>
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/범상우.jpeg" alt="범상우">
         <strong>범상우</strong><br />
-        <span>FAN XIANGYU</span>
+        <span>FAN XIANGYU / 范祥宇</span>
       </div>
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/서은선.jpg" alt="서은선">
@@ -245,7 +492,7 @@
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/설가심.jpg" alt="설가심">
         <strong>설가심</strong><br />
-        <span>XUE KEXIN</span>
+        <span>XUE KEXIN / 薛可心</span>
       </div>
      
       <div class="student-card">
@@ -256,7 +503,7 @@
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/왕몽연.jpg" alt="왕몽연">
         <strong>왕몽연</strong><br />
-        <span>WANG MENGRAN</span>
+        <span>WANG MENGRAN / 王梦然</span>
       </div>
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/윤민주.jpg" alt="윤민주">
@@ -282,7 +529,7 @@
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/이주영.jpg" alt="이주영">
         <strong>이주영</strong><br />
-        <span>LEE JU YEONG</span>
+        <span>LEE JUYEONG</span>
       </div>
       
       <div class="student-card">
@@ -293,27 +540,27 @@
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/장수아.jpg" alt="장수아">
         <strong>장수아</strong><br />
-        <span>[영문 이름]</span>
+        <span>JANG SOOAH</span>
       </div>
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/장주아.jpg" alt="장주아">
         <strong>장주아</strong><br />
-        <span>JANG JU AH</span>
+        <span>JANG JUAH</span>
       </div>
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/장청청.jpg" alt="장청청">
         <strong>장청청</strong><br />
-        <span>ZHANG QINGQING</span>
+        <span>ZHANG QINGQING / 张晴晴</span>
       </div>
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/전우곤.jpg" alt="전우곤">
         <strong>전우곤</strong><br />
-        <span>[영문 이름]</span>
+        <span>JEON WOOGON / 田雨坤</span>
       </div>
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/주하우.jpg" alt="주하우">
         <strong>주하우</strong><br />
-        <span>[영문 이름]</span>
+        <span>ZHOU HANGYU / 周航宇</span>
       </div>
       
       <div class="student-card">
@@ -334,7 +581,7 @@
       <div class="student-card">
         <img src="../../1.Picture/1.%2027th%20Graduation/Profile/한패달.jpg" alt="한패달">
         <strong>한패달</strong><br />
-        <span>HAN PEIDA</span>
+        <span>HAN PEIDA / 韩沛达</span>
       </div>
 
       <div class="student-card">
@@ -343,14 +590,20 @@
         <span>HWANG YEBIN</span>
       </div>
       
+      
 
+</div><!-- .studentstaff-grid -->
+</div><!-- .gallery-wrap -->
+</div><!-- .main -->
 
-</div>
-      <!-- 🔻 푸터 영역 -->
-   <div id="footer-placeholder"></div>
+<!-- 🔻 푸터 영역 -->
+<div id="footer-placeholder"></div>
 
-   <!-- 📜 JavaScript -->
-   <script>
+<!-- 🔼 상단 이동 버튼 -->
+<button id="scrollTopBtn" title="맨 위로" aria-label="맨 위로 이동">▲</button>
+
+<!-- 📜 JavaScript -->
+<script>
      // 네비게이션 HTML 삽입 (로고 경로/링크 정규화)
      fetch('../../2.PageElement/Tob_nav/Tob_nav.html')
        .then(res => res.text())
@@ -490,6 +743,130 @@
         })
         .catch(err => console.error('Cursor load failed:', err));
     })();
+    // === 이미지 로딩 최적화: 우선순위/지연 로딩/블러업 (강화판) ===
+    (function optimizeImages(){
+      const imgs = Array.from(document.querySelectorAll('.student-card img'));
+      if (!imgs.length) return;
+
+      // ---------- 0) 헬퍼: width/height 속성 보정 ----------
+      function applyIntrinsicSize(img){
+        if (!img.hasAttribute('width'))  img.setAttribute('width',  String(200));
+        if (!img.hasAttribute('height')) img.setAttribute('height', String(240));
+      }
+
+      // ---------- 1) 퍼스트 뷰 포커스: 첫 섹션(또는 첫 그리드)의 상단 6장 Preload ----------
+      (function preloadFirstRow(){
+        const head = document.head || document.getElementsByTagName('head')[0];
+        if (!head) return;
+        // 첫번째 그리드에서 위쪽의 6개만 선별
+        const firstGrid = document.querySelector('.studentstaff-grid');
+        const firstBatch = firstGrid ? Array.from(firstGrid.querySelectorAll('img')).slice(0, 6) : imgs.slice(0, 6);
+        firstBatch.forEach(img => {
+          const href = img.getAttribute('src');
+          if (!href) return;
+          const link = document.createElement('link');
+          link.setAttribute('rel', 'preload');
+          link.setAttribute('as', 'image');
+          link.setAttribute('href', href);
+          // 같은 자원 중복 preload 방지
+          if (![...head.querySelectorAll('link[rel="preload"][as="image"]')].some(l=>l.getAttribute('href')===href)){
+            head.appendChild(link);
+          }
+          // 즉시 렌더 우선
+          img.loading = 'eager';
+          img.setAttribute('fetchpriority', 'high');
+        });
+      })();
+
+      // ---------- 2) 기본 속성 세팅 ----------
+      imgs.forEach((img) => {
+        applyIntrinsicSize(img);
+        img.decoding = 'async';
+        img.classList.add('is-loading');
+
+        // 초기 우선순위: 기본은 lazy/low, 1행(최초 8장)만 eager/high
+        img.loading = 'lazy';
+        img.setAttribute('fetchpriority', 'low');
+
+        // 가벼운 onload 핸들러만 사용 (decode()는 CPU 스파이크를 유발할 수 있음)
+        if (img.complete) {
+          img.classList.remove('is-loading');
+          img.classList.add('is-loaded');
+        } else {
+          img.addEventListener('load', ()=>{
+            img.classList.remove('is-loading');
+            img.classList.add('is-loaded');
+          }, {once:true});
+          img.addEventListener('error', ()=>{
+            img.classList.remove('is-loading');
+          }, {once:true});
+        }
+      });
+
+      // ---------- 3) 인터섹션 옵저버로 조기 로딩/우선순위 상향 ----------
+      const io = ('IntersectionObserver' in window) ? new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if (entry.isIntersecting) {
+            io.unobserve(entry.target); // 브라우저 기본 lazy에 맡김
+          }
+        });
+      }, {
+        root: null,
+        rootMargin: '400px 0px',  // 근접 범위 축소 → 관찰 수/콜백 빈도 감소
+        threshold: 0
+      }) : null;
+
+      if (io){
+        imgs.forEach(img => io.observe(img));
+      }
+    })();
+    // === 정렬(오름/내림) : 초성 그룹별 이름 기준 ===
+    (function enableDesignerSorting(){
+      const btnAsc  = document.getElementById('sort-asc');
+      const btnDesc = document.getElementById('sort-desc');
+      if (!btnAsc || !btnDesc) return;
+
+      const collator = new Intl.Collator('ko', { usage:'sort', sensitivity:'base', numeric:true });
+      let current = null; // 'asc' | 'desc' | null
+
+      function setActive(order){
+        const on  = (el)=>{ el.style.borderColor = '#ff4d4d'; el.style.color = '#ff4d4d'; el.setAttribute('aria-pressed','true'); };
+        const off = (el)=>{ el.style.borderColor = '#424242';  el.style.color = 'rgb(159,159,159)'; el.setAttribute('aria-pressed','false'); };
+        off(btnAsc); off(btnDesc);
+        if (order === 'asc') on(btnAsc);
+        if (order === 'desc') on(btnDesc);
+      }
+
+      function sortSectionGrid(grid, order){
+        const cards = Array.from(grid.querySelectorAll('.student-card'));
+        cards.sort((a,b)=>{
+          const an = (a.querySelector('strong')?.textContent || '').trim();
+          const bn = (b.querySelector('strong')?.textContent || '').trim();
+          const c = collator.compare(an, bn);
+          return order === 'desc' ? -c : c;
+        });
+        const frag = document.createDocumentFragment();
+        cards.forEach(c => frag.appendChild(c));
+        grid.appendChild(frag);
+      }
+
+      function apply(order){
+        // 모든 섹션(.alpha-group, .team-group) 내 그리드에 대해 정렬 적용
+        document.querySelectorAll('.alpha-group .studentstaff-grid, .team-group .studentstaff-grid').forEach(grid => sortSectionGrid(grid, order));
+        current = order; setActive(order);
+      }
+
+      function reset(){ current = null; setActive(null); }
+
+      // 버튼 바인딩 (토글 끄기 지원)
+      btnAsc.addEventListener('click',  () => { current === 'asc'  ? reset() : apply('asc');  });
+      btnDesc.addEventListener('click', () => { current === 'desc' ? reset() : apply('desc'); });
+
+      // 탭(ALL/Staff) 변경 후에도 현재 정렬 유지
+      const reapply = ()=>{ if (current) apply(current); };
+      document.getElementById('tab-all')?.addEventListener('click',  ()=> setTimeout(reapply, 0));
+      document.getElementById('tab-staff')?.addEventListener('click', ()=> setTimeout(reapply, 0));
+    })();
 
     // 푸터 HTML 삽입
     fetch('../../2.PageElement/Footer/Footer.html')
@@ -500,10 +877,18 @@
       });
 
       
-    // --- ALL 뷰: 초성(ㄱ~ㅎ) 보조 네비 + 그룹 묶기 ---
-    (function buildAlphabetGroups(){
+    // --- 데이터 원본 보존 & 뷰 빌더 (ALL: 초성 / STAFF: 팀) ---
+    (function initDesignerViews(){
       const wrap = document.querySelector('.gallery-wrap');
       if (!wrap) return;
+
+      // 페이지 로드 시 DOM에 있던 원본 카드들 수집 (flatten)
+      const originalCards = Array.from(wrap.querySelectorAll('.student-card'));
+      if (!originalCards.length) return;
+
+      // 외부에서도 다시 그릴 수 있게 전역 참조 제공
+      window.__cardsSource = originalCards;
+
       const ALPH = ['ㄱ','ㄴ','ㄹ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅎ'];
       const CHOSEONG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 
@@ -513,119 +898,183 @@
         if (code >= 0xAC00 && code <= 0xD7A3){
           const idx = Math.floor((code - 0xAC00) / 28 / 21);
           const cs = CHOSEONG[idx];
-          // ㄲ, ㄸ, ㅃ, ㅆ, ㅉ 은 각각 기본 초성으로 매핑
           const mapped = ({'ㄲ':'ㄱ','ㄸ':'ㄷ','ㅃ':'ㅂ','ㅆ':'ㅅ','ㅉ':'ㅈ'}[cs]) || cs;
-          // 제외된 초성(ㄴ, ㄷ, ㅁ, ㅋ, ㅍ 등)은 'ㅇ' 그룹으로 재배치
           return (ALPH.includes(mapped) ? mapped : 'ㅇ');
         }
-        // 한글이 아니면 ㅇ 그룹로 묶기(임시 규칙)
         return 'ㅇ';
       }
 
-      // 기존 카드 모으기
-      const originalCards = Array.from(wrap.querySelectorAll('.student-card'));
-      if (!originalCards.length) return;
+      function clearAndMakeNav(containerClass){
+        wrap.innerHTML = '';
+        const nav = document.createElement('div');
+        nav.className = containerClass;
+        wrap.appendChild(nav);
+        return nav;
+      }
 
-      // 기존 내용 비우고 보조 네비 생성
-      wrap.innerHTML = '';
-      const nav = document.createElement('div');
-      nav.className = 'alpha-nav';
-      ALPH.forEach(c => {
-        const a = document.createElement('a');
-        a.href = `#sec-${c}`; a.textContent = c; nav.appendChild(a);
-      });
-      wrap.appendChild(nav);
-
-      // ⬇️ 초성 보조 네비 클릭 시, 상단 고정 네비+보조네비 높이만큼 오프셋을 두고 스크롤
-      nav.addEventListener('click', function(e){
-        const t = e.target;
-        if (!(t && t.tagName === 'A')) return;
-        e.preventDefault();
-        const hash = (t.getAttribute('href') || '').replace('#','');
-        const sec = document.getElementById(`sec-${hash}`) || document.getElementById(hash);
-        if (!sec) return;
-
-        // 기준 타이틀 요소(섹션 내 .alpha-title) 위치 계산
-        const titleEl = sec.querySelector('.alpha-title') || sec;
-        const titleY = titleEl.getBoundingClientRect().top + window.pageYOffset;
-
-        // 상단 고정 헤더(#nav-placeholder 내부 header) + 보조 네비(.alpha-nav) 실제 높이 합산
-        const headerEl = document.querySelector('#nav-placeholder header');
-        const headerH = headerEl ? headerEl.offsetHeight : 0;
-        const alphaNavEl = document.querySelector('.alpha-nav');
-        const alphaNavH = alphaNavEl ? alphaNavEl.offsetHeight : 0;
-
-        const extraGap = 12; // 시각적 여백
-        const targetY = Math.max(0, titleY - headerH - alphaNavH - extraGap);
-
-        window.scrollTo({ top: targetY, behavior: 'smooth' });
-        // 주소 해시 동기화 (뒤로 가기 동작 자연스럽게)
-        try { history.pushState(null, '', `#sec-${hash}`); } catch(_) {}
-      });
-
-      // 그룹핑
-      const groups = {}; ALPH.forEach(c=>groups[c]=[]);
-      originalCards.forEach(card=>{
-        const name = (card.querySelector('strong')?.textContent||'').trim();
-        const key = getChoseong(name);
-        if (groups[key]) groups[key].push(card);
-      });
-
-      // 각 그룹 정렬 후 섹션 구성
-      ALPH.forEach(c=>{
-        const list = groups[c];
-        if (!list || !list.length) return;
-        list.sort((a,b)=>{
-          const an=(a.querySelector('strong')?.textContent||'').trim();
-          const bn=(b.querySelector('strong')?.textContent||'').trim();
-          return an.localeCompare(bn,'ko-KR');
-        });
-        const sec = document.createElement('section'); sec.className='alpha-group'; sec.id = `sec-${c}`;
-        const h2 = document.createElement('h2'); h2.className='alpha-title'; h2.textContent = c;
-        const grid = document.createElement('div'); grid.className='studentstaff-grid';
-        list.forEach(card=>grid.appendChild(card));
-        sec.appendChild(h2); sec.appendChild(grid);
-        wrap.appendChild(sec);
-      });
-
-      // 그룹 가시성 업데이트 (필터와 함께 사용)
-      window.__updateAlphaSections = function(){
-        document.querySelectorAll('.alpha-group').forEach(sec=>{
-          const visible = Array.from(sec.querySelectorAll('.student-card')).some(c=>c.style.display !== 'none');
-          sec.style.display = visible ? '' : 'none';
-        });
-      };
-    })();
-    // --- Staff 필터: Staff 탭 클릭 시 staff만 표시 / All 클릭 시 전체 표시 ---
-    (function enableStaffFilter(){
-      const tabAll = document.querySelector('[data-filter="all"]');
-      const tabStaff = document.getElementById('tab-staff');
-      const cards = () => Array.from(document.querySelectorAll('.student-card'));
-
-      if (tabAll) {
-        tabAll.addEventListener('click', () => {
-          cards().forEach(c => { c.style.display = ''; });
-          // active styles
-          tabAll.style.color = 'red';
-          tabAll.style.fontWeight = '700';
-          if (tabStaff) { tabStaff.style.color = '#aaa'; tabStaff.style.fontWeight = '500'; }
-          if (window.__updateAlphaSections) window.__updateAlphaSections();
+      function bindSectionNav(navSelector, sectionPrefix){
+        const nav = document.querySelector(navSelector);
+        if (!nav) return;
+        nav.addEventListener('click', function(e){
+          const t = e.target;
+          if (!(t && t.tagName === 'A')) return;
+          e.preventDefault();
+          const hash = (t.getAttribute('href') || '').replace('#','');
+          const sec = document.getElementById(`${sectionPrefix}-${hash}`) || document.getElementById(hash);
+          if (!sec) return;
+          const titleEl = sec.querySelector(`.${sectionPrefix === 'sec' ? 'alpha-title' : 'team-title'}`) || sec;
+          const titleY = titleEl.getBoundingClientRect().top + window.pageYOffset;
+          const headerEl = document.querySelector('#nav-placeholder header');
+          const headerH = headerEl ? headerEl.offsetHeight : 0;
+          const subNavEl = document.querySelector(navSelector);
+          const subNavH = subNavEl ? subNavEl.offsetHeight : 0;
+          const targetY = Math.max(0, titleY - headerH - subNavH - 12);
+          window.scrollTo({ top: targetY, behavior: 'smooth' });
+          try { history.pushState(null, '', `#${sectionPrefix}-${hash}`); } catch(_) {}
         });
       }
-      if (tabStaff) {
-        tabStaff.addEventListener('click', () => {
-          cards().forEach(c => {
-            if (c.getAttribute('data-group') === 'staff') c.style.display = '';
-            else c.style.display = 'none';
+
+      // === ALL 뷰 (초성 네비 + 섹션) ===
+      window.buildAllView = function(){
+        const nav = clearAndMakeNav('alpha-nav');
+        ALPH.forEach(c => { const a=document.createElement('a'); a.href = `#sec-${c}`; a.textContent = c; nav.appendChild(a); });
+
+        // 그룹핑
+        const groups = {}; ALPH.forEach(c=>groups[c]=[]);
+        originalCards.forEach(card=>{
+          const name = (card.querySelector('strong')?.textContent||'').trim();
+          const key = getChoseong(name);
+          if (groups[key]) groups[key].push(card);
+        });
+
+        // 섹션 구성 (이름 순 정렬)
+        ALPH.forEach(c=>{
+          const list = groups[c]; if (!list || !list.length) return;
+          list.sort((a,b)=>{
+            const an=(a.querySelector('strong')?.textContent||'').trim();
+            const bn=(b.querySelector('strong')?.textContent||'').trim();
+            return an.localeCompare(bn,'ko-KR');
           });
-          // active styles
-          tabStaff.style.color = 'red';
-          tabStaff.style.fontWeight = '700';
-          if (tabAll) { tabAll.style.color = '#aaa'; tabAll.style.fontWeight = '500'; }
-          if (window.__updateAlphaSections) window.__updateAlphaSections();
+          const sec = document.createElement('section'); sec.className='alpha-group'; sec.id = `sec-${c}`;
+          const h2 = document.createElement('h2'); h2.className='alpha-title'; h2.textContent = c;
+          const grid = document.createElement('div'); grid.className='studentstaff-grid';
+          list.forEach(card=>grid.appendChild(card));
+          sec.appendChild(h2); sec.appendChild(grid); wrap.appendChild(sec);
+        });
+
+        bindSectionNav('.alpha-nav', 'sec');
+        if (window.__updateAlphaSections) window.__updateAlphaSections();
+      };
+
+      // === STAFF 뷰 (역할 네비 + 섹션 → 팀 네비 + 섹션) ===
+      window.buildStaffView = function(){
+        const ROLES = ['위원장','부위원장'];
+        const TEAMS = ['편집팀','홍보팀','전시팀','총무&감사'];
+
+        // 네비게이션: 역할 먼저, 팀 다음
+        const nav = clearAndMakeNav('team-nav');
+        ROLES.forEach(r => { const a=document.createElement('a'); a.href = `#team-${encodeURIComponent(r)}`; a.textContent = r; nav.appendChild(a); });
+        TEAMS.forEach(t => { const a=document.createElement('a'); a.href = `#team-${encodeURIComponent(t)}`; a.textContent = t; nav.appendChild(a); });
+
+        // 그룹 초기화
+        const roleGroups = {}; ROLES.forEach(r=>roleGroups[r]=[]);
+        const teamGroups = {}; TEAMS.forEach(t=>teamGroups[t]=[]); teamGroups['기타'] = [];
+
+        // 카드 분배: staff만, 역할 우선 분배 (역할이 있으면 팀에서 중복 제외)
+        window.__cardsSource.forEach(card=>{
+          const isStaff = card.getAttribute('data-group') === 'staff';
+          if (!isStaff) return;
+          const role = card.getAttribute('data-role');
+          const team = card.getAttribute('data-team') || '기타';
+
+          if (role && roleGroups[role]){
+            roleGroups[role].push(card);
+            return; // 역할 섹션에만 포함 (팀 섹션 중복 방지)
+          }
+          (teamGroups[team] || teamGroups['기타']).push(card);
+        });
+
+        // 섹션 빌더 공통 (이름순, 홍보팀 팀장 우선)
+        const makeSection = (idText, titleText, list) => {
+          if (!list || !list.length) return;
+
+          // 홍보팀에서는 팀장 카드가 앞으로 오도록 우선 정렬
+          const isLeader = (card) => {
+            const strongText = (card.querySelector('strong')?.textContent || '').trim();
+            if (/\(팀장\)/.test(strongText)) return true;
+            return card.getAttribute('data-lead') === 'true';
+          };
+
+          list.sort((a,b)=>{
+            if (titleText === '홍보팀'){
+              const la = isLeader(a); const lb = isLeader(b);
+              if (la !== lb) return la ? -1 : 1; // 팀장은 항상 앞으로
+            }
+            const an=(a.querySelector('strong')?.textContent||'').trim();
+            const bn=(b.querySelector('strong')?.textContent||'').trim();
+            return an.localeCompare(bn,'ko-KR');
+          });
+
+          const sec = document.createElement('section'); sec.className='team-group'; sec.id = `team-${encodeURIComponent(idText)}`;
+          const h2 = document.createElement('h2'); h2.className='team-title'; h2.textContent = titleText;
+          const grid = document.createElement('div'); grid.className='studentstaff-grid';
+          list.forEach(card=>grid.appendChild(card));
+          sec.appendChild(h2); sec.appendChild(grid); document.querySelector('.gallery-wrap').appendChild(sec);
+        };
+
+        // 역할 섹션 먼저
+        ROLES.forEach(r=> makeSection(r, r, roleGroups[r]));
+        // 팀 섹션 다음 (기타 포함)
+        [...TEAMS, '기타'].forEach(t=> makeSection(t, t, teamGroups[t]));
+
+        bindSectionNav('.team-nav', 'team');
+      };
+
+      // 초깃값: ALL 뷰로 렌더
+      buildAllView();
+    })();
+    (function enableStaffFilter(){
+      const tabAll = document.getElementById('tab-all');
+      const tabStaff = document.getElementById('tab-staff');
+
+      function setActive(which){
+        if (tabAll)  tabAll.classList.toggle('is-active', which === 'all');
+        if (tabStaff) tabStaff.classList.toggle('is-active', which === 'staff');
+      }
+
+      if (tabAll){
+        tabAll.addEventListener('click', () => {
+          if (typeof window.buildAllView === 'function') window.buildAllView();
+          setActive('all');
+        });
+      }
+      if (tabStaff){
+        tabStaff.addEventListener('click', () => {
+          if (typeof window.buildStaffView === 'function') window.buildStaffView();
+          setActive('staff');
         });
       }
     })();
-   </script>
+// === 상단 이동 버튼 표시/동작 (정리본) ===
+window.addEventListener('load', function initScrollTopBtn(){
+  var btn = document.getElementById('scrollTopBtn');
+  if (!btn) return;
+
+  function toggle() {
+    if (window.scrollY > 180) {
+      btn.classList.add('show');
+    } else {
+      btn.classList.remove('show');
+    }
+  }
+
+  window.addEventListener('scroll', toggle, { passive: true });
+  toggle(); // 초기 상태 반영
+
+  btn.addEventListener('click', function(){
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
 </body>
 </html>

@@ -932,6 +932,11 @@
         if (!isNaN(idx) && messages[idx]) {
           if (confirm('정말 삭제하시겠어요?')) {
             messages.splice(idx, 1);
+            // 🔄 로컬 캐시도 현재 messages 배열로 동기화
+            try {
+              const toCache = messages.map(({ name, message, from }) => ({ name, message, from, _ts: Date.now() }));
+              localStorage.setItem('guestbook-cache', JSON.stringify(toCache));
+            } catch (_) {}
             const maxPage = Math.ceil(messages.length / messagesPerPage) || 1;
             if (currentPage > maxPage) currentPage = maxPage;
             renderMessages();
@@ -953,6 +958,10 @@
       const newMsg  = document.getElementById(`edit-message-${idx}`).value;
       messages[idx] = { name: newName, from: newFrom, message: newMsg, editing: false };
       renderMessages();
+      try {
+        const toCache = messages.map(({ name, message, from }) => ({ name, message, from, _ts: Date.now() }));
+        localStorage.setItem('guestbook-cache', JSON.stringify(toCache));
+      } catch (_) {}
     });
 
     async function loadInitialMessages(){

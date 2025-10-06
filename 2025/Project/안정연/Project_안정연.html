@@ -3,22 +3,334 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>개인프로젝트페이지</title><!-- 🔺 스타일시트 연결 -->
-  <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
-  <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
-  <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
-
+  <title>안정연 | TUVD 27th Graduate Exhibition</title>
+  <!-- 🔺 스타일시트 연결 -->
+  <!-- // 네비게이션 스타일 -->
+  <link rel="stylesheet" href="/2.PageElement/Tob_nav/Tob_nav.css" />
+  <!-- // 푸터 스타일 -->
+  <link rel="stylesheet" href="/2.PageElement/Footer/Footer.css" />
+  <!-- // 커서 스타일 -->
+  <link rel="stylesheet" href="/2.PageElement/Cursor/cursor.css" />
+  
   <style>
-    /* Hide-on-scroll for Tob_nav */
-    .tob-nav { transition: transform .28s ease; will-change: transform; }
-    .tob-nav.is-hidden { transform: translateY(-110%); }
-    /* Fallback selectors for injected header without class */
-    #nav-placeholder header { transition: transform .28s ease; will-change: transform; }
-    #nav-placeholder header.is-hidden { transform: translateY(-110%); }
-    :root { --bg: #000; --text: #fff; }
-    html, body { margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: 'Pretendard', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    /* 장미 커서 기본 스타일( .cursor-dot / .rose-cursor 공통 ) */
+    .cursor-dot, .rose-cursor, [data-rose-cursor]{
+      position: fixed;
+      left: -100px; top: -100px;         /* offscreen until first move */
+      transform: translate3d(-9999px, -9999px, 0); /* moved offscreen until we know size */
+      transform-origin: 50% 50%; /* center by default; JS will set exact px hotspot */
+      pointer-events: none;               /* never block clicks */
+      z-index: 99999;                     /* above everything */
+      will-change: transform;             /* GPU hint for smoothness */
+    }
+    
+    :root {
+      --bg: #000;
+      --text: #fff;
+      --muted: #aaa;
+      --muted-2: #ccc;
+      --panel: #111;
+      --line: #222;
+      --red: #ff2b2b;
+    }
 
+    .won {
+      color: white;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Layout containers */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .profile-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--bg);
+      color: var(--text);
+      flex-wrap: wrap;
+      padding: 96px 2rem 56px;
+      min-height: 90vh;
+      box-sizing: border-box;
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .profile-right {
+      flex: 1 1 520px;
+      max-width: 560px;
+      padding: 0 2rem;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: auto;
+      order: 1; /* 텍스트(프로필 정보) 왼쪽 */
+      margin-right: auto;
+    }
+
+    .profile-left {
+      flex: 1 1 420px;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Profile card */
+    .profile-card {
+      order: 2;
+      flex: 0 0 auto;
+      background-color: transparent;
+      border: 1px solid var(--red);
+      border-radius: 10px;
+      padding: 4px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-left: auto;
+      box-shadow: none;
+    }
+    .profile-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(255, 43, 43, 0.18), 0 6px 16px rgba(0,0,0,0.45);
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 2.8rem;
+      color: var(--red);
+      margin: 0;
+      line-height: 1.1;
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+    h1::after {
+      content: "";
+      display: block;
+      width: 64px;
+      height: 3px;
+      background: var(--red);
+      margin-top: 10px;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      color: var(--muted);
+      margin: 6px 0 14px;
+      font-weight: 500;
+    }
+
+    .contact-info {
+      font-size: 0.92rem;
+      color: var(--muted-2);
+      margin: 0.25rem 0 0.25rem;
+    }
+
+    .email {
+      font-size: 1rem;
+      margin: 6px 0 10px;
+      color: var(--text);
+    }
+
+    .hashtags {
+      display: inline-block;
+      background-color: var(--panel);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      margin: 0 8px 8px 0;
+      border: 1px solid var(--red);
+      color: var(--text);
+    }
+
+    .message {
+      font-size: 1.05rem;
+      color: #eaeaea;
+      line-height: 1.8;
+      white-space: pre-line;
+      margin-top: 12px;
+    }
+
+    .profile-role {
+      color: var(--text);
+      font-size: 0.95rem;
+      margin: 12px 0 0;
+      background-color: var(--panel);
+      padding: 6px 12px;
+      border-radius: 999px;
+      display: inline-block;
+      border: 1px solid var(--red);
+      letter-spacing: 0.6px;
+    }
+
+    /* Images */
+    .profile-img {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    }
+
+    .image-gallery {
+      width: 100%;
+      padding: 48px 0 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .image-gallery img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      height: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .scroll-visible { 
+      margin-top: 80px; 
+      margin-bottom: 100px;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      color: var(--red);
+      animation: bounce 1.5s infinite;
+      cursor: pointer;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+      40% { transform: translate(-50%, -10px); }
+      60% { transform: translate(-50%, -5px); }
+    }
+
+    /* Scroll-to-top button styles */
+    #scrollTopBtn {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      z-index: 10000;
+      width: 48px;
+      height: 48px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    #scrollTopBtn:hover {
+      background-color: rgba(255, 43, 43, 0.85);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 900px) {
+      .profile-container { padding: 72px 1.25rem 36px; }
+      .profile-right { padding: 0; order: 1; max-width: none; margin-right: 0; }
+      .profile-card { order: 2; margin-left: 0; }
+      h1 { font-size: 2.1rem; }
+      h2 { font-size: 0.98rem; }
+      .profile-img { max-width: 360px; }
+      .scroll-visible { 
+        margin-top: 40px; 
+        margin-bottom: 60px;
+      }
+    }
+
+    #nav-placeholder{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: transform 0.6s ease-in-out; /* 시간 늘리고 부드러운 곡선 적용 */
+      will-change: transform;
+    }
+
+    /* 헤더 비주얼: 반투명 블랙 + 블러 + 얇은 구분선 */
+    #nav-placeholder header{
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      box-sizing: border-box;
+      width: 100%;
+      height: 90px;
+      padding-left: 59px;
+      padding-right: 60px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+      transition: transform .38s cubic-bezier(.22,.61,.36,1), box-shadow .24s ease;
+    }
+
+    /* 로고 크기 조정 */
+    #nav-placeholder header .logo img{
+      max-height: 38px;
+      transform: translateY(2px);
+    }
+
+    #nav-placeholder .logo .logo-main{ font-size: 15px !important; }
+    #nav-placeholder .logo .logo-sub { font-size: 15px !important; }
+
+
+    /* 네비 링크 타이포그래피 */
+    #nav-placeholder header a{
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      text-decoration: none;
+      color: #fff;
+      padding: 8px 0;
+    }
+    
+    #nav-placeholder header a:hover{ color:#ff3b3b; }
+    #nav-placeholder header a.is-active{ color:#ff4d4d; font-weight:700; }
+
+    #nav-placeholder nav ul{
+      display: flex;
+      align-items: center;       /* 세로 가운데 정렬 */
+      gap: 47px;                 /* Project 페이지 간격과 동일하게 */
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 스크롤 시 네비게이션 숨김 */
+    body.nav-hidden #nav-placeholder,
+    body.nav-hidden #nav-placeholder > header {
+      transform: translateY(-110%) !important;
+    }
     /* prevent overlap with sticky nav */
     .nav-spacer { height:72px; }
     .hero { display:block; width:100%; height:auto; margin-top: 0; }
@@ -62,6 +374,18 @@
       padding: 10px 0;
       /* nav-spacer will handle offset */
       margin-top: 0;
+      opacity: 0;
+      filter: blur(6px);
+      transform: translateY(10px);
+      transition: opacity .4s ease, filter .4s ease, transform .4s ease;
+      pointer-events: none;
+    }
+
+    .marquee.is-visible {
+      opacity: 1;
+      filter: none;
+      transform: none;
+      pointer-events: auto;
     }
     .marquee-track {
       display: flex;
@@ -106,140 +430,269 @@
     }
   </style>
 </head>
+
+
 <body>
-  <!-- 🔺 네비게이션 영역 -->
   <div id="nav-placeholder"></div>
   <div class="nav-spacer"></div>
-  <img class="hero" src="../../8.ProjectSection/안정연/3번->디자인 소개-100.jpg" alt="메인">
-  <section class="marquee" aria-label="프로젝트 미리보기">
-    <div class="marquee-track">
-      <!-- Set A -->
-      <div class="marquee-item"><img src="project1.jpg" alt="프로젝트 1" /><span>프로젝트 1</span></div>
-      <div class="marquee-item"><img src="project2.jpg" alt="프로젝트 2" /><span>프로젝트 2</span></div>
-      <div class="marquee-item"><img src="project3.jpg" alt="프로젝트 3" /><span>프로젝트 3</span></div>
-      <div class="marquee-item"><img src="project4.jpg" alt="프로젝트 4" /><span>프로젝트 4</span></div>
-      <!-- Set B (duplicate for seamless loop) -->
-      <div class="marquee-item"><img src="project1.jpg" alt="프로젝트 1" /><span>프로젝트 1</span></div>
-      <div class="marquee-item"><img src="project2.jpg" alt="프로젝트 2" /><span>프로젝트 2</span></div>
-      <div class="marquee-item"><img src="project3.jpg" alt="프로젝트 3" /><span>프로젝트 3</span></div>
-      <div class="marquee-item"><img src="project4.jpg" alt="프로젝트 4" /><span>프로젝트 4</span></div>
+  <div id="cursor-placeholder"></div>
+
+
+  <nav class="breadcrumb" style="max-width:1200px;margin:12px auto 0;padding:0 2rem;">
+    <a href="/2025/Designer.html" style="color:var(--muted-2);text-decoration:none;border-bottom:1px solid transparent;">← Designers</a>
+  </nav>
+
+  <div class="profile-container">
+    <div class="profile-right">
+      <div class="text-content">
+        <h1>안정연</h1>
+        <h2>AN JEONG YEON</h2>
+        <br />
+        <div class="contact-info"> ghghrjfrjf@naver.com</div>
+        <div class="contact-info"> @jeong_yeon_02</div>
+        <div class="email">ghghrjfrjf@gmail.com</div>
+        <br>
+        <div class="hashtags">#트렌드감각적</div>
+        <div class="hashtags">#열정적</div>
+        <div class="hashtags">#공감력</div>
+        <div class="hashtags">#UX/UI</div>
+        <p class="message">
+          "낯설고 망설였던 시간들, 이런 고민의 조각들이 모여 저만의 진심을 담은 이야기가 <br> 되었습니다 이 전시가 끝이 아닌, 다시 시작하는 새로운 도약이 되길 바랍니다."
+        </p>
+      </div>
+      <div class="won">
+        📍2022 BGC서포터즈 및 우수상<br>
+        📍2022 대학 비대면 수업콘텐츠 및 자료개발 지원사업 참여<br>
+        📍2024 하반기 동작관악 교육전문직 디지털 역량강화 연수 AI 보조강사<br>
+        📍2024 넥스트랩 초광역 Chat GPT-AI 창업경진대회 은상<br>
+        📍2025 부산옥외광고대상전 창작디자인광고물 공모전 특선 </div>
     </div>
-  </section>
+    <br>
+
+    <div class="profile-card">
+      <div class="profile-left">
+        <img class="profile-img" src="/1.Picture/1. 27th Graduation/Profile/안졍연.jpg" alt="안정연 프로필 사진" />
+      </div>
+    </div>
+    <div id="scroll-triangle" class="scroll-indicator" onclick="document.querySelector('.scroll-visible').scrollIntoView({behavior: 'smooth'});">▼</div>
+  </div>
+
+  <img class="hero" src="/2025/Project/안정연/3번->디자인 소개-100.jpg" alt="메인">
+  
+
+  <!-- End of profile-container -->
+</body>
+  <button id="scrollTopBtn" aria-label="맨 위로" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">▲</button>
   <div id="footer-placeholder"></div>
   <script>
-
-function initHeaderHideOnScroll() {
-  const root = document.getElementById('nav-placeholder');
-  if (!root) return;
-  const header = root.querySelector('.tob-nav') || root.querySelector('header');
-  if (!header) return;
-
-  let lastY = window.pageYOffset || document.documentElement.scrollTop;
-  const threshold = 100; // start after 100px
-  let ticking = false;
-
-  const onScroll = () => {
-    const y = window.pageYOffset || document.documentElement.scrollTop;
-    if (y > lastY && y > threshold) {
-      header.classList.add('is-hidden');
-    } else {
-      header.classList.remove('is-hidden');
-    }
-    lastY = y <= 0 ? 0 : y;
-    ticking = false;
-  };
-
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      window.requestAnimationFrame(onScroll);
-      ticking = true;
-    }
-  }, { passive: true });
-}
-
-// 📜 JavaScript
-  // 네비게이션 HTML 로드 (주입 + 경로 정규화 + 스크롤시 숨김)
-fetch('../../2.PageElement/Tob_nav/Tob_nav.html')
-  .then(res => res.text())
-  .then(html => {
+  // ===== Header hide-on-scroll =====
+  function initHeaderHideOnScroll() {
     const root = document.getElementById('nav-placeholder');
-    root.innerHTML = html;
-
-    // Ensure injected header has .tob-nav class (for hide/show CSS)
-    const injectedHeader = root.querySelector('header');
-    if (injectedHeader && !injectedHeader.classList.contains('tob-nav')) {
-      injectedHeader.classList.add('tob-nav');
-    }
-
-    // Fix logo image(s) inside nav for this page depth
-    const logoImg = root.querySelector('#tuvd-logo, .tob-nav__logo img, .logo img');
-    if (logoImg) {
-      logoImg.src = '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png';
-      logoImg.alt = '장미로고';
-      logoImg.onerror = function(){ this.onerror=null; this.src = '../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png'; };
-    }
-
-    // Normalize any image paths that incorrectly start with ../../ inside the injected fragment
-    root.querySelectorAll('img[src]').forEach(img => {
-      const s = img.getAttribute('src') || '';
-      // If injected fragment used one-level-up paths, promote them to two-levels-up for this page depth
-      if (s.startsWith('../1.Picture/')) img.setAttribute('src', s.replace('../1.Picture/', '../../1.Picture/'));
-      if (s.startsWith('../2.PageElement/')) img.setAttribute('src', s.replace('../2.PageElement/', '../../2.PageElement/'));
-      // Also normalize accidental absolute root paths
-      if (s.startsWith('/Before_Work3/')) img.setAttribute('src', s.replace('/Before_Work3/', '../../'));
-    });
-
-    // Normalize nav links to this depth
-    const BASE = '../../3.PageExhibition';
-    const map = {
-      about: `${BASE}/2.AboutPage/About.html`,
-      project: `${BASE}/3.ProjectPage/project2.html`,
-      designer: `${BASE}/4.DesignerPage/Designer.html`,
-      guest: `${BASE}/5.GuestBookPage/Guest.html`,
-      gallery: `${BASE}/6.GalleryPage/Gallery.html`,
-      home: `${BASE}/1.MainPage/1.MainPage.html`
-    };
-    root.querySelectorAll('a[href]').forEach(a => {
-      const t = (a.textContent || '').toLowerCase();
-      const h = a.getAttribute('href') || '';
-      if (/about/i.test(t) || /about/i.test(h)) a.href = map.about;
-      else if (/project/i.test(t) || /project/i.test(h)) a.href = map.project;
-      else if (/designer/i.test(t) || /designer/i.test(h)) a.href = map.designer;
-      else if (/guest.?book/i.test(t) || /guest.?book/i.test(h) || /guest/i.test(t)) a.href = map.guest;
-      else if (/gallery/i.test(t) || /gallery/i.test(h)) a.href = map.gallery;
-      else if (/home|main|index/i.test(t) || /mainPage|home|index/i.test(h)) a.href = map.home;
-    });
-
-    initHeaderHideOnScroll();
-
-    // Dynamically size spacer to exact header height
-    const spacer = document.querySelector('.nav-spacer');
+    if (!root) return;
     const header = root.querySelector('.tob-nav') || root.querySelector('header');
-    if (spacer && header) {
-      const setSpacerHeight = () => {
-        // Use offsetHeight to include padding/border
-        spacer.style.height = (header.offsetHeight - 8) + 'px';
-      };
-      setSpacerHeight();
-      window.addEventListener('resize', setSpacerHeight);
-      // In case web fonts change height after load
-      setTimeout(setSpacerHeight, 100);
-    }
-  });
+    if (!header) return;
 
-// 푸터 HTML 로드 (주입 + 경로 정규화)
-fetch('../../2.PageElement/Footer/Footer.html')
-  .then(res => res.text())
-  .then(html => {
-    const foot = document.getElementById('footer-placeholder');
-    foot.innerHTML = html;
-    foot.querySelectorAll('img[src]').forEach(img => {
-      const s = img.getAttribute('src') || '';
-      if (s.startsWith('../1.Picture/')) img.setAttribute('src', s.replace('../1.Picture/', '../../1.Picture/'));
-      if (s.startsWith('../2.PageElement/')) img.setAttribute('src', s.replace('../2.PageElement/', '../../2.PageElement/'));
-      if (s.startsWith('/Before_Work3/')) img.setAttribute('src', s.replace('/Before_Work3/', '../../'));
+    let lastY = window.pageYOffset || document.documentElement.scrollTop;
+    const threshold = 100; // start after 100px
+    let ticking = false;
+
+    const onScroll = () => {
+      const y = window.pageYOffset || document.documentElement.scrollTop;
+      if (y > lastY && y > threshold) {
+        header.classList.add('is-hidden');
+      } else {
+        header.classList.remove('is-hidden');
+      }
+      lastY = y <= 0 ? 0 : y;
+      ticking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(onScroll);
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+  // ===== Inject Tob_nav (HTML fetch + path normalization) =====
+  fetch('/2.PageElement/Tob_nav/Tob_nav.html')
+    .then(res => res.text())
+    .then(html => {
+      const root = document.getElementById('nav-placeholder');
+      if (!root) return;
+      root.innerHTML = html;
+
+      const injectedHeader = root.querySelector('header');
+      if (injectedHeader && !injectedHeader.classList.contains('tob-nav')) {
+        injectedHeader.classList.add('tob-nav');
+      }
+
+      // Fix logo for this depth
+      const logoImg = root.querySelector('#tuvd-logo, .tob-nav__logo img, .logo img');
+      if (logoImg) {
+        logoImg.src = '/1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png';
+        logoImg.alt = '장미로고';
+        logoImg.onerror = function(){ this.onerror=null; this.src = '/1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png'; };
+      }
+
+      // Normalize any paths inside injected fragment
+      root.querySelectorAll('img[src]').forEach(img => {
+        const s = img.getAttribute('src') || '';
+        const normalized = s
+          .replace(/^(\.\.\/){1,3}1\.Picture\//, '/1.Picture/')
+          .replace(/^(\.\.\/){1,3}2\.PageElement\//, '/2.PageElement/')
+          .replace(/^\/Before_Work3\//, '/');
+        if (normalized !== s) img.setAttribute('src', normalized);
+      });
+
+      // Normalize nav links to this depth
+      const map = {
+        about: '/2025/About.html',
+        project: '/2025/Project.html',
+        designer: '/2025/Designer.html',
+        guest: '/2025/Guest.html',
+        gallery: '/2025/Gallery.html',
+        home: '/2025/Main.html'
+      };
+      root.querySelectorAll('a[href]').forEach(a => {
+        const t = (a.textContent || '').toLowerCase();
+        const h = a.getAttribute('href') || '';
+        if (/about/i.test(t) || /about/i.test(h)) a.href = map.about;
+        else if (/project/i.test(t) || /project/i.test(h)) a.href = map.project;
+        else if (/designer/i.test(t) || /designer/i.test(h)) a.href = map.designer;
+        else if (/guest.?book/i.test(t) || /guest.?book/i.test(h) || /guest/i.test(t)) a.href = map.guest;
+        else if (/gallery/i.test(t) || /gallery/i.test(h)) a.href = map.gallery;
+        else if (/home|main|index/i.test(t) || /mainPage|home|index/i.test(h)) a.href = map.home;
+      });
+
+      initHeaderHideOnScroll();
+
+      // Dynamically size spacer to exact header height
+      const spacer = document.querySelector('.nav-spacer');
+      const header = root.querySelector('.tob-nav') || root.querySelector('header');
+      if (spacer && header) {
+        const setSpacerHeight = () => { spacer.style.height = (header.offsetHeight - 8) + 'px'; };
+        setSpacerHeight();
+        window.addEventListener('resize', setSpacerHeight);
+        setTimeout(setSpacerHeight, 100);
+      }
     });
-  });
+
+  // ===== Inject Footer (and fix paths inside) =====
+  fetch('/2.PageElement/Footer/Footer.html')
+    .then(res => res.text())
+    .then(html => {
+      const foot = document.getElementById('footer-placeholder');
+      if (!foot) return;
+      foot.innerHTML = html;
+      foot.querySelectorAll('img[src]').forEach(img => {
+        const s = img.getAttribute('src') || '';
+        const normalized = s
+          .replace(/^(\.\.\/){1,3}1\.Picture\//, '/1.Picture/')
+          .replace(/^(\.\.\/){1,3}2\.PageElement\//, '/2.PageElement/')
+          .replace(/^\/Before_Work3\//, '/');
+        if (normalized !== s) img.setAttribute('src', normalized);
+      });
+    });
+
+  // ===== Inject Cursor HTML (and execute scripts) =====
+  (function(){
+    const CURSOR_BASE = '/2.PageElement/Cursor/';
+    fetch(CURSOR_BASE + 'cursor.html')
+      .then(res => res.text())
+      .then(html => {
+        const mount = document.getElementById('cursor-placeholder');
+        if (!mount) return;
+
+        // Parse the fetched HTML to extract scripts
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+
+        // Move non-script nodes into mount
+        [...tmp.childNodes].forEach(node => {
+          if (node.tagName === 'SCRIPT') return; // handle later
+          mount.appendChild(node);
+        });
+
+        // Execute scripts (both inline and external)
+        const scripts = tmp.querySelectorAll('script');
+        scripts.forEach(oldS => {
+          const s = document.createElement('script');
+          const src = oldS.getAttribute('src');
+          if (src) {
+            // Resolve relative paths against CURSOR_BASE
+            s.src = (/^https?:\/\//i.test(src) || src.startsWith('/')) ? src : (CURSOR_BASE + src);
+            s.async = true;
+          } else {
+            s.textContent = oldS.textContent || '';
+          }
+          document.body.appendChild(s);
+        });
+
+        // Fallback: if no script present, attach a minimal follower so the cursor is visible
+        if (scripts.length === 0) {
+          const dot = mount.querySelector('.cursor-dot, .rose-cursor, [data-rose-cursor]');
+          if (dot) {
+            let x = -100, y = -100;
+            const move = (e) => { x = e.clientX; y = e.clientY; dot.style.transform = `translate(${x}px, ${y}px)`; };
+            window.addEventListener('mousemove', move, { passive: true });
+          }
+        }
+      })
+      .catch(() => {
+        // Last-resort fallback: create a simple dot
+        const mount = document.getElementById('cursor-placeholder');
+        if (!mount) return;
+        const d = document.createElement('div');
+        d.className = 'cursor-dot';
+        d.style.cssText = 'position:fixed;left:0;top:0;width:10px;height:10px;border-radius:50%;background:#ff2b2b;transform:translate(-9999px,-9999px);pointer-events:none;z-index:99999;';
+        mount.appendChild(d);
+        window.addEventListener('mousemove', (e)=>{ d.style.transform = `translate(${e.clientX-5}px, ${e.clientY-5}px)`; }, { passive: true });
+      });
+  })();
+
+  // ===== Scroll-to-top visibility =====
+  (function(){
+    const scrollBtn = document.getElementById('scrollTopBtn');
+    if (!scrollBtn) return;
+    const onScroll = () => {
+      if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1) {
+        scrollBtn.style.display = 'flex';
+      } else {
+        scrollBtn.style.display = 'none';
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  // ===== Reveal marquee only after the triangle goes out of view =====
+  (function(){
+    const triangle = document.getElementById('scroll-triangle');
+    const marquee = document.querySelector('.marquee');
+    if (!marquee) return;
+
+    // Fallback: if no triangle, show immediately
+    if (!('IntersectionObserver' in window) || !triangle) {
+      marquee.classList.add('is-visible');
+      return;
+    }
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          // Triangle is visible -> keep marquee hidden
+          marquee.classList.remove('is-visible');
+        } else {
+          // Triangle scrolled past -> show marquee
+          marquee.classList.add('is-visible');
+        }
+      });
+    }, { threshold: 0.01 });
+
+    obs.observe(triangle);
+  })();
   </script>
 </body>
 </html>
+

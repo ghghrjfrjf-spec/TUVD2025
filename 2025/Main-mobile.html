@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BLOOM — 모바일</title>
+  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" />
+  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" />
+  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" />
   <style>
     :root{ --line: rgba(255,255,255,.12); }
     html,body{ margin:0; padding:0; background:#000; color:#fff; }
@@ -30,11 +33,13 @@
     }
     .m-header .logo-text{
       display:flex; flex-direction:column;
-      line-height:1;            /* 줄 간격 타이트하게 */
+      /* 줄 간격 타이트하게 */
+      line-height:1;
     }
     .m-header .logo-text .main{
       font-size:15px; font-weight:800; color:#fff;
-      display:block; margin:0 0 2px 0; /* 아래 간격 2px */
+      /* 아래 간격 2px */
+      display:block; margin:0 0 2px 0;
     }
     .m-header .logo-text .sub{
       font-size:14px; font-weight:800; color:#ff4d4d;
@@ -55,51 +60,82 @@
 
     /* ===== 모바일 메뉴 오버레이 ===== */
     .m-menu{
-      position:fixed; top:0; right:0; bottom:0; width:260px;
-      background:rgba(255,255,255,0.95); color:#111; z-index:9999;
+      position:fixed; top:64px; right:0; bottom:0; width:260px;
+      /* 투명한 유리 느낌 */
+      background:rgba(255,255,255,0.10);
+      color:#fff; z-index:9999;
       display:flex; flex-direction:column; padding:0; margin:0; overflow:auto;
-      transform:translateX(100%); transition:transform .35s ease;
-      box-shadow:-2px 0 12px rgba(0,0,0,0.4);
+      transform:translateX(100%); transition:transform .35s ease, background .25s ease;
+      box-shadow:-8px 0 24px rgba(0,0,0,0.35);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      border-left:1px solid rgba(255,255,255,0.18);
     }
     body.nav-open .m-menu{ transform:translateX(0); }
     /* 반투명 배경 */
     .menu-overlay{
-      content:''; position:fixed; left:0; top:0; right:0; bottom:0;
-      background:rgba(0,0,0,.5); z-index:9998; display:none;
+      content:''; position:fixed; left:0; top:64px; right:0; bottom:0;
+      background:rgba(0,0,0,.35); z-index:900; display:none;
     }
     body.nav-open .menu-overlay{ display:block; }
 
     .m-menu ul{ list-style:none; padding:0; margin:0; }
     .m-menu li a{
       display:flex; align-items:center; height:64px; padding:0 20px;
-      color:#111; text-decoration:none; font:800 22px/1 Pretendard, system-ui, -apple-system, sans-serif;
-      border-top:1px solid #111; background:#fff;
+      color:#fff; text-decoration:none; font:800 22px/1 Pretendard, system-ui, -apple-system, sans-serif;
+      border-top:1px solid rgba(255,255,255,.18);
+      /* 유리 위에 텍스트만 */
+      background:transparent;
+      text-shadow:0 1px 0 rgba(0,0,0,.3);
     }
     .m-menu li:first-child a{ border-top:none; }
-    .m-menu li a:active{ background:#f3f3f3; }
+    .m-menu li a:hover{ background:rgba(255,255,255,.08); }
+
+    .m-menu li a:active{ background:rgba(255,255,255,.16); }
+
+    /* ===== 햄버거 클릭 시 나타나는 라인(글라스 상단바 아래) ===== */
+    .nav-line{
+      position:fixed; left:0; right:0; top:64px; height:2px;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%);
+      transform: scaleX(0); transform-origin: left center;
+      transition: transform .45s ease, opacity .3s ease;
+      opacity:.95;
+      /* 헤더 위, 오버레이 아래 */
+      z-index:1001;
+      pointer-events:none;
+    }
+    body.nav-open .nav-line{ transform: scaleX(1); }
+
+    /* 작은 화면(아이폰 SE)에서 헤더 높이 56px 대응 */
+    @media (max-width: 375px){
+      .nav-line{ top:56px; }
+    }
 
     /* 콘텐츠: 포스터와 푸터 */
     .poster{ display:block; width:100%; height:auto; margin:0 auto; }
-    .rose-left{
+    /* .rose-left{
       display:block;
-      max-width:50%;  /* 절반 정도 크기 */
+      max-width:50%;  절반 정도 크기 
       height:auto;
-      margin:40px 0 0 10px; /* 위에서 조금 내리고 왼쪽으로 붙임 */
-    }
-    .gun-poster{
+      margin:40px 0 0 10px;  위에서 조금 내리고 왼쪽으로 붙임 
+    } */
+    /* .gun-poster{
       display:block;
       width:80%;
       max-width:500px;
       height:auto;
-      margin:30px auto 0 auto; /* 위쪽 여백 주고 중앙 정렬 */
-    }
+      margin:30px auto 0 auto;  위쪽 여백 주고 중앙 정렬 
+    } */
     .promo-video{
-      display:block; width:100%; height:auto; 
-      margin:20px auto 80px; /* 아래 여백으로 푸터 고정 높이 피함 */
+      display:block; width:100%; height:auto;
+      /* 아래 여백으로 푸터 고정 높이 피함 */
+      margin:20px auto 80px;
       border:1px solid rgba(255,255,255,.2); border-radius:8px;
-      background:#000; /* 로딩 중 배경 */
+      /* 로딩 중 배경 */
+      background:#000;
     }
-    .stage{ background:#000; line-height:0; padding-bottom:72px; } /* 푸터(고정)와 겹치지 않도록 여백 확보 */
+    /* 푸터(고정)와 겹치지 않도록 여백 확보 */
+    .stage{ background:#000; line-height:0; padding-bottom:72px; }
 
     footer{
       position:fixed;
@@ -120,6 +156,7 @@
     @media (max-width: 375px){
       .m-header{ height:56px; }
       .m-menu{ top:56px; }
+      .menu-overlay{ top:56px; }
       .m-menu li a{ height:56px; font-size:20px; padding:0 18px; }
       .m-menu-btn{ width:36px; height:36px; }
       .m-menu-btn img{ width:22px; height:22px; }
@@ -140,35 +177,42 @@
     .poster-wrapper .rose-left{
       position:relative;
       z-index:1;
-      max-width:100%;   /* 훨씬 크게 확대 */
-      transform:translate(-23%, 6%); /* 왼쪽으로 이동하고 아래로 10% 내림 */
+      /* 훨씬 크게 확대 */
+      max-width:100%;
+      /* 왼쪽으로 이동하고 아래로 10% 내림 */
+      transform:translate(-23%, 6%);
     }
     .poster-wrapper .gun-below{
       position:absolute;
-      top:22%;  /* BLOOM 텍스트 바로 밑에 */
-      right:5%; /* 오른쪽에 맞춤 */
+      /* BLOOM 텍스트 바로 밑에 */
+      top:22%;
+      /* 오른쪽에 맞춤 */
+      right:5%;
       transform:translateY(-50%);
       max-width:70%;
       z-index:2;
-      opacity:0.6; /* 살짝 투명하게 */
+      /* 살짝 투명하게 */
+      opacity:0.6;
     }
   </style>
 </head>
+
+
 <body>
   <!-- 상단: 제목 + 햄버거 버튼 -->
   <header class="m-header">
     <a class="logo" aria-label="BLOOM" href="Main.html">
-      <img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="BLOOM 로고" />
+      <img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="BLOOM 로고" decoding="async" />
       <span class="logo-text">
         <strong class="main">TUVD</strong>
         <span class="sub">27th Graduate Exhibition</span>
       </span>
     </a>
-    <button id="menuBtn" class="m-menu-btn" aria-label="메뉴 열기">
+    <button id="menuBtn" class="m-menu-btn" aria-label="메뉴 열기" aria-expanded="false">
       <img src="../../1.Picture/Another/Menu.png" alt="메뉴" />
     </button>
   </header>
-
+  <div class="nav-line" aria-hidden="true"></div>
   <div class="menu-overlay" id="menuOverlay"></div>
 
   <!-- 모바일 메뉴(링크 연결 제거 요청: # 처리) -->
@@ -185,9 +229,9 @@
   <!-- 본문: 포스터 이미지 + 푸터(바로 맞닿음) -->
   <main class="stage">
     <div class="poster-wrapper">
-      <img class="logo-bg" src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" alt="배경 로고" />
-      <img class="gun-below" src="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" alt="BLOOM Gun 포스터" loading="lazy" />
-      <img class="rose-left" src="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" alt="BLOOM 장미 포스터" loading="lazy" />
+      <img class="logo-bg" src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" alt="배경 로고" loading="eager" decoding="async" />
+      <img class="gun-below" src="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" alt="BLOOM Gun 포스터" loading="eager" decoding="async" />
+      <img class="rose-left" src="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" alt="BLOOM 장미 포스터" loading="eager" decoding="async" fetchpriority="high" />
     </div>
   </main>
   <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
@@ -200,7 +244,12 @@
       if(!btn || !menu) return;
 
       const overlay = document.getElementById('menuOverlay');
-      const toggle = () => document.body.classList.toggle('nav-open');
+      function toggle(){
+        const open = !document.body.classList.contains('nav-open');
+        document.body.classList.toggle('nav-open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+      }
       btn.addEventListener('click', toggle);
       if(overlay){ overlay.addEventListener('click', toggle); }
 
@@ -213,6 +262,8 @@
       window.addEventListener('scroll', () => {
         if(document.body.classList.contains('nav-open')){
           document.body.classList.remove('nav-open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', '메뉴 열기');
         }
       }, { passive:true });
     })();

@@ -4,19 +4,77 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AboutPage</title>
+  <!-- 🔺 스타일시트 연결 -->
+  <!-- // 네비게이션 스타일 -->
   <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
+  <!-- // 푸터 스타일 -->
   <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
+  <!-- // 커서 스타일 -->
   <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+  
   <style>
+    /* ==================== 전역 변수(색상/최대폭 등) ==================== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     :root{
       --bg:#0a0a0a; --text:#fff; --line:rgba(255,255,255,.12);
       --red:#ff3b3b; --red-600:#ff4d4d; --card:#121212; --card-2:#151515;
       --max:1280px;
+      --radius:12px; --shadow:0 12px 28px rgba(0,0,0,.28);
+    }
+
+    body{
+      margin:0;
+      padding:0;
+      background:#000;
+      color:#fff;
+      font-family:'Pretendard', system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+
+
+    /* 스크롤 시 네비게이션 숨김 */
+    body.nav-hidden #nav-placeholder,
+    body.nav-hidden #nav-placeholder > header {
+      transform: translateY(-110%) !important;
     }
     
-    /* ===== Tob_nav: Project/Guest identical header style ===== */
-    /* Sticky container + hide-on-scroll */
+    /* 전체 화면 레이아웃 + 푸터 하단 고정 */
+    html, body { background:#000; }
+    .page { background:#000; width:100%; }
+
+
+    .content {
+      max-width: 960px;
+      margin: 6rem auto 4rem;
+      padding: 0 1.5rem;
+    }
+
+    .content h1 {
+      font-size: 3rem;
+      color: #ff3b3b;
+      font-family: 'Georgia', serif;
+      margin-bottom: 1rem;
+    }
+
+    .content h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: #333;
+      margin-bottom: 2.5rem;
+    }
+
+    .content p {
+      font-size: 1.1rem;
+      margin-bottom: 1.7rem;
+      color: #444;
+    }
+
+    .highlight {
+      color: #ff3b3b;
+      font-weight: bold;
+    }
+    
+    /* ==================== 상단 네비게이션(공용 Tob_nav 적용 + 스크롤시 숨김) ==================== */
     #nav-placeholder{
       position: sticky;
       top: 0;
@@ -33,6 +91,7 @@
     @media (max-width: 900px){ .nav-spacer{ height: 90px; } }
 
     /* Visuals: translucent black + blur + thin border */
+    /* 네비게이션 비주얼: 반투명 블랙 + 블러 + 보더 */
     #nav-placeholder header{
       background: rgba(0,0,0,.72);
       backdrop-filter: blur(6px);
@@ -46,6 +105,7 @@
     }
 
     /* Typography & links */
+    /* 네비 타이포그래피 & 링크 상태 */
     #nav-placeholder header a{
       font-family: 'Pretendard', sans-serif;
       font-size: 14px;            /* menu size */
@@ -65,6 +125,7 @@
     }
 
     /* Logo size */
+    /* 로고 사이즈/정렬 */
     #nav-placeholder header .logo img{
       max-height: 38px;
       transform: translateY(2px);
@@ -73,6 +134,7 @@
     #nav-placeholder .logo .logo-sub{ font-size:15px !important; }
 
     /* Disable dropdown menus from Tob_nav */
+    /* 드롭다운 메뉴 비활성화(상단바 단층 구조 유지) */
     #nav-placeholder nav ul li ul,
     #nav-placeholder .dropdown,
     #nav-placeholder .submenu,
@@ -82,9 +144,11 @@
     }
     #nav-placeholder nav ul li:hover > ul{ display:none !important; }
     /* Global font: keep Pretendard to match other pages */
+    /* 페이지 기본 폰트(다른 페이지와 톤 맞춤) */
     body{ font-family:'Pretendard', system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
 
     /* Decorative ABOUT mark (centered, large serif) */
+    /* ABOUT 대제목(Playfair Display 서체) */
     .about-mark{
       display:block;
       margin:48px 0 0 0; /* align with section spacing */
@@ -102,9 +166,6 @@
     }
 
     /* Layout */
-    html,body{margin:0; padding:0; background:var(--bg); color:#fff !important;
-      font-family: 'Pretendard', system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    }
     a{color:inherit; text-decoration:none}
     img{max-width:100%; height:auto; display:block}
 
@@ -114,6 +175,7 @@
 
     /* Hero */
     /* Top visual banner (image-only at the very top) */
+    /* ==================== 상단 비주얼(배너/히어로 전 영역) ==================== */
     .top-banner{position:relative; width:100%; background:var(--bg);}
     /* New: simple top-right image slot */
     .top-right-slot{display:flex; justify-content:flex-end; padding:16px max(24px,6vw) 0;}
@@ -136,6 +198,7 @@
       .top-banner.align-right img,
       .top-banner.align-left img{ width:min(560px,86vw); margin:0 auto 0 auto; }
     }
+    /* 레드 그라데이션 히어로 영역(타이틀/서브/날짜) */
     .hero{position:relative; overflow:hidden; padding:132px 0 84px; background:linear-gradient(180deg, rgba(255,59,59,.12), rgba(0,0,0,0));}
     /* Image slot INSIDE the red gradient hero */
     .hero .container{position:relative; z-index:1}
@@ -168,6 +231,7 @@
     .date-large .yy{font-size: .58em; display:block; opacity:.95}
     .hero .cta{margin-top:28px; display:flex; gap:12px; flex-wrap:wrap}
     /* Date pill inside red gradient hero */
+    /* 히어로 내부 날짜 pill 스타일 */
     .date-pill{
       display:inline-flex; align-items:center; gap:8px;
       margin-top:16px; padding:10px 14px; border-radius:12px;
@@ -182,6 +246,7 @@
     .btn .dot{width:8px; height:8px; border-radius:999px; background:var(--red)}
 
     /* Info stripe */
+    /* 정보 스트라이프(기간/장소/관람) */
     .stripe{border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:rgba(255,255,255,.03)}
     .info-grid{display:grid; grid-template-columns: repeat(3, 1fr); gap:24px; padding:28px 0}
     .info-item{display:flex; flex-direction:column; gap:6px}
@@ -189,25 +254,50 @@
     .info-value{font-size:20px; font-weight:800; color:#fff !important}
 
     /* Theme section */
+    /* 공통 섹션 레이아웃(패딩/제목) */
     .section{padding:56px 0}
     .section h2{font-size:28px; margin:0 0 16px; font-weight:900; color:#fff !important;}
     .lead{color:#fff !important; font-size:20px; line-height:1.8}
+    /* 본문 2단 분할 레이아웃 */
     .split{display:grid; grid-template-columns:1.2fr .8fr; gap:28px}
     .panel{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px}
 
+    /* ===== Media gallery polish (logos & posters) ===== */
+    .media-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:14px; }
+    .media-grid figure{ margin:0; background:var(--card-2); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:none; transition:box-shadow .25s ease; }
+    .media-grid figure:hover{ box-shadow: var(--shadow); }
+    .media-grid .pad{ padding:18px; }
+    .media-grid img{ width:100%; height:auto; display:block; opacity:0; transform:scale(.995); transition:opacity .35s ease, transform .35s ease; }
+    .media-grid img.is-loaded{ opacity:1; transform:scale(1); }
+    .media-grid figcaption{ padding:10px 12px; font-size:12px; color:#fff; opacity:.9; border-top:1px solid var(--line); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); background:rgba(255,255,255,.03); }
+    /* Logo vs Poster fit */
+    .media-grid img.logo-img{ object-fit:contain; aspect-ratio: 5/2; background:linear-gradient(180deg,#101010,#0b0b0b); }
+    .media-grid img.poster-img{ object-fit:cover; aspect-ratio: 3/4; }
+    /* Hover micro-parallax */
+    .media-grid figure:hover img{ transform:scale(1.02); }
+    @media (max-width:900px){ .media-grid{ grid-template-columns:1fr; } }
+
+    /* Fullscreen viewer */
+    .img-viewer{ padding:0; border:none; background:transparent; max-width:90vw; max-height:90vh; }
+    .img-viewer::backdrop{ background:rgba(0,0,0,.7); }
+    .img-viewer img{ display:block; max-width:90vw; max-height:90vh; border-radius:12px; }
+
     /* Highlights */
+    /* 하이라이트 카드 그리드 */
     .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
     .card{background:var(--card-2); border:1px solid var(--line); border-radius:14px; padding:20px}
     .card h3{margin:0 0 8px; font-size:18px; color:#fff !important;}
     .card p{margin:0; color:#fff !important;}
 
     /* Stats */
+    /* 숫자 통계 그리드 */
     .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
     .stat{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; text-align:center}
     .stat .num{font-size:32px; font-weight:900; color:#fff !important;}
     .stat .cap{color:#fff !important; font-weight:700}
 
     /* Map/venue */
+    /* 오시는 길(장소/지도) 영역 */
     .venue{display:grid; grid-template-columns:1fr 1fr; gap:16px}
     .venue p {color:#fff !important;}
     .map{background:#0f0f0f; border:1px solid var(--line); border-radius:14px; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center; color:#888}
@@ -216,6 +306,7 @@
     .cta-row{display:flex; gap:10px; flex-wrap:wrap}
 
     /* People (Advisor) section */
+    /* 참여자/Advisor 영역 */
     .people{display:grid; grid-template-columns:1fr; gap:16px}
     .people-group{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px}
     .people-title{margin:0 0 12px; display:flex; align-items:center; gap:10px; font-size:20px; font-weight:900; color:#fff}
@@ -230,7 +321,7 @@
     @media (max-width: 1000px){ .info-grid{grid-template-columns:1fr 1fr} .split{grid-template-columns:1fr} .venue{grid-template-columns:1fr} .cards{grid-template-columns:1fr 1fr} .stats{grid-template-columns:1fr 1fr} .hero{padding:96px 0 56px} .hero .title{font-size:40px} }
     @media (max-width: 520px){ .info-grid{grid-template-columns:1fr} .cards{grid-template-columns:1fr} .stats{grid-template-columns:1fr 1fr} .hero .title{font-size:34px} }
 
-    /* ========== 지도교수 사진 갤러리 ========== */
+    /* ==================== 지도교수 사진 갤러리 ==================== */
     .faculty{ padding:56px 0; }
     .faculty .container{ max-width:var(--max); margin:0 auto; padding:0 24px; }
     .faculty h2{ font-size:28px; margin:0 0 16px; font-weight:900; color:#fff !important; }
@@ -254,22 +345,27 @@
     /* 살짝 떠오르는 효과 */
     .faculty-card{ transition: transform .22s ease, box-shadow .22s ease; }
     .faculty-card:hover{ transform: translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.28); }
-  </style>
+</style>
 </head>
 <body>
-  <div id="nav-placeholder"></div>
+
+
+
+  <!-- 상단 네비게이션 자리(스크립트로 Tob_nav.html을 주입) -->
+  <div id="nav-placeholder"></div> 
   <div id="cursor-placeholder"></div>
 
 
+  <!-- 페이지 메인 콘텐츠 시작 -->
   <main>
-    <!-- Hero -->
+    <!-- Hero: 전시 타이틀/소개/날짜 + 오른쪽 장미 이미지 -->
     <section class="hero">
       <div class="container">
         <div class="hero-grid">
           <div class="hero-left">
             <span class="eyebrow"><span class="dot" style="background:var(--red);"></span> 27th Graduation Exhibition</span>
             <h1 class="title">BLOOM — 27th Graduation Exhibition</h1>
-            <p class="subtitle">우리의 지난 시간은 하나의 씨앗처럼 작은 가능성을 품고 있었습니다. 그렇게 우리는 순수함과 열정을 더하며 그 가능성을 키워 왔습니다. 이제 졸업전시 BLOOM에서 각자의 열정과 순수함을 담아낸 꽃을 피웁니다.</p>
+            <p class="subtitle">우리의 시간은 하나의 씨앗처럼 작은 가능성을 품고 시작되었습니다. 순수함과 열정을 더해온 과정은 마침내 꽃이 되었고, 졸업전시 BLOOM에서 그 결실의 순간을 맞이합니다.</p>
             <div class="date-pill"><span class="yy">2025</span>&nbsp;10.17–20</div>
           </div>
         </div>
@@ -279,43 +375,73 @@
         </div>
       </div>
     </section>
-
     
-
-    <!-- Info stripe -->
+    <!-- Info stripe: 기간/장소/관람 정보 -->
     <section class="stripe">
       <div class="container info-grid">
         <div class="info-item"><span class="info-label">기간</span><span class="info-value">2025. 10. 17 — 10. 20</span></div>
-        <div class="info-item"><span class="info-label">장소</span><span class="info-value">OO대학교 디자인관 전시홀 A</span></div>
+        <div class="info-item"><span class="info-label">장소</span><span class="info-value">부산디자인진흥원 전시홀</span></div>
         <div class="info-item"><span class="info-label">관람</span><span class="info-value">무료 · AM 10:00 — PM 6:00</span></div>
       </div>
     </section>
     <div class="container"><div class="about-mark">ABOUT</div></div>
 
-    <!-- Theme & Intro -->
+    <!-- Theme & Intro: 전시 주제 설명 + 카테고리 카드 -->
     <section class="section">
       <div class="container split">
         <div class="panel">
-          <h2>전시 주제: BLOOM</h2>
+          <h2>BLOOM</h2>
+          <img src="/1.Picture/1. 27th Graduation/BLOOM_Poster/가로.jpg" alt="">
+          </div>
+        <div class="panel">
+          <h2>설명</h2>
           <p class="lead">한 장의 스케치에서 시작된 작은 가능성이, 리서치와 프로토타입, 피드백과 개선을 거쳐 <strong>완성의 순간</strong>을 맞이합니다. 그 여정 전체가 우리가 피워 낸 <strong>꽃</strong>입니다.</p>
         </div>
+      </div>
+      <div class="container" style="margin-top:28px;">
         <div class="panel">
-          <h2>영역</h2>
-          <div class="cards" style="grid-template-columns:1fr 1fr;">
-            <div class="card"><h3>편집</h3><p>타이포그래피와 컴포지션으로 메시지를 구조화합니다.</p></div>
-            <div class="card"><h3>캐릭터</h3><p>이야기와 감정을 담은 형태와 움직임.</p></div>
-            <div class="card"><h3>CI/BI & 패키지</h3><p>브랜드의 정체성과 경험을 통합합니다.</p></div>
-            <div class="card"><h3>영상디자인</h3><p>시간과 공간을 넘어서는 시각 언어.</p></div>
-            <div class="card"><h3>UX/UI</h3><p>문제를 정의하고 더 나은 상호작용을 설계합니다.</p></div>
+          <h2>전시</h2>
+          <p class="lead">우리의 지난 시간은 하나의 씨앗처럼 작은 가능성을 품고 있었습니다. 그렇게 우리는 순수함과 열정을 더하며 그 가능성을 키워 왔습니다. 이제 졸업전시 BLOOM에서 각자의 열정과 순수함을 담아낸 꽃을 피웁니다.</p>
+        </div>
+        <div class="panel">
+          <h2>로고</h2>
+          <p class="lead">이 로고는 BLOOM의 상징인 ‘장미’와 브랜드 이니셜 ‘B’를 조화롭게 결합하여 디자인되었습니다. 장미는 순수함·열정·아름다움을, ‘B’는 브랜드의 중심과 정체성을 상징합니다. 두 요소를 유기적으로 묶어 시각적 완성도와 상징성을 함께 담아냈습니다.</p>
+          <div class="media-grid">
+            <figure>
+              <div class="pad">
+                <img class="logo-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="BLOOM 장미 심볼마크" onload="this.classList.add('is-loaded')" />
+              </div>
+              <figcaption>장미 심볼 — 순수함과 열정의 상징</figcaption>
+            </figure>
+            <figure>
+              <div class="pad">
+                <img class="logo-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" alt="BLOOM 워드마크" onload="this.classList.add('is-loaded')" />
+              </div>
+              <figcaption>워드마크 — 브랜드 이니셜 B를 중심으로</figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>포스터</h2>
+          <p class="lead">포스터는 우리가 피워낸 장미의 순간을 ‘크리스탈 장미’로 표현합니다. 맑고 투명한 결정을 품은 꽃잎은 변치 않는 순수함과 열정을 상징하며, 함께 모여 만들어낸 아름다움과 힘을 보여줍니다.</p>
+          <div class="media-grid">
+            <figure>
+              <img class="poster-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" alt="크리스탈 장미 포스터" onload="this.classList.add('is-loaded')" />
+              <figcaption>Crystal Rose — 투명한 결정 구조로 표현한 순수함</figcaption>
+            </figure>
+            <figure>
+              <img class="poster-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_GUN/Gum.png" alt="BLOOM Gun 포스터" onload="this.classList.add('is-loaded')" />
+              <figcaption>Motion/Contrast — 강렬한 대비로 완성의 순간 강조</figcaption>
+            </figure>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Highlights -->
+    <!-- Highlights: 행사/프로그램 카드 -->
     <section class="section">
       <div class="container">
-        <h2>하이라이트</h2>
+        <h2>타임라인</h2>
         <div class="cards">
           <div class="card"><h3>오프닝 토크</h3><p>전시 기획 배경과 참여 디자이너 라운드테이블.</p></div>
           <div class="card"><h3>워크숍</h3><p>타이포 포스터, 캐릭터 라이브 드로잉, 프로토타입 스프린트.</p></div>
@@ -324,7 +450,7 @@
       </div>
     </section>
 
-    <!-- Stats strip -->
+    <!-- Stats: 전시 관련 숫자 지표 -->
     <section class="section stripe">
       <div class="container stats">
         <div class="stat"><div class="num">27</div><div class="cap">기수</div></div>
@@ -334,7 +460,7 @@
       </div>
     </section>
 
-    <!-- Venue / Map placeholder -->
+    <!-- Venue: 오시는 길 + 지도 자리 -->
     <section class="section">
       <div class="container venue">
         <div class="panel">
@@ -351,16 +477,14 @@
       </div>
     </section>
 
-    <!-- Thanks / Credits -->
+    <!-- Thanks/Credits: 지도교수/운영/도슨트 -->
     <section class="section">
       <div class="container panel">
         <h2>Thanks to</h2>
-        <p class="lead" style="margin-bottom:8px">지도교수 · 운영스태프 .</p>
         <div class="people">
           <div class="people-group">
             <h3 class="people-title"><span class="pill">Advisor</span> 지도교수님</h3>
-            <ul class="people-list">
-              <!-- ========== 지도교수 사진 갤러리 ========== -->
+            <ul class="people-list"></ul>
     <section class="faculty">
       <div class="container">
         <ul class="faculty-gallery">
@@ -438,9 +562,18 @@
     </section>
   </main>
 
+  <!-- Fullscreen image viewer (click any gallery image) -->
+  <dialog id="imgViewer" class="img-viewer">
+    <img alt="viewer" />
+  </dialog>
   <div id="footer-placeholder"></div>
 
   <script>
+    /* ==================== 스크립트: 네비게이션 로더 ====================
+       - Tob_nav.html을 불러와 로고 교체/링크 정규화/드롭다운 제거
+       - 헤더 높이만큼 spacer를 만들어 겹침 방지
+       - 스크롤 방향에 따라 헤더를 숨김/표시
+    ==================== */
     // 네비게이션 HTML 삽입 (로고 교체 + 링크 정규화)
     fetch('../../2.PageElement/Tob_nav/Tob_nav.html', {cache: "no-store"})
       .then(res => res.text())
@@ -575,6 +708,9 @@
         })();
       });
 
+    /* ==================== 스크립트: 푸터 로더 ====================
+       - Footer.html 주입 및 높이를 CSS 변수(--footer-safe)로 노출
+    ==================== */
     // 푸터 HTML 삽입
     fetch('../../2.PageElement/Footer/Footer.html', {cache: "no-store"})
       .then(res => res.text())
@@ -594,6 +730,7 @@
         }catch(_){}
       });
 
+    /* ==================== 스크립트: 커서 로더 ==================== */
     // 커서 HTML 삽입
     (function loadCursor(){
       const root = document.getElementById('cursor-placeholder');
@@ -604,6 +741,7 @@
         .catch(err => console.error('Cursor load failed:', err));
     })();
 
+    /* 커서 위치 따라 점(dot) 이동 */
     // 커서 움직임 제어
     document.addEventListener('mousemove', function(e){
       const dot = document.querySelector('.cursor-dot');
@@ -614,8 +752,12 @@
     });
   </script>
 
-  <!-- Firebase SDK -->
-<script>
+  <script>
+  /* ==================== 스크립트: 지도교수 이미지 자동 로더 ====================
+     - 여러 폴더/파일명/확장자 후보를 순회하며 이미지를 로드
+     - 실패 시 다음 후보를 시도, 모두 실패하면 카드에 no-photo 플레이스홀더 표시
+     - data-filename 속성이 있으면 그 값을 최우선으로 사용
+  ==================== */
   // Faculty image loader with fallback extensions + encoded folder
   (function(){
     // Try multiple BASE folder variants to be robust to spacing/encoding differences
@@ -706,5 +848,22 @@
     });
   })();
 </script>
+
+  <script>
+    // Simple lightbox for media-grid images
+    (function(){
+      const dlg = document.getElementById('imgViewer');
+      if(!dlg) return;
+      const img = dlg.querySelector('img');
+      function open(src, alt){ if(!src) return; img.src = src; img.alt = alt||''; if(typeof dlg.showModal==='function') dlg.showModal(); }
+      document.addEventListener('click', function(e){
+        const t = e.target.closest('img.zoomable');
+        if(!t) return;
+        open(t.currentSrc || t.src, t.alt);
+      });
+      dlg.addEventListener('click', function(e){ if(e.target===dlg) dlg.close(); });
+      window.addEventListener('keydown', function(e){ if(e.key==='Escape' && dlg.open) dlg.close(); });
+    })();
+  </script>
 </body>
 </html>

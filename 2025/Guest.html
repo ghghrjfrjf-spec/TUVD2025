@@ -775,7 +775,7 @@
         .catch(err => console.error('Cursor load failed:', err));
     })();
 
-    const API_URL = "https://script.google.com/macros/s/AKfycbw8PMK_qgjLYnCG9fW7JD4hdHFbqVScjdFG9HDRFerL5fAJfu1xnnxKGS0IzAPgqGJyPg/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyQqkyuZ5oosTFd8TOhIpELwQbVvu6Ro3alvbkiSdFD7A1YxyjJA8p7fc_7TEytUJ3rg/exec";
     const messagesPerPage = 6; // 3 columns x 2 rows per page
     let messages = [];
     let currentPage = 1;
@@ -1017,6 +1017,10 @@
       window.addEventListener('resize', checkViewport);
       window.addEventListener('load', checkViewport);
     })();
+
+    return ContentService.createTextOutput(JSON.stringify({ result: "success" }))
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeader("Access-Control-Allow-Origin", "*");
   </script>
 </body>
 </html>

@@ -132,24 +132,6 @@
       .about-mark{ font-size:clamp(32px,10vw,72px); margin-top:32px; }
     }
 
-    /* === Decorative divider between BLOOM and ABOUT === */
-    .section-divider {
-      position: relative;
-      width: 100%;
-      height: 120px;
-      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(255,77,77,0.1) 50%, rgba(255,77,77,0.25) 100%);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-    }
-    .section-divider::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      width: 80%;
-      height: 1px;
-      background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,.4) 50%, rgba(255,255,255,0) 100%);
-    }
 
     /* Layout */
     a{color:inherit; text-decoration:none}
@@ -456,25 +438,78 @@ html, body { overflow-x:hidden; scroll-behavior:smooth; }
     .faculty .container{ max-width:var(--max); margin:0 auto; padding:0 24px; }
     .faculty h2{ font-size:28px; margin:0 0 16px; font-weight:900; color:#fff !important; }
 
-    .faculty-gallery{ list-style:none; margin:0; padding:0; display:grid; gap:16px; grid-template-columns:repeat(4, minmax(0,1fr)); }
-    @media (max-width:1000px){ .faculty-gallery{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
-    @media (max-width:720px){ .faculty-gallery{ grid-template-columns:repeat(2, minmax(0,1fr)); } }
-    @media (max-width:480px){ .faculty-gallery{ grid-template-columns:1fr; } }
+    .faculty-gallery {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    @media (max-width:1000px) {
+      .faculty-gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width:720px) {
+      .faculty-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width:480px) {
+      .faculty-gallery { grid-template-columns: 1fr; }
+    }
 
-    .faculty-card{ position:relative; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; aspect-ratio:1/1; display:flex; align-items:flex-end; }
-    .faculty-card img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
-
+    .faculty-card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      aspect-ratio: 4 / 5;
+      display: flex;
+      align-items: flex-end;
+      transform: scale(0.9);
+      transform-origin: center center;
+      transition: transform .22s ease, box-shadow .22s ease;
+    }
+    .faculty-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
     /* 이미지가 없을 때(로드 실패 시) 카드에 플레이스홀더 */
-    .faculty-card.no-photo{ background:linear-gradient(180deg, #1b1b1b, #101010); }
-    .faculty-card.no-photo::before{ content:attr(data-name); position:absolute; inset:auto 12px 46px 12px; color:#fff; font-weight:900; font-size:18px; letter-spacing:.3px; opacity:.9; }
-
-    .faculty-card .cap{ position:relative; z-index:1; width:100%; padding:10px 12px; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border-top:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:8px; }
-    .faculty-card .cap .dot{ width:8px; height:8px; border-radius:999px; background:var(--red); flex:none; }
-    .faculty-card .cap .name{ color:#fff; font-weight:800; letter-spacing:.2px; }
-
+    .faculty-card.no-photo {
+      background: linear-gradient(180deg, #1b1b1b, #101010);
+    }
+    .faculty-card.no-photo::before {
+      content: attr(data-name);
+      position: absolute;
+      inset: auto 12px 46px 12px;
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: .3px;
+      opacity: .9;
+    }
+    .faculty-card .cap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-top: 1px solid rgba(255,255,255,.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .faculty-card .cap .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--red); flex: none; }
+    .faculty-card .cap .name { color: #fff; font-weight: 800; letter-spacing: .2px; }
     /* 살짝 떠오르는 효과 */
-    .faculty-card{ transition: transform .22s ease, box-shadow .22s ease; }
-    .faculty-card:hover{ transform: translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.28); }
+    .faculty-card:hover {
+      transform: scale(0.92);
+    }
     
     /* === Compact & Safe Layout Patch (no horizontal scroll, compact spacing) === */
 
@@ -774,11 +809,30 @@ html, body { overflow-x: hidden; }
   content:"";
   position:absolute;
   left:0; right:0;
-  bottom:-20px;             /* 장미 하단 곡선 라인에 맞춘 위치 */
+  /* Rose 하단 끝선(Y)에서 부드럽게 어둡게 페이드다운 */
+  top: var(--rose-bottom, 60%);
   height:260px;             /* 부드러운 전환을 위한 높이 */
   background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.88) 100%);
   pointer-events:none;
-  z-index:1;                /* 이미지 위, 텍스트(.hero .container z-index:2) 아래 */
+  z-index:1;                /* 라인(.hero::before) 아래, 텍스트(.hero .container z-index:2) 아래 */
+}
+/* Dedicated baseline line aligned to the rose bottom */
+.hero .rose-line{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--rose-bottom, 60%) - 1px); /* follow JS-computed baseline */
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0),
+    rgba(255,255,255,.78) 45%,
+    rgba(255,255,255,.78) 55%,
+    rgba(255,255,255,0)
+  );
+  box-shadow: 0 0 12px rgba(255,255,255,.28);
+  pointer-events: none;
+  z-index: 5; /* above hero text/art (z-index:2) and the fade (::after, z-index:1) */
 }
 
 /* 안전장치: 효과 때문에 가로 스크롤 생기지 않게 */
@@ -793,6 +847,46 @@ html, body{ overflow-x:hidden; }
       letter-spacing: .02em;         /* slightly more airy tracking */
       font-feature-settings: "liga" 1, "kern" 1;
     }
+    /* ===== Hero와 Explain 사이 구분선 ===== */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px; /* 장미 이미지 바로 밑에 딱 맞게 */
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0),
+    rgba(255,255,255,0.7) 45%,
+    rgba(255,255,255,0.7) 55%,
+    rgba(255,255,255,0)
+  );
+  box-shadow: 0 0 8px rgba(255,255,255,.25);
+  pointer-events: none;
+  z-index: 5;
+}
+/* ===== Explain 위 구분선 추가 (상단 그라데이션과 명확히 분리) ===== */
+.explain-section {
+  position: relative;
+}
+.explain-section::before {
+  content: "";
+  position: absolute;
+  top: -40px; /* Explain 시작점 위 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 1.5px;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  z-index: 10;
+}
   </style>
 </head>
 <body>
@@ -813,22 +907,22 @@ html, body{ overflow-x:hidden; }
           <div class="hero-left">
             <span class="eyebrow"><span class="dot" style="background:var(--red);"></span> 27th Graduation Exhibition</span>
             <h1 class="title">ABOUT - BLOOM </h1>
-            <p class="subtitle">우리의 시간은 하나의 씨앗처럼 작은 가능성을 품고 시작되었습니다. 순수함과 열정을 더해온 <br>과정은 마침내 꽃이 되었고, 졸업전시 BLOOM에서 그 결실의 순간을 맞이합니다.</p>
+            <p class="subtitle">우리의 시간은 하나의 씨앗처럼 작은 가능성을 품고 시작되었습니다. 순수함과 열정을 더한 <br>과정은 마침내 꽃이 되었고, 졸업전시 BLOOM에서 그 결실의 순간을 맞이합니다.</p>
           </div>
         </div>
         <div class="hero-art">
           <!-- 히어로 내부 이미지: src만 교체해서 사용하세요 -->
           <img src="../../1.Picture/1.%2027th%20Graduation/BLOOM_ROSE/BLOOM_ROSE.png" alt="BLOOM rose" />
         </div>
+        <!-- Rose baseline line (positioned via CSS var --rose-bottom) -->
+        <div class="rose-line" aria-hidden="true"></div>
       </div>
     </section>
     
     
-    <div class="section-divider"></div>
-    <div class="container"><div class="about-mark">Explain</div></div>
-
     <!-- Theme & Intro: 전시 주제 설명 + 카테고리 카드 -->
-    <section class="section">
+    <section class="section explain-section">
+      <div class="container"><div class="about-mark">Explain</div></div>
       <div class="bloom-section">
         <h2>BLOOM Poster</h2>
         <img class="about-poster" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_Poster/가로.jpg" alt="BLOOM Poster">
@@ -1364,5 +1458,41 @@ html, body{ overflow-x:hidden; }
     document.querySelectorAll('.section,.hero,.venue,.faculty,.traffic-table')
       .forEach(el=>observer.observe(el));
     </script>
+</script>
+<script>
+(function alignRoseBaseline(){
+  const hero = document.querySelector('.hero');
+  const art  = document.querySelector('.hero-art img');
+  if (!hero || !art) return;
+
+  function setBaseline(){
+    const heroRect = hero.getBoundingClientRect();
+    const artRect  = art.getBoundingClientRect();
+    // Rose 하단 끝선(Y) - hero의 위쪽 기준
+    const bottomY  = Math.max(0, Math.round(artRect.bottom - heroRect.top));
+    // 미세 보정값이 필요하면 아래 값(0)을 ±로 조정
+    const adjusted = bottomY + 0;
+    hero.style.setProperty('--rose-bottom', adjusted + 'px');
+  }
+
+  // 이미지 로딩/교체, 리사이즈 등 다양한 타이밍에서 재계산
+  if (art.complete) setBaseline();
+  else art.addEventListener('load', setBaseline, { once:true });
+
+  window.addEventListener('resize', setBaseline, { passive:true });
+  window.addEventListener('orientationchange', setBaseline, { passive:true });
+  window.addEventListener('pageshow', setBaseline, { passive:true });
+
+  // iOS/Safari 레이아웃 지연 대비 킥
+  let kicks = 0;
+  const kickTimer = setInterval(() => {
+    setBaseline();
+    if (++kicks > 8) clearInterval(kickTimer);
+  }, 150);
+
+  // 폰트 로딩 후 재계산
+  try { document.fonts && document.fonts.ready.then(setBaseline); } catch(_) {}
+})();
+</script>
 </body>
 </html>

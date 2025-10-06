@@ -3,203 +3,202 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BLOOM — 모바일</title>
-  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" />
-  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" />
-  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" />
+  <title>BLOOM — Guest (Mobile)</title>
+  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" />
+  <link rel="preload" as="image" href="../../1.Picture/Another/Menu.png" />
   <style>
-    :root{ --line: rgba(255,255,255,.12); }
+    :root{
+      --line: rgba(255,255,255,.12);
+      --footer-safe: 72px;  /* footer height reserve */
+      --header-h: 64px;
+      --card-gap: 12px;
+      --card-radius: 12px;
+    }
     html,body{ margin:0; padding:0; background:#000; color:#fff; }
+    body{ font-family: Pretendard, system-ui, -apple-system, sans-serif; overflow-x:hidden; }
 
     /* ===== 헤더 (모바일 전용) ===== */
     .m-header{
       position:sticky; top:0; z-index:1000;
-      height:64px; display:flex; align-items:center; justify-content:space-between;
+      height:var(--header-h);
+      display:flex; align-items:center; justify-content:space-between;
       padding:0 14px; box-sizing:border-box;
-      background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      background:rgba(0,0,0,.72);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
       border-bottom:1px solid rgba(255,255,255,.12);
-      transition:transform .5s ease; will-change:transform;
+      transition:transform .45s ease;
     }
-    .m-title{ font:800 16px/1 Pretendard, system-ui, -apple-system, sans-serif; letter-spacing:.2px; }
-
-    /* 로고: Main.html과 동일한 위치/크기로 */
     .m-header .logo{
-      display:flex; align-items:center; gap:8px;
-      text-decoration:none; color:#fff;
+      display:flex; align-items:center; gap:8px; text-decoration:none; color:#fff;
     }
-    .m-header .logo img{
-      max-height:32px;
-      display:block;
-    }
-    .m-header .logo-text{
-      display:flex; flex-direction:column;
-      /* 줄 간격 타이트하게 */
-      line-height:1;
-    }
-    .m-header .logo-text .main{
-      font-size:15px; font-weight:800; color:#fff;
-      /* 아래 간격 2px */
-      display:block; margin:0 0 2px 0;
-    }
-    .m-header .logo-text .sub{
-      font-size:14px; font-weight:800; color:#ff4d4d;
-      display:block; letter-spacing:.2px;
-    }
+    .m-header .logo img{ max-height:32px; display:block; }
+    .m-header .logo-text{ line-height:1; display:flex; flex-direction:column; }
+    .m-header .logo-text .main{ font:800 15px/1 Pretendard; }
+    .m-header .logo-text .sub{ font:800 14px/1 Pretendard; color:#ff4d4d; letter-spacing:.2px; }
 
-    /* 햄버거 버튼: 미니멀/얇은 스타일, hover/active에만 테두리 */
     .m-menu-btn{
       width:40px; height:40px; border-radius:10px;
       display:inline-flex; align-items:center; justify-content:center;
-      background:transparent; border:none; box-shadow:none; cursor:pointer; overflow:hidden;
+      background:transparent; border:none; cursor:pointer;
     }
-    .m-menu-btn img{ width:20px; height:20px; display:block; }
-
-    /* hover/active 시에만 미세한 테두리 표시 (시각 피드백) */
+    .m-menu-btn img{ width:22px; height:22px; display:block; }
     .m-menu-btn:hover{ border:1px solid rgba(255,255,255,.18); }
     .m-menu-btn:active{ border:1px solid rgba(255,255,255,.28); }
 
-    /* ===== 모바일 메뉴 오버레이 ===== */
+    /* ===== 사이드 메뉴 ===== */
     .m-menu{
-      position:fixed; top:64px; right:0; bottom:0; width:260px;
-      /* 투명한 유리 느낌 */
-      background:rgba(255,255,255,0.10);
+      position:fixed; top:var(--header-h); right:0; bottom:0; width:260px;
+      background:rgba(255,255,255,.10);
       color:#fff; z-index:9999;
-      display:flex; flex-direction:column; padding:0; margin:0; overflow:auto;
-      transform:translateX(100%); transition:transform .35s ease, background .25s ease;
-      box-shadow:-8px 0 24px rgba(0,0,0,0.35);
+      display:flex; flex-direction:column; overflow:auto;
+      transform:translateX(100%); transition:transform .35s ease;
+      box-shadow:-8px 0 24px rgba(0,0,0,.35);
       backdrop-filter: blur(16px) saturate(160%);
       -webkit-backdrop-filter: blur(16px) saturate(160%);
-      border-left:1px solid rgba(255,255,255,0.18);
+      border-left:1px solid rgba(255,255,255,.18);
     }
     body.nav-open .m-menu{ transform:translateX(0); }
-    /* 반투명 배경 */
     .menu-overlay{
-      content:''; position:fixed; left:0; top:64px; right:0; bottom:0;
+      position:fixed; inset:0 0 0 0; top:var(--header-h);
       background:rgba(0,0,0,.35); z-index:900; display:none;
     }
     body.nav-open .menu-overlay{ display:block; }
-
     .m-menu ul{ list-style:none; padding:0; margin:0; }
     .m-menu li a{
-      display:flex; align-items:center; height:64px; padding:0 20px;
-      color:#fff; text-decoration:none; font:800 22px/1 Pretendard, system-ui, -apple-system, sans-serif;
+      display:flex; align-items:center; height:60px; padding:0 20px;
+      color:#fff; text-decoration:none; font:800 20px/1 Pretendard;
       border-top:1px solid rgba(255,255,255,.18);
-      /* 유리 위에 텍스트만 */
-      background:transparent;
-      text-shadow:0 1px 0 rgba(0,0,0,.3);
+      background:transparent; text-shadow:0 1px 0 rgba(0,0,0,.3);
     }
     .m-menu li:first-child a{ border-top:none; }
     .m-menu li a:hover{ background:rgba(255,255,255,.08); }
 
-    .m-menu li a:active{ background:rgba(255,255,255,.16); }
-
-    /* ===== 햄버거 클릭 시 나타나는 라인(글라스 상단바 아래) ===== */
-    .nav-line{
-      position:fixed; left:0; right:0; top:64px; height:2px;
-      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%);
-      transform: scaleX(0); transform-origin: left center;
-      transition: transform .45s ease, opacity .3s ease;
-      opacity:.95;
-      /* 헤더 위, 오버레이 아래 */
-      z-index:1001;
-      pointer-events:none;
+    /* ===== 페이지 타이틀 / 섹션 ===== */
+    .wrap{ padding: 16px 16px calc(var(--footer-safe) + 16px); }
+    .wrap {
+      overflow-y: auto;
+      max-height: calc(100vh - var(--header-h) - var(--footer-safe));
     }
-    body.nav-open .nav-line{ transform: scaleX(1); }
-
-    /* 작은 화면(아이폰 SE)에서 헤더 높이 56px 대응 */
-    @media (max-width: 375px){
-      .nav-line{ top:56px; }
+    .hero-title{
+      margin: 10px auto 12px;
+      font-size: 28px; font-weight: 900; letter-spacing:.2px;
+      text-align: center;
     }
 
-    /* 콘텐츠: 포스터와 푸터 */
-    .poster{ display:block; width:100%; height:auto; margin:0 auto; }
-    /* .rose-left{
-      display:block;
-      max-width:50%;  절반 정도 크기 
-      height:auto;
-      margin:40px 0 0 10px;  위에서 조금 내리고 왼쪽으로 붙임 
-    } */
-    /* .gun-poster{
-      display:block;
-      width:80%;
-      max-width:500px;
-      height:auto;
-      margin:30px auto 0 auto;  위쪽 여백 주고 중앙 정렬 
-    } */
-    .promo-video{
-      display:block; width:100%; height:auto;
-      /* 아래 여백으로 푸터 고정 높이 피함 */
-      margin:20px auto 80px;
-      border:1px solid rgba(255,255,255,.2); border-radius:8px;
-      /* 로딩 중 배경 */
-      background:#000;
+    /* ===== 글쓰기 토글 / 폼 ===== */
+    .write-toggle{ display:flex; justify-content:center; margin: 8px 0 14px; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 16px; border-radius:10px; border:1px solid rgba(255,255,255,.18);
+      background:#111; color:#fff; font-weight:800; cursor:pointer;
     }
-    /* 푸터(고정)와 겹치지 않도록 여백 확보 */
-    .stage{ background:#000; line-height:0; padding-bottom:72px; }
+    .btn:active{ transform: translateY(1px); }
+    .form-box{
+      display:none; margin:0; padding:12px; border:1px solid rgba(255,255,255,.14);
+      border-radius:12px; background:rgba(255,255,255,.03);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    .form-box.show{ display:block; }
+    .form-box form{ display:flex; flex-direction:column; gap:10px; }
+    .form-box input, .form-box textarea{
+      width:100%; box-sizing:border-box;
+      padding:12px 14px; border-radius:10px; border:1px solid #333;
+      background:#1a1a1a; color:#fff; font-size:14px;
+    }
+    .form-box textarea{ min-height:110px; resize:vertical; }
+    .form-box input:focus, .form-box textarea:focus{
+      outline:none; border-color:#ff4d4d; box-shadow:0 0 0 2px rgba(255,77,77,.2);
+    }
+    .form-submit{
+      margin-top:4px; width:100%; background:#fff; color:#000; border:1px solid #000;
+      font-weight:900; padding:10px 16px; border-radius:10px; cursor:pointer;
+    }
+    .form-submit:hover{ background:#000; color:#fff; }
+
+    /* ===== 메시지 카드 ===== */
+    .list{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--card-gap);
+      margin-top: 18px;
+      max-height: calc(100vh - var(--header-h) - var(--footer-safe) - 160px);
+      overflow-y: auto;
+      padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.2) transparent;
+    }
+    .list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .list::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.2);
+      border-radius: 3px;
+    }
+    .card{
+      position:relative; border-radius: var(--card-radius);
+      background:#fff; color:#000; padding:12px 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.25);
+      min-height: 74px;
+    }
+    .card .to{ font-weight:800; font-size:14px; color:#111; }
+    .card .msg{
+      margin:6px 0 8px;
+      line-height:1.5;
+      font-size:14px;
+      overflow-y: auto;
+      max-height: 120px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,0,0,.3) transparent;
+    }
+    .card .msg::-webkit-scrollbar {
+      width: 4px;
+    }
+    .card .msg::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,.3);
+      border-radius: 2px;
+    }
+    .card .from{ font-weight:700; font-size:13px; color:#333; }
+    .card .edit-toggle{
+      position:absolute; top:8px; right:8px;
+      background:transparent; border:0; font-size:18px; cursor:pointer; color:#777;
+    }
+    .card .actions{ display:none; position:absolute; top:8px; right:8px; gap:6px; }
+    .card.show-actions .actions{ display:flex; }
+    .card .actions .mini{
+      padding:4px 8px; border-radius:8px; border:1px solid #444; background:#222; color:#fff; font-size:12px;
+    }
+
+    /* ===== 페이지네이션 (고정) ===== */
+    .pager{
+      position:fixed; left:50%; bottom: calc(var(--footer-safe) + 8px);
+      transform: translateX(-50%);
+      display:flex; gap:6px; align-items:center;
+      background:rgba(0,0,0,.55); padding:6px 10px; border-radius:10px;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      z-index: 900;
+    }
+    .pager .page{ width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+      font-weight:800; color:#ddd; border:1px solid rgba(255,255,255,.16); background:transparent; }
+    .pager .page.active{ background:#ff4d4d; color:#fff; border-color: transparent; }
+    .pager .page:not(.active):hover{ background: rgba(255,77,77,.1); color:#ff4d4d; }
 
     footer{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      width:100%;
-      background:#000;
-      color: #f3f3f3;
-      border-top:1px solid var(--line);
-      padding:6px 10px;
-      box-sizing:border-box;
-      font-size:12px;
-      text-align:center;
+      position:fixed; left:0; right:0; bottom:0; height: var(--footer-safe);
+      display:flex; align-items:center; justify-content:center;
+      background:#000; border-top:1px solid var(--line);
+      color:#eee; font-size:12px; z-index:800;
     }
 
-    /* 작은 화면(아이폰 SE) 폰트/여백 조정 */
+    /* 작은 화면 최적화 (아이폰 SE 등) */
     @media (max-width: 375px){
-      .m-header{ height:56px; }
+      :root{ --header-h: 56px; }
       .m-menu{ top:56px; }
-      .menu-overlay{ top:56px; }
-      .m-menu li a{ height:56px; font-size:20px; padding:0 18px; }
-      .m-menu-btn{ width:36px; height:36px; }
-      .m-menu-btn img{ width:22px; height:22px; }
-    }
-
-    .poster-wrapper{
-      position:relative;
-      display:inline-block;
-      width:100%;
-      text-align:left;
-    }
-    .poster-wrapper .logo-bg{
-      position:absolute;
-      top:0; left:0;
-      width:100%; height:auto;    
-      z-index:0;
-    }
-    .poster-wrapper .rose-left{
-      position:relative;
-      z-index:1;
-      /* 훨씬 크게 확대 */
-      max-width:100%;
-      /* 왼쪽으로 이동하고 아래로 10% 내림 */
-      transform:translate(-23%, 6%);
-    }
-    .poster-wrapper .gun-below{
-      position:absolute;
-      /* BLOOM 텍스트 바로 밑에 */
-      top:22%;
-      /* 오른쪽에 맞춤 */
-      right:5%;
-      transform:translateY(-50%);
-      max-width:70%;
-      z-index:2;
-      /* 살짝 투명하게 */
-      opacity:0.6;
+      .m-header{ height:56px; }
     }
   </style>
 </head>
-
-
 <body>
-  <!-- 상단: 제목 + 햄버거 버튼 -->
+  <!-- 상단 헤더 -->
   <header class="m-header">
     <a class="logo" aria-label="BLOOM" href="Main.html">
       <img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="BLOOM 로고" decoding="async" />
@@ -212,29 +211,58 @@
       <img src="../../1.Picture/Another/Menu.png" alt="메뉴" />
     </button>
   </header>
-  <div class="nav-line" aria-hidden="true"></div>
   <div class="menu-overlay" id="menuOverlay"></div>
 
-  <!-- 모바일 메뉴(링크 연결 제거 요청: # 처리) -->
-   <nav class="m-menu" id="mMenu" aria-label="모바일 메뉴">
+  <!-- 모바일 메뉴 -->
+  <nav class="m-menu" id="mMenu" aria-label="모바일 메뉴">
     <ul>
       <li><a href="Main.html">HOME</a></li>
-      <li><a href="About.html#">ABOUT</a></li>
-      <li><a href="Project.html#">PROJECT</a></li>
-      <li><a href="Designer.html#">DESIGNER</a></li>
+      <li><a href="About.html">ABOUT</a></li>
+      <li><a href="Project.html">PROJECT</a></li>
+      <li><a href="Designer.html">DESIGNER</a></li>
       <li><a href="Guest.html">GUEST BOOK</a></li>
     </ul>
   </nav>
 
+  <!-- 본문 -->
+  <main class="wrap">
+    <h1 class="hero-title">GUEST BOOK</h1>
+
+    <div class="write-toggle">
+      <button id="toggleWriteForm" class="btn">✍ 글쓰기</button>
+    </div>
+
+    <section id="writeBox" class="form-box" aria-hidden="true">
+      <form id="guestForm" name="guestbook" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="guestbook" />
+        <input type="text" id="name" name="name" placeholder="To" required />
+        <textarea id="message" name="message" placeholder="메시지를 남겨주세요" required></textarea>
+        <input type="text" id="from" name="from" placeholder="From" required />
+        <button type="submit" class="form-submit">남기기</button>
+      </form>
+    </section>
+
+    <section class="list" id="messageList"></section>
+    <div class="pager" id="pagination" role="navigation" aria-label="페이지 이동"></div>
+  </main>
+
   <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
 
+  <!-- 숨김 폼(넷리파이 빌드용) -->
+  <form name="guestbook" method="POST" data-netlify="true" netlify-honeypot="bot-field" style="position:absolute;left:-9999px;opacity:0;pointer-events:none;">
+    <input type="hidden" name="form-name" value="guestbook" />
+    <input name="name" />
+    <textarea name="message"></textarea>
+    <input name="from" />
+    <input type="text" name="bot-field" />
+    <button type="submit">남기기</button>
+  </form>
+
   <script>
-    // 햄버거 버튼으로 오버레이 열고/닫기
+    // ===== 햄버거 열고/닫기 =====
     (function(){
       const btn = document.getElementById('menuBtn');
       const menu = document.getElementById('mMenu');
-      if(!btn || !menu) return;
-
       const overlay = document.getElementById('menuOverlay');
       function toggle(){
         const open = !document.body.classList.contains('nav-open');
@@ -243,67 +271,234 @@
         btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
       }
       btn.addEventListener('click', toggle);
-      if(overlay){ overlay.addEventListener('click', toggle); }
+      overlay.addEventListener('click', toggle);
+      menu.addEventListener('click', (e)=>{ if(e.target.closest('a')) document.body.classList.remove('nav-open'); });
+      window.addEventListener('scroll', ()=>{ if(document.body.classList.contains('nav-open')) document.body.classList.remove('nav-open'); }, {passive:true});
+    })();
 
-      // 메뉴 항목 탭 시 닫기(링크는 모두 '#')
-      menu.addEventListener('click', (e)=>{
-        if(e.target.closest('a')) document.body.classList.remove('nav-open');
+    // ===== 라우팅: 화면 너비 기준 (<=639px: Guest-mobile.html, >=640px: Guest.html) =====
+    (function responsiveRoute(){
+      const DESKTOP_BASE = 'Guest';
+      const MOBILE_BASE  = 'Guest-mobile';
+      function isOnBase(base){
+        const p = location.pathname.toLowerCase().replace(/\/+$/, '');
+        const b = base.toLowerCase().replace(/\.html?$/, '');
+        return (
+          p.endsWith('/'+b) ||
+          p.endsWith('/'+b+'.html') ||
+          p.endsWith('/'+b+'/') ||
+          p.endsWith('/'+b+'/index.html')
+        );
+      }
+      function goToBase(base){
+        const baseDir = location.pathname.replace(/[^/]*$/, '');
+        const file = base + '.html';
+        location.replace((baseDir + file).replace(/\/\/{2,}/g,'/'));
+      }
+      const mq = window.matchMedia('(min-width: 640px)');
+      let ticking = false;
+      function check(){
+        if (ticking) return; ticking = true;
+        requestAnimationFrame(() => {
+          const isDesktop = mq.matches;
+          // Debug log
+          console.log('Routing:', isDesktop ? 'Desktop → Guest.html' : 'Mobile → Guest-mobile.html');
+          if (isDesktop && isOnBase(MOBILE_BASE)) {
+            goToBase(DESKTOP_BASE);
+          }
+          // If mobile and on Guest-mobile.html, do nothing (stay)
+          ticking = false;
+        });
+      }
+      if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
+      else if (mq.addListener) mq.addListener(check);
+      window.addEventListener('resize', check,   {passive:true});
+      window.addEventListener('orientationchange', check, {passive:true});
+      document.addEventListener('DOMContentLoaded', check);
+      setTimeout(check, 120);
+      let kicks = 0; const kickTimer = setInterval(()=>{ kicks++; check(); if (kicks>10) clearInterval(kickTimer); }, 200);
+      window.addEventListener('pageshow', check, {passive:true});
+      document.addEventListener('visibilitychange', check, {passive:true});
+    })();
+
+    // ===== Guestbook 데이터 =====
+    const messagesPerPage = 6; // 1열 기준 6개(스크롤 최소화)
+    let messages = [];
+    let currentPage = 1;
+
+    function escHtml(str){
+      return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+    }
+    function escAttr(str){ return escHtml(str); }
+
+    function renderMessages(){
+      const list = document.getElementById('messageList');
+      const pager = document.getElementById('pagination');
+      list.innerHTML = '';
+      pager.innerHTML = '';
+
+      const start = (currentPage - 1) * messagesPerPage;
+      const end   = start + messagesPerPage;
+      const pageItems = messages.slice(start, end);
+
+      pageItems.forEach((item, iLocal) => {
+        const idx = start + iLocal;
+        const el = document.createElement('article');
+        el.className = 'card';
+        if (item.editing){
+          el.innerHTML = `
+            <form class="edit-form" data-index="${idx}">
+              <input type="text" id="edit-name-${idx}" value="${escAttr(item.name)}" placeholder="To" required />
+              <input type="text" id="edit-from-${idx}" value="${escAttr(item.from || '')}" placeholder="From" required />
+              <textarea id="edit-message-${idx}" required>${escHtml(item.message)}</textarea>
+              <div class="actions" style="display:flex; position:static; gap:8px; margin-top:8px;">
+                <button type="submit" class="mini">저장</button>
+                <button type="button" class="mini cancel-btn">취소</button>
+                <button type="button" class="mini delete-btn" data-index="${idx}">삭제</button>
+              </div>
+            </form>`;
+        } else {
+          el.innerHTML = `
+            <button class="edit-toggle" aria-label="수정 메뉴 열기">✏️</button>
+            <div class="to">To · ${escHtml(item.name)}</div>
+            <div class="msg">${escHtml(item.message).replace(/\n/g,'<br>')}</div>
+            <div class="from">From · ${escHtml(item.from || item.name)}</div>
+            <div class="actions">
+              <button class="mini edit-btn"   data-index="${idx}">수정</button>
+              <button class="mini delete-btn" data-index="${idx}">삭제</button>
+            </div>`;
+        }
+        list.appendChild(el);
       });
 
-      // 바깥 스크롤 시 닫힘(선택)
-      window.addEventListener('scroll', () => {
-        if(document.body.classList.contains('nav-open')){
-          document.body.classList.remove('nav-open');
-          btn.setAttribute('aria-expanded', 'false');
-          btn.setAttribute('aria-label', '메뉴 열기');
+      const pageCount = Math.max(1, Math.ceil(messages.length / messagesPerPage));
+      for (let i=1; i<=pageCount; i++){
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'page' + (i===currentPage ? ' active' : '');
+        btn.textContent = i;
+        btn.addEventListener('click', () => { currentPage = i; renderMessages(); });
+        pager.appendChild(btn);
+      }
+    }
+
+    // 폼 제출
+    document.getElementById('guestForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      const data = new FormData(form);
+      if (!data.get('form-name')) data.set('form-name','guestbook');
+
+      const body = new URLSearchParams();
+      for (const [k,v] of data.entries()) body.append(k, v);
+
+      try{
+        await fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: body.toString() });
+        const name = data.get('name'); const message = data.get('message'); const from = data.get('from');
+        messages.unshift({ name, message, from });
+        try{
+          const cached = JSON.parse(localStorage.getItem('guestbook-cache') || '[]');
+          cached.unshift({ name, message, from, _ts: Date.now() });
+          localStorage.setItem('guestbook-cache', JSON.stringify(cached.slice(0,200)));
+        }catch(_){}
+        currentPage = 1; renderMessages(); form.reset();
+        alert('작성되었습니다!');
+      }catch(err){
+        console.error('submit failed', err);
+        alert('제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      }
+    });
+
+    // 글쓰기 토글
+    (function(){
+      const btn = document.getElementById('toggleWriteForm');
+      const box = document.getElementById('writeBox');
+      if (!btn || !box) return;
+      btn.addEventListener('click', ()=>{
+        const show = !box.classList.contains('show');
+        box.classList.toggle('show', show);
+        box.setAttribute('aria-hidden', show ? 'false' : 'true');
+      });
+    })();
+
+    // 리스트 액션 (수정/삭제)
+    document.getElementById('messageList').addEventListener('click', (e) => {
+      const editBtn = e.target.closest('.edit-btn');
+      const delBtn  = e.target.closest('.delete-btn');
+      const toggle  = e.target.closest('.edit-toggle');
+      if (toggle){
+        const card = toggle.closest('.card');
+        card && card.classList.toggle('show-actions');
+        return;
+      }
+      if (editBtn){
+        const idx = parseInt(editBtn.dataset.index, 10);
+        if (!isNaN(idx) && messages[idx]){ messages[idx].editing = true; renderMessages(); }
+        return;
+      }
+      if (delBtn){
+        const idx = parseInt(delBtn.dataset.index, 10);
+        if (!isNaN(idx) && messages[idx]){
+          if (confirm('정말 삭제하시겠어요?')){
+            messages.splice(idx, 1);
+            try{
+              const toCache = messages.map(({name,message,from}) => ({name,message,from,_ts:Date.now()}));
+              localStorage.setItem('guestbook-cache', JSON.stringify(toCache));
+            }catch(_){}
+            const maxPage = Math.ceil(messages.length / messagesPerPage) || 1;
+            if (currentPage > maxPage) currentPage = maxPage;
+            renderMessages();
+          }
         }
-      }, { passive:true });
+      }
+    });
+
+    // 인라인 편집 저장/취소
+    document.getElementById('messageList').addEventListener('submit', (e) => {
+      const form = e.target.closest('.edit-form'); if (!form) return;
+      e.preventDefault();
+      const idx = parseInt(form.dataset.index, 10); if (isNaN(idx) || !messages[idx]) return;
+      const newName = document.getElementById(`edit-name-${idx}`).value;
+      const newFrom = document.getElementById(`edit-from-${idx}`).value;
+      const newMsg  = document.getElementById(`edit-message-${idx}`).value;
+      messages[idx] = { name: newName, from: newFrom, message: newMsg, editing: false };
+      renderMessages();
+      try{
+        const toCache = messages.map(({name,message,from}) => ({name,message,from,_ts:Date.now()}));
+        localStorage.setItem('guestbook-cache', JSON.stringify(toCache));
+      }catch(_){}
+    });
+    document.getElementById('messageList').addEventListener('click', (e) => {
+      const cancel = e.target.closest('.cancel-btn');
+      if (!cancel) return;
+      const form = cancel.closest('.edit-form');
+      const idx = form ? parseInt(form.dataset.index, 10) : -1;
+      if (!isNaN(idx) && messages[idx]){ messages[idx].editing = false; renderMessages(); }
+    });
+
+    // 초기 데이터 로드
+    (async function loadInitial(){
+      try{
+        const res = await fetch('/api/guestbook', { cache:'no-store' });
+        if (res.ok){
+          const rows = await res.json();
+          messages = Array.isArray(rows) ? rows.map(r => ({
+            name: r.name || '', message: r.message || '', from: r.from || (r.name || '')
+          })) : [];
+          currentPage = 1; renderMessages(); return;
+        }
+      }catch(_){}
+      try{
+        const cached = JSON.parse(localStorage.getItem('guestbook-cache') || '[]');
+        messages = cached.map(r => ({ name:r.name, message:r.message, from:r.from }));
+      }catch(_){ messages = []; }
+      currentPage = 1; renderMessages();
     })();
   </script>
-<script>
-// [라우팅] 화면 너비 기준 페이지 전환 // (>=640: Main.html, <=639: Main-mobile.html)
-(function responsiveRoute(){
-  const DESKTOP_BASE = 'Main';
-  const MOBILE_BASE  = 'Main-mobile';
-
-  function isOnBase(base){
-    const p = location.pathname.toLowerCase().replace(/\/+$/, '');
-    const b = base.toLowerCase().replace(/\.html?$/, '');
-    return (
-      p.endsWith('/'+b) ||
-      p.endsWith('/'+b+'.html') ||
-      p.endsWith('/'+b+'/') ||
-      p.endsWith('/'+b+'/index.html')
-    );
-  }
-  function goToBase(base){
-    const baseDir = location.pathname.replace(/[^/]*$/, '');
-    const file = base + '.html';
-    location.replace(baseDir + file);
-  }
-
-  const mq = window.matchMedia('(max-width: 639px)');
-  let ticking = false;
-  function check(){
-    if (ticking) return; ticking = true;
-    requestAnimationFrame(() => {
-      const isMobile = mq.matches;
-      if (!isMobile && isOnBase(MOBILE_BASE)) goToBase(DESKTOP_BASE);
-      ticking = false;
-    });
-  }
-
-  if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
-  else if (mq.addListener) mq.addListener(check);
-  window.addEventListener('resize', check, {passive:true});
-  window.addEventListener('orientationchange', check, {passive:true});
-  document.addEventListener('DOMContentLoaded', check);
-  setTimeout(check, 120);
-  // iOS/Safari 지연 대응
-  let kicks = 0; const kickTimer = setInterval(()=>{ kicks++; check(); if (kicks>10) clearInterval(kickTimer); }, 200);
-  window.addEventListener('pageshow', check, {passive:true});
-  document.addEventListener('visibilitychange', check, {passive:true});
-})();
-</script>
 </body>
 </html>

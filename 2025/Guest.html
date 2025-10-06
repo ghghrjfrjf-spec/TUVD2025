@@ -993,6 +993,26 @@
 
     // Replace the original direct call
     loadInitialMessages();
+    // --- 화면 크기 변화 시 모바일 페이지로 자동 전환 ---
+    (function handleResponsiveRedirect(){
+      function checkViewport() {
+        const width = window.innerWidth;
+        const current = location.pathname.toLowerCase();
+        if (width < 800 && !current.includes('guest-mobile.html')) {
+          location.href = 'Guest-mobile.html';
+        }
+      }
+      window.addEventListener('resize', checkViewport);
+      window.addEventListener('load', checkViewport);
+    })();
   </script>
 </body>
 </html>
+    /* 모바일(800px 이하)에서 guestbook-title 중앙정렬 및 스타일 적용 */
+    @media (max-width: 800px) {
+      .guestbook-title {
+        text-align: center;
+        margin: 0 auto 1.5rem auto;
+        font-size: 3rem;
+      }
+    }

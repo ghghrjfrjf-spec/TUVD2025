@@ -775,10 +775,12 @@
         .catch(err => console.error('Cursor load failed:', err));
     })();
 
-    const API_URL = "https://script.google.com/macros/s/AKfycbyQqkyuZ5oosTFd8TOhIpELwWQbVvu6Ro3alvbkiSdFD7A1YxyjJA8p7fc_7TEytUJ3rg/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzv2q6tQP8CILNnkPYhKy-VF_ugJq4XaI4v79XTRbUsU0ZaBKOxJojnJGZyEgcBz1vBMA/exec";
     const messagesPerPage = 6; // 3 columns x 2 rows per page
-    let messages = [];
-    let currentPage = 1;
+let messages = [];
+let currentPage = 1;
+// Clear stale local cache on every visit (ensure fresh fetch from API)
+try { localStorage.removeItem('guestbook-cache'); } catch (_) {}
 
     // --- helpers to avoid HTML injection when rendering user text ---
     function escHtml(str){
@@ -871,43 +873,45 @@
 
   // (kept above code untouched)
   document.getElementById("guestForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const form = e.currentTarget;
+  e.preventDefault();
+  const form = e.currentTarget;
 
-    try {
-      const name = document.getElementById("name").value.trim();
-      const message = document.getElementById("message").value.trim();
-      const from = document.getElementById("from").value.trim();
+  const name = document.getElementById("name").value.trim();
+  const message = document.getElementById("message").value.trim();
+  const from = document.getElementById("from").value.trim();
 
-      if (!name || !message) {
-        alert("이름과 메시지를 입력해주세요.");
-        return;
-      }
+  if (!name || !message) {
+    alert("이름과 메시지를 입력해주세요.");
+    return;
+  }
 
-      const postRes = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, message, from })
-      });
+  // ✅ 프리플라이트 없는 '단순요청'으로 전송 (CORS 에러 회피)
+  const body = new URLSearchParams();
+  body.set("name", name);
+  body.set("message", message);
+  body.set("from", from);
 
-      if (!postRes.ok) {
-        throw new Error("서버 응답이 올바르지 않습니다. (" + postRes.status + ")");
-      }
+  try {
+    await fetch(API_URL, {
+      method: "POST",
+      mode: "no-cors",   // 응답은 opaque가 되지만 요청은 정상 전송됨
+      body                // 절대 headers에 Content-Type을 강제로 넣지 마!
+    });
+  } catch (err) {
+    // 진짜 네트워크 끊김 같은 경우만 콘솔로 보고, 사용자에겐 알림 안 띄움
+    console.warn("submit network error:", err);
+  }
 
-      // 성공 즉시 UI 반영
-      messages.unshift({ name, message, from });
-      currentPage = 1;
-      renderMessages();
+  // ✅ 낙관적 업데이트: 바로 화면에 반영
+  const tempId = 'temp-' + Date.now();
+  messages.unshift({ id: tempId, name, message, from });
+  currentPage = 1;
+  renderMessages();
+  form.reset();
 
-      // 서버 최신 데이터로 동기화
-      await loadInitialMessages();
-      form.reset();
-      alert("작성되었습니다!");
-    } catch (err) {
-      console.error("Apps Script submit failed", err);
-      alert("제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-    }
-  });
+  // ✅ Apps Script가 시트에 쓰는 데 약간 시간 걸림 → 잠깐 후 실제 데이터로 동기화
+  setTimeout(loadInitialMessages, 1200);
+});
 
     document.getElementById("toggleWriteForm").addEventListener("click", function () {
       const formContainer = document.querySelector(".guestbook-form-container");
@@ -945,16 +949,25 @@
       if (delBtn) {
         const idx = parseInt(delBtn.dataset.index, 10);
         if (!isNaN(idx) && messages[idx]) {
+          const target = messages[idx];
+          if (!target.id || String(target.id).startsWith('temp-')) {
+            alert('이 글은 아직 서버에 저장된 ID가 없어 삭제가 불가합니다.\n잠시 후 새로고침(F5) 후 다시 시도해주세요.');
+            return;
+          }
           if (confirm('정말 삭제하시겠어요?')) {
-            messages.splice(idx, 1);
-            // 🔄 로컬 캐시도 현재 messages 배열로 동기화
-            try {
-              const toCache = messages.map(({ name, message, from }) => ({ name, message, from, _ts: Date.now() }));
-              localStorage.setItem('guestbook-cache', JSON.stringify(toCache));
-            } catch (_) {}
-            const maxPage = Math.ceil(messages.length / messagesPerPage) || 1;
-            if (currentPage > maxPage) currentPage = maxPage;
-            renderMessages();
+            fetch(API_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ action: "delete", id: target.id })
+            })
+            .then(res => {
+              // 성공/실패와 관계없이 UI에서는 제거, 필요시 추후 보강
+              messages.splice(idx, 1);
+              renderMessages();
+            })
+            .catch(() => {
+              alert("삭제 중 오류가 발생했습니다.");
+            });
           }
         }
         return;
@@ -973,10 +986,6 @@
       const newMsg  = document.getElementById(`edit-message-${idx}`).value;
       messages[idx] = { name: newName, from: newFrom, message: newMsg, editing: false };
       renderMessages();
-      try {
-        const toCache = messages.map(({ name, message, from }) => ({ name, message, from, _ts: Date.now() }));
-        localStorage.setItem('guestbook-cache', JSON.stringify(toCache));
-      } catch (_) {}
     });
 
     async function loadInitialMessages(){
@@ -985,6 +994,7 @@
         if (!res.ok) throw new Error("fetch failed: " + res.status);
         const rows = await res.json();
         messages = Array.isArray(rows) ? rows.map(r => ({
+          id: r.id || "",
           name: r.name || "",
           message: r.message || "",
           from: r.from || (r.name || ""),
@@ -993,10 +1003,7 @@
         renderMessages();
       } catch (e) {
         console.warn("[guest] loadInitialMessages fallback to local cache", e);
-        try {
-          const cached = JSON.parse(localStorage.getItem("guestbook-cache") || "[]");
-          messages = cached.map(r => ({ name: r.name, message: r.message, from: r.from }));
-        } catch(_) { messages = []; }
+        messages = [];
         currentPage = 1;
         renderMessages();
       }

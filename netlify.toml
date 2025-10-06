@@ -1,0 +1,8 @@
+[build]
+publish = "2025"
+functions = "netlify/functions"
+
+[[redirects]]
+from = "/api/guestbook"
+to = "/.netlify/functions/guestbook"
+status = 200

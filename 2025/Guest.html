@@ -558,8 +558,7 @@
             <button id="toggleWriteForm">✍ 글쓰기</button>
           </div>
           <div class="guestbook-form-container hidden">
-            <form id="guestForm" name="guestbook" method="POST" data-netlify="true">
-              <input type="hidden" name="form-name" value="guestbook" />
+            <form id="guestForm">
               <input type="text" id="name" name="name" placeholder="To" required />
               <textarea id="message" name="message" placeholder="메시지를 남겨주세요" required></textarea>
               <input type="text" id="from" name="from" placeholder="From" required />
@@ -575,14 +574,6 @@
     </main>
     <div id="footer-placeholder"></div>
   </div>
-  <form name="guestbook" method="POST" data-netlify="true" netlify-honeypot="bot-field" style="position:absolute;left:-9999px;opacity:0;pointer-events:none;">
-    <input type="hidden" name="form-name" value="guestbook" />
-    <input name="name" />
-    <textarea name="message"></textarea>
-    <input name="from" />
-    <input type="text" name="bot-field" />
-    <button type="submit">남기기</button>
-  </form>
   <script> 
     // 네비게이션 HTML 로드 (Project.page 스타일 우선 적용) + 로고 교체 + 링크 정규화
     (async function loadProjectNav(){
@@ -784,6 +775,7 @@
         .catch(err => console.error('Cursor load failed:', err));
     })();
 
+    const API_URL = "https://script.google.com/macros/s/AKfycbw8PMK_qgjLYnCG9fW7JD4hdHFbqVScjdFG9HDRFerL5fAJfu1xnnxKGS0IzAPgqGJyPg/exec";
     const messagesPerPage = 6; // 3 columns x 2 rows per page
     let messages = [];
     let currentPage = 1;
@@ -877,45 +869,45 @@
       document.documentElement.style.setProperty('--footer-safe', (document.getElementById('footer-placeholder').offsetHeight || 0) + 'px');
     }
 
-    document.getElementById("guestForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const form = e.currentTarget;
-      const formData = new FormData(form);
-      // Netlify requires the `form-name` key in the encoded body
-      if (!formData.get("form-name")) formData.set("form-name", "guestbook");
+  // (kept above code untouched)
+  document.getElementById("guestForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const form = e.currentTarget;
 
-      // Encode as application/x-www-form-urlencoded
-      const body = new URLSearchParams();
-      for (const [k, v] of formData.entries()) body.append(k, v);
+    try {
+      const name = document.getElementById("name").value.trim();
+      const message = document.getElementById("message").value.trim();
+      const from = document.getElementById("from").value.trim();
 
-      try {
-        await fetch("/", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: body.toString()
-        });
-
-        const name = formData.get("name");
-        const message = formData.get("message");
-        const from = formData.get("from");
-
-        // Optimistic UI + local cache as fallback
-        messages.unshift({ name, message, from });
-        try {
-          const cached = JSON.parse(localStorage.getItem("guestbook-cache") || "[]");
-          cached.unshift({ name, message, from, _ts: Date.now() });
-          localStorage.setItem("guestbook-cache", JSON.stringify(cached.slice(0, 200)));
-        } catch (_) {}
-
-        currentPage = 1;
-        renderMessages();
-        form.reset();
-        alert("작성되었습니다!.");
-      } catch (err) {
-        console.error("Netlify submit failed", err);
-        alert("제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      if (!name || !message) {
+        alert("이름과 메시지를 입력해주세요.");
+        return;
       }
-    });
+
+      const postRes = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, message, from })
+      });
+
+      if (!postRes.ok) {
+        throw new Error("서버 응답이 올바르지 않습니다. (" + postRes.status + ")");
+      }
+
+      // 성공 즉시 UI 반영
+      messages.unshift({ name, message, from });
+      currentPage = 1;
+      renderMessages();
+
+      // 서버 최신 데이터로 동기화
+      await loadInitialMessages();
+      form.reset();
+      alert("작성되었습니다!");
+    } catch (err) {
+      console.error("Apps Script submit failed", err);
+      alert("제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
+  });
 
     document.getElementById("toggleWriteForm").addEventListener("click", function () {
       const formContainer = document.querySelector(".guestbook-form-container");
@@ -988,34 +980,31 @@
     });
 
     async function loadInitialMessages(){
-      // 1) Try server endpoint (you will add a Netlify Function named `guestbook` that returns JSON)
       try {
-        const res = await fetch("/api/guestbook", { cache: "no-store" });
-        if (res.ok) {
-          const rows = await res.json();
-          // Expecting an array of { name, message, from }
-          messages = Array.isArray(rows) ? rows.map(r => ({
-            name: r.name || "",
-            message: r.message || "",
-            from: r.from || (r.name || ""),
-          })) : [];
-          currentPage = 1;
-          renderMessages();
-          return;
-        }
-      } catch(_) { /* ignore and try local */ }
-
-      // 2) Fallback: local cache so at least this device keeps messages
-      try {
-        const cached = JSON.parse(localStorage.getItem("guestbook-cache") || "[]");
-        messages = cached.map(r => ({ name: r.name, message: r.message, from: r.from }));
-      } catch(_) { messages = []; }
-      currentPage = 1;
-      renderMessages();
+        const res = await fetch(API_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("fetch failed: " + res.status);
+        const rows = await res.json();
+        messages = Array.isArray(rows) ? rows.map(r => ({
+          name: r.name || "",
+          message: r.message || "",
+          from: r.from || (r.name || ""),
+        })) : [];
+        currentPage = 1;
+        renderMessages();
+      } catch (e) {
+        console.warn("[guest] loadInitialMessages fallback to local cache", e);
+        try {
+          const cached = JSON.parse(localStorage.getItem("guestbook-cache") || "[]");
+          messages = cached.map(r => ({ name: r.name, message: r.message, from: r.from }));
+        } catch(_) { messages = []; }
+        currentPage = 1;
+        renderMessages();
+      }
     }
 
-    // Replace the original direct call
+    // 초기 데이터 로드
     loadInitialMessages();
+
     // --- 화면 크기 변화 시 모바일 페이지로 자동 전환 ---
     (function handleResponsiveRedirect(){
       function checkViewport() {

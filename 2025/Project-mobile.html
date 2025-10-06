@@ -3,13 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BLOOM — 모바일</title>
-  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" />
-  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" />
-  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" />
+  <title>Project — 모바일</title>
+  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" />
   <style>
-    :root{ --line: rgba(255,255,255,.12); }
-    html,body{ margin:0; padding:0; background:#000; color:#fff; }
+    :root{
+      --line: rgba(255,255,255,.12);
+      --content-max: 1000px; /* clamp width for big tablets like iPad Pro */
+      --side-pad: 16px;      /* safe side padding on all widths */
+    }
+    /* Prevent any content from exceeding the viewport */
+    main, header, nav, .stage, .search-bar, .filter-scroll, .toolbar-count, .grid {
+      width: min(100vw, 100%);
+      max-width: 100vw;
+    }
+
+/* Force text wrapping to avoid layout overflow */
+*, *::before, *::after {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+    html,body{
+      margin:0;
+      padding:0;
+      background:#000;
+      color:#fff;
+      width:100%;
+      max-width:100%;
+      overflow-x:hidden; /* 🚫 prevent horizontal scroll on iPad Pro */
+      -webkit-text-size-adjust:100%;
+    }
+*{ box-sizing:border-box; }
 
     /* ===== 헤더 (모바일 전용) ===== */
     .m-header{
@@ -20,184 +43,138 @@
       border-bottom:1px solid rgba(255,255,255,.12);
       transition:transform .5s ease; will-change:transform;
     }
-    .m-title{ font:800 16px/1 Pretendard, system-ui, -apple-system, sans-serif; letter-spacing:.2px; }
+    .m-header .logo{ display:flex; align-items:center; gap:8px; text-decoration:none; color:#fff; }
+    .m-header .logo img{ max-height:32px; display:block; }
+    .m-header .logo-text{ display:flex; flex-direction:column; line-height:1; }
+    .m-header .logo-text .main{ font-size:15px; font-weight:800; color:#fff; margin:0 0 2px 0; }
+    .m-header .logo-text .sub{ font-size:14px; font-weight:800; color:#ff4d4d; letter-spacing:.2px; }
 
-    /* 로고: Main.html과 동일한 위치/크기로 */
-    .m-header .logo{
-      display:flex; align-items:center; gap:8px;
-      text-decoration:none; color:#fff;
-    }
-    .m-header .logo img{
-      max-height:32px;
-      display:block;
-    }
-    .m-header .logo-text{
-      display:flex; flex-direction:column;
-      /* 줄 간격 타이트하게 */
-      line-height:1;
-    }
-    .m-header .logo-text .main{
-      font-size:15px; font-weight:800; color:#fff;
-      /* 아래 간격 2px */
-      display:block; margin:0 0 2px 0;
-    }
-    .m-header .logo-text .sub{
-      font-size:14px; font-weight:800; color:#ff4d4d;
-      display:block; letter-spacing:.2px;
-    }
-
-    /* 햄버거 버튼: 미니멀/얇은 스타일, hover/active에만 테두리 */
-    .m-menu-btn{
-      width:40px; height:40px; border-radius:10px;
-      display:inline-flex; align-items:center; justify-content:center;
-      background:transparent; border:none; box-shadow:none; cursor:pointer; overflow:hidden;
-    }
+    .m-menu-btn{ width:40px; height:40px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; background:transparent; border:none; box-shadow:none; cursor:pointer; overflow:hidden; }
     .m-menu-btn img{ width:20px; height:20px; display:block; }
-
-    /* hover/active 시에만 미세한 테두리 표시 (시각 피드백) */
     .m-menu-btn:hover{ border:1px solid rgba(255,255,255,.18); }
     .m-menu-btn:active{ border:1px solid rgba(255,255,255,.28); }
 
     /* ===== 모바일 메뉴 오버레이 ===== */
-    .m-menu{
-      position:fixed; top:64px; right:0; bottom:0; width:260px;
-      /* 투명한 유리 느낌 */
-      background:rgba(255,255,255,0.10);
-      color:#fff; z-index:9999;
-      display:flex; flex-direction:column; padding:0; margin:0; overflow:auto;
-      transform:translateX(100%); transition:transform .35s ease, background .25s ease;
-      box-shadow:-8px 0 24px rgba(0,0,0,0.35);
-      backdrop-filter: blur(16px) saturate(160%);
-      -webkit-backdrop-filter: blur(16px) saturate(160%);
-      border-left:1px solid rgba(255,255,255,0.18);
-    }
+    .m-menu{ position:fixed; top:64px; right:0; bottom:0; width:260px; background:rgba(255,255,255,0.10); color:#fff; z-index:9999; display:flex; flex-direction:column; padding:0; margin:0; overflow:auto; transform:translateX(100%); transition:transform .35s ease, background .25s ease; box-shadow:-8px 0 24px rgba(0,0,0,0.35); backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); border-left:1px solid rgba(255,255,255,0.18); contain: layout;}
     body.nav-open .m-menu{ transform:translateX(0); }
-    /* 반투명 배경 */
-    .menu-overlay{
-      content:''; position:fixed; left:0; top:64px; right:0; bottom:0;
-      background:rgba(0,0,0,.35); z-index:900; display:none;
-    }
+    .menu-overlay{ content:''; position:fixed; left:0; top:64px; right:0; bottom:0; background:rgba(0,0,0,.35); z-index:900; display:none; }
     body.nav-open .menu-overlay{ display:block; }
-
     .m-menu ul{ list-style:none; padding:0; margin:0; }
-    .m-menu li a{
-      display:flex; align-items:center; height:64px; padding:0 20px;
-      color:#fff; text-decoration:none; font:800 22px/1 Pretendard, system-ui, -apple-system, sans-serif;
-      border-top:1px solid rgba(255,255,255,.18);
-      /* 유리 위에 텍스트만 */
-      background:transparent;
-      text-shadow:0 1px 0 rgba(0,0,0,.3);
-    }
+    .m-menu li a{ display:flex; align-items:center; height:64px; padding:0 20px; color:#fff; text-decoration:none; font:800 22px/1 Pretendard, system-ui, -apple-system, sans-serif; border-top:1px solid rgba(255,255,255,.18); background:transparent; text-shadow:0 1px 0 rgba(0,0,0,.3); }
     .m-menu li:first-child a{ border-top:none; }
     .m-menu li a:hover{ background:rgba(255,255,255,.08); }
-
     .m-menu li a:active{ background:rgba(255,255,255,.16); }
+    /* Prevent layout overflow for iPad/tablet widths (640–1039px) */
+@media (min-width: 640px) and (max-width: 1039px) {
+  h1.page-title,
+  .search-bar .search-wrap,
+  .filter-scroll,
+  .toolbar-count,
+  .grid {
+    width: min(100%, var(--content-max));
+    max-width: var(--content-max);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--side-pad);
+    padding-right: var(--side-pad);
+  }
+}
+/* iPad / large tablet clamp (prevents horizontal page scroll at 768–1366 widths) */
+@media (min-width: 640px) and (max-width: 1366px){
+  .stage,
+  .search-bar .search-wrap,
+  .filter-scroll,
+  .toolbar-count,
+  .grid{
+    width:min(100%, var(--content-max));
+    max-width:var(--content-max);
+    margin-left:auto;
+    margin-right:auto;
+    padding-left:var(--side-pad);
+    padding-right:var(--side-pad);
+  }
+}
+    @media (max-width: 375px){ .m-header{ height:56px; } .m-menu{ top:56px; } .menu-overlay{ top:56px; } .m-menu li a{ height:56px; font-size:20px; padding:0 18px; } .m-menu-btn{ width:36px; height:36px; } .m-menu-btn img{ width:22px; height:22px; } }
 
-    /* ===== 햄버거 클릭 시 나타나는 라인(글라스 상단바 아래) ===== */
-    .nav-line{
-      position:fixed; left:0; right:0; top:64px; height:2px;
-      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%);
-      transform: scaleX(0); transform-origin: left center;
-      transition: transform .45s ease, opacity .3s ease;
-      opacity:.95;
-      /* 헤더 위, 오버레이 아래 */
-      z-index:1001;
-      pointer-events:none;
-    }
-    body.nav-open .nav-line{ transform: scaleX(1); }
+    
+    /* ===== 페이지 타이틀/툴바 ===== */
+    .stage{ padding:18px 14px 84px; }
+    h1.page-title{ font:900 34px/1.15 Playfair Display, serif; text-align:center; margin:18px 0 18px; letter-spacing:.2px; }
 
-    /* 작은 화면(아이폰 SE)에서 헤더 높이 56px 대응 */
-    @media (max-width: 375px){
-      .nav-line{ top:56px; }
-    }
+    .toolbar{ display:flex; align-items:center; justify-content:center; gap:10px; padding:8px 2px 10px; border-bottom:none; position:static; top:auto; background:transparent; }
 
-    /* 콘텐츠: 포스터와 푸터 */
-    .poster{ display:block; width:100%; height:auto; margin:0 auto; }
-    /* .rose-left{
-      display:block;
-      max-width:50%;  절반 정도 크기 
-      height:auto;
-      margin:40px 0 0 10px;  위에서 조금 내리고 왼쪽으로 붙임 
-    } */
-    /* .gun-poster{
-      display:block;
-      width:80%;
-      max-width:500px;
-      height:auto;
-      margin:30px auto 0 auto;  위쪽 여백 주고 중앙 정렬 
-    } */
-    .promo-video{
-      display:block; width:100%; height:auto;
-      /* 아래 여백으로 푸터 고정 높이 피함 */
-      margin:20px auto 80px;
-      border:1px solid rgba(255,255,255,.2); border-radius:8px;
-      /* 로딩 중 배경 */
-      background:#000;
-    }
-    /* 푸터(고정)와 겹치지 않도록 여백 확보 */
-    .stage{ background:#000; line-height:0; padding-bottom:72px; }
-
-    footer{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      width:100%;
-      background:#000;
-      color: #f3f3f3;
-      border-top:1px solid var(--line);
-      padding:6px 10px;
-      box-sizing:border-box;
-      font-size:12px;
-      text-align:center;
-    }
-
-    /* 작은 화면(아이폰 SE) 폰트/여백 조정 */
-    @media (max-width: 375px){
-      .m-header{ height:56px; }
-      .m-menu{ top:56px; }
-      .menu-overlay{ top:56px; }
-      .m-menu li a{ height:56px; font-size:20px; padding:0 18px; }
-      .m-menu-btn{ width:36px; height:36px; }
-      .m-menu-btn img{ width:22px; height:22px; }
-    }
-
-    .poster-wrapper{
+    /* ▶ 가로 스크롤 필터 네비게이션 */
+    .filter-scroll{ 
+      display:block; overflow-x:auto; overflow-y:hidden; white-space:nowrap; 
+      -webkit-overflow-scrolling:touch; scrollbar-width:none; 
+      padding:8px 12px;
+      margin:0 auto;
       position:relative;
-      display:inline-block;
-      width:100%;
-      text-align:left;
+      max-width:100vw;
+      overscroll-behavior-x: contain;
     }
-    .poster-wrapper .logo-bg{
-      position:absolute;
-      top:0; left:0;
-      width:100%; height:auto;    
-      z-index:0;
+    /* iOS/Chrome 얇은 스크롤바 숨김 */
+    .filter-scroll::-webkit-scrollbar{ height:0; }
+    .filter-track{ display:inline-flex; align-items:center; gap:12px; padding:4px 0; }
+    /* 버튼을 텍스트처럼 보이게, 사이에 | 구분자 자동 생성 */
+    .pill{
+      appearance:none; background:transparent; border:none; outline:none;
+      color:#aaa; font-weight:700; font-size:15px; letter-spacing:.25px;
+      padding:8px 16px; border-radius:20px; cursor:pointer; flex:0 0 auto;
+      transition:color .2s ease, background .25s ease;
     }
-    .poster-wrapper .rose-left{
-      position:relative;
-      z-index:1;
-      /* 훨씬 크게 확대 */
-      max-width:100%;
-      /* 왼쪽으로 이동하고 아래로 10% 내림 */
-      transform:translate(-23%, 6%);
+    .pill:hover{ background:rgba(255,255,255,.08); color:#ff4d4d; }
+    .pill.is-active{ background:rgba(255,77,77,.18); color:#ff4d4d; }
+
+    .search-bar{ position:sticky; top:64px; z-index:950; background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); border-bottom:1px solid rgba(255,255,255,.12); padding:10px 12px; }
+    .search-bar .search-wrap{ position:relative; display:block; }
+    .search-bar .search-input{ width:100%; max-width:none; height:42px; padding:0 14px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:#151515; color:#eee; font-size:15px; }
+    .toolbar-count{ display:flex; justify-content:flex-end; font-size:12px; color:#bbb; padding:4px 2px 0; }
+
+    /* ===== 모바일 그리드 ===== */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-top:14px;
+      max-width:100vw;     /* keep inside viewport on iPad Pro */
+      overflow-x:hidden;   /* extra safety */
     }
-    .poster-wrapper .gun-below{
-      position:absolute;
-      /* BLOOM 텍스트 바로 밑에 */
-      top:22%;
-      /* 오른쪽에 맞춤 */
-      right:5%;
-      transform:translateY(-50%);
-      max-width:70%;
-      z-index:2;
-      /* 살짝 투명하게 */
-      opacity:0.6;
+    @media (max-width:360px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card{ background:#0b0b0b; border:1px solid rgba(255,255,255,.06); border-radius:12px; overflow:hidden; }
+    .card img{ display:block; width:100%; height:auto; aspect-ratio: 1/1; object-fit:contain; background:#000;
+max-width:100vw;
+min-width:0;
+contain:content;
+}
+    .cap{ padding:10px 10px 12px; }
+    .cap .t{ font-weight:800; font-size:14px; line-height:1.25; color:#fff; }
+    .cap .m{ margin-top:6px; font-size:12px; color:#d0d0d0; }
+
+    footer{ position:fixed; left:0; right:0; bottom:0; height:auto; padding:6px 10px; background:#000; border-top:1px solid var(--line); text-align:center; font-size:12px; color:#f3f3f3; }
+
+    /* Final safety net: prevent any element from exceeding viewport width */
+    @supports (width: min(100%, 100vw)){
+      :where(body) > *{ width:min(100%, 100vw); }
+    }
+
+    /* === View-fit scaler (iPad Pro: shrink content to fit without horizontal scroll) === */
+    #fit-root{
+      transform-origin: top center;
+      will-change: transform;
+      /* keep the scaled block centered */
+      margin-left:auto;
+      margin-right:auto;
+      /* prevent scaled children from creating overflow */
+      overflow-x: hidden;
+    }
+    /* make sure scalable area never exceeds the viewport width before scaling */
+    @supports (width: min(100%, 100vw)){
+      #fit-root{ width: min(100%, 100vw); }
     }
   </style>
 </head>
-
-
 <body>
   <!-- 상단: 제목 + 햄버거 버튼 -->
   <header class="m-header">
@@ -212,38 +189,54 @@
       <img src="../../1.Picture/Another/Menu.png" alt="메뉴" />
     </button>
   </header>
-  <div class="nav-line" aria-hidden="true"></div>
   <div class="menu-overlay" id="menuOverlay"></div>
 
-  <!-- 모바일 메뉴(링크 연결 제거 요청: # 처리) -->
+  <!-- 모바일 메뉴 -->
   <nav class="m-menu" id="mMenu" aria-label="모바일 메뉴">
     <ul>
       <li><a href="Main.html">HOME</a></li>
-      <li><a href="Project.html">ABOUT</a></li>
+      <li><a href="About.html">ABOUT</a></li>
       <li><a href="Project.html">PROJECT</a></li>
       <li><a href="Designer.html">DESIGNER</a></li>
       <li><a href="Guest.html">GUEST BOOK</a></li>
     </ul>
   </nav>
 
-  <!-- 본문: 포스터 이미지 + 푸터(바로 맞닿음) -->
-  <main class="stage">
-    <div class="poster-wrapper">
-      <img class="logo-bg" src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" alt="배경 로고" loading="eager" decoding="async" />
-      <img class="gun-below" src="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" alt="BLOOM Gun 포스터" loading="eager" decoding="async" />
-      <img class="rose-left" src="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" alt="BLOOM 장미 포스터" loading="eager" decoding="async" fetchpriority="high" />
+  <!-- 본문 (스케일 컨테이너) -->
+  <div id="fit-root">
+    <main class="stage">
+    <h1 class="page-title">PROJECT</h1>
+    <div class="search-bar">
+      <div class="search-wrap">
+        <input id="q" type="search" class="search-input" placeholder="프로젝트·이름·초성…" aria-label="검색" />
+      </div>
     </div>
+    <div class="toolbar">
+      <nav class="filter-scroll" aria-label="카테고리 필터">
+        <div class="filter-track">
+          <button class="pill is-active" data-filter="all">All</button>
+          <button class="pill" data-filter="character">Character</button>
+          <button class="pill" data-filter="ci-bi-package">BI/CI &amp; Package</button>
+          <button class="pill" data-filter="uxui&editorial">UX/UI &amp; Editorial</button>
+        </div>
+      </nav>
+    </div>
+    <div class="toolbar-count" aria-live="polite">
+      <span id="cnt">0 Project</span>
+    </div>
+    <section id="list" class="grid" aria-live="polite"></section>
   </main>
+  </div><!-- /#fit-root -->
+
   <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
 
   <script>
-    // 햄버거 버튼으로 오버레이 열고/닫기
+    // 햄버거 토글
     (function(){
       const btn = document.getElementById('menuBtn');
       const menu = document.getElementById('mMenu');
-      if(!btn || !menu) return;
-
       const overlay = document.getElementById('menuOverlay');
+      if(!btn || !menu) return;
       function toggle(){
         const open = !document.body.classList.contains('nav-open');
         document.body.classList.toggle('nav-open', open);
@@ -251,67 +244,177 @@
         btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
       }
       btn.addEventListener('click', toggle);
-      if(overlay){ overlay.addEventListener('click', toggle); }
+      overlay && overlay.addEventListener('click', toggle);
+      menu.addEventListener('click', (e)=>{ if(e.target.closest('a')) document.body.classList.remove('nav-open'); });
+    })();
 
-      // 메뉴 항목 탭 시 닫기(링크는 모두 '#')
-      menu.addEventListener('click', (e)=>{
-        if(e.target.closest('a')) document.body.classList.remove('nav-open');
-      });
+    // === Auto-fit scaler (keeps all content inside viewport width on big tablets) ===
+    (function fitToViewportWidth(){
+      const root = document.getElementById('fit-root');
+      if (!root) return;
+      let raf = null;
 
-      // 바깥 스크롤 시 닫힘(선택)
-      window.addEventListener('scroll', () => {
-        if(document.body.classList.contains('nav-open')){
-          document.body.classList.remove('nav-open');
-          btn.setAttribute('aria-expanded', 'false');
-          btn.setAttribute('aria-label', '메뉴 열기');
-        }
-      }, { passive:true });
+      function measureAndScale(){
+        // Temporarily reset transform to measure natural width
+        root.style.transform = 'none';
+
+        // The inner content width we want to fit (use scrollWidth to include grids)
+        const naturalWidth = root.scrollWidth || root.getBoundingClientRect().width;
+        const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+
+        // Padding safety (match side safe pad from :root if present)
+        const sidePad = 0; // we already clamp with CSS; keep 0 here
+        const available = vw - sidePad * 2;
+
+        // Scale down only if content is wider than viewport
+        const scale = naturalWidth > 0 ? Math.min(1, available / naturalWidth) : 1;
+
+        // Apply scale
+        root.style.transform = (scale < 1) ? `scale(${scale})` : 'none';
+
+        // Prevent any phantom horizontal scroll from transforms
+        document.documentElement.style.overflowX = 'hidden';
+        document.body.style.overflowX = 'hidden';
+      }
+
+      function schedule(){
+        if (raf) return;
+        raf = requestAnimationFrame(()=>{ raf = null; measureAndScale(); });
+      }
+
+      // Initial and reactive
+      window.addEventListener('DOMContentLoaded', schedule, { passive: true });
+      window.addEventListener('load', schedule, { passive: true });
+      window.addEventListener('resize', schedule, { passive: true });
+      window.addEventListener('orientationchange', schedule, { passive: true });
+      window.addEventListener('pageshow', schedule, { passive: true });
+      document.addEventListener('visibilitychange', schedule, { passive: true });
+
+      // Also re-fit after dynamic content render (cards built async)
+      const list = document.getElementById('list');
+      if (list){
+        const mo = new MutationObserver(schedule);
+        mo.observe(list, { childList: true, subtree: false });
+      }
+    })();
+
+    // 데스크톱으로 자동 전환 (>=640px)
+    (function responsiveRoute(){
+      const DESKTOP_URL = './Project.html';
+      const mq = window.matchMedia('(min-width: 640px)');
+      function go(){ if (mq.matches) location.replace(DESKTOP_URL + location.search + location.hash); }
+      go();
+      if (mq.addEventListener) mq.addEventListener('change', e=>{ if (e.matches) go(); }, {passive:true});
+      else if (mq.addListener) mq.addListener(e=>{ if (e.matches) go(); });
+      window.addEventListener('orientationchange', go, {passive:true});
+      window.addEventListener('resize', go, {passive:true});
+    })();
+
+    // 한글 초성 유틸
+    const __CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+    function toInitials(str){
+      return (str||'').split('').map(ch => {
+        const code = ch.charCodeAt(0) - 44032; // 0xAC00
+        if (code >= 0 && code < 11172) return __CHO[Math.floor(code/588)];
+        if (/^[ㄱ-ㅎ]$/.test(ch)) return ch;
+        if (/[A-Za-z0-9]/.test(ch)) return ch.toLowerCase();
+        return ' ';
+      }).join('');
+    }
+
+    // 데스크톱 Project.html에서 카드 정보를 가져와 모바일 리스트 구성
+    (function buildFromDesktop(){
+      const list = document.getElementById('list');
+      const cnt  = document.getElementById('cnt');
+      const q    = document.getElementById('q');
+      const filterNav = document.querySelector('.filter-scroll');
+      const pills = document.querySelectorAll('.pill');
+      let items = [];
+      let currentFilter = 'all';
+
+      function render(){
+        list.innerHTML = '';
+        let visible = 0;
+        const frag = document.createDocumentFragment();
+        items.forEach(it => {
+          const passFilter = (currentFilter === 'all' || it.category === currentFilter);
+          const passSearch = !q.value || it.matches(q.value);
+          if (passFilter && passSearch){
+            visible++;
+            const card = document.createElement('article');
+            card.className = 'card';
+            card.setAttribute('data-category', it.category);
+            card.innerHTML = `
+              <img src="${it.src}" alt="${it.title}" loading="lazy" decoding="async"/>
+              <div class="cap">
+                <div class="t">${it.title}</div>
+                <div class="m">${it.name}${it.eng ? ` · <span>${it.eng}</span>`:''}</div>
+              </div>`;
+            frag.appendChild(card);
+          }
+        });
+        list.appendChild(frag);
+        cnt.textContent = visible + ' Project';
+      }
+
+      function normalizeSrc(src){
+        // 그대로 사용 (모바일과 데스크톱이 같은 폴더 구조)
+        return src;
+      }
+
+      fetch('./Project.html', {cache:'no-store'})
+        .then(r=>r.text())
+        .then(html => {
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+          const cards = doc.querySelectorAll('.project-gallery .project-gridcard');
+          items = Array.from(cards).map(card => {
+            const img = card.querySelector('img');
+            const title = (card.querySelector('.title')?.textContent || card.getAttribute('data-title') || 'Project').trim();
+            const name  = (card.querySelector('.text strong')?.textContent || card.getAttribute('data-name') || '').trim();
+            const eng   = (card.querySelector('.text span')?.textContent || card.getAttribute('data-eng') || '').trim();
+            const cat   = (card.getAttribute('data-category')||'all').trim();
+            const src   = normalizeSrc(img ? (img.getAttribute('src')||'') : '');
+            const hay   = (title + ' ' + name + ' ' + eng).toLowerCase();
+            const init  = toInitials(hay).replace(/[^ㄱ-ㅎa-z0-9]/g, '');
+            return {
+              title, name, eng, category: cat, src,
+              matches(q){
+                q = (q||'').toLowerCase().trim();
+                if (!q) return true;
+                const hasCho  = /[\u3131-\u314e]/.test(q);
+                const hasSyl  = /[\uac00-\ud7a3]/.test(q);
+                if (hasCho){
+                  const qi = toInitials(q).replace(/[^ㄱ-ㅎa-z0-9]/g, '');
+                  return init.includes(qi);
+                }
+                if (hasSyl){
+                  return hay.includes(q);
+                }
+                return hay.includes(q);
+              }
+            };
+          });
+          render();
+        });
+
+      // 검색
+      q.addEventListener('input', () => render());
+
+      // 가로 스크롤 네비 필터 (이벤트 위임)
+      if (filterNav){
+        filterNav.addEventListener('click', (e)=>{
+          const btn = e.target.closest('.pill');
+          if (!btn) return;
+          pills.forEach(b=> b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          currentFilter = btn.getAttribute('data-filter') || 'all';
+          render();
+        });
+        // 초기 활성값
+        const active = document.querySelector('.pill.is-active');
+        currentFilter = (active && active.getAttribute('data-filter')) || 'all';
+      }
     })();
   </script>
-<script>
-// [라우팅] 화면 너비 기준 페이지 전환 // (>=640: Main.html, <=639: Main-mobile.html)
-(function responsiveRoute(){
-  const DESKTOP_BASE = 'Main';
-  const MOBILE_BASE  = 'Main-mobile';
-
-  function isOnBase(base){
-    const p = location.pathname.toLowerCase().replace(/\/+$/, '');
-    const b = base.toLowerCase().replace(/\.html?$/, '');
-    return (
-      p.endsWith('/'+b) ||
-      p.endsWith('/'+b+'.html') ||
-      p.endsWith('/'+b+'/') ||
-      p.endsWith('/'+b+'/index.html')
-    );
-  }
-  function goToBase(base){
-    const baseDir = location.pathname.replace(/[^/]*$/, '');
-    const file = base + '.html';
-    location.replace(baseDir + file);
-  }
-
-  const mq = window.matchMedia('(max-width: 639px)');
-  let ticking = false;
-  function check(){
-    if (ticking) return; ticking = true;
-    requestAnimationFrame(() => {
-      const isMobile = mq.matches;
-      if (!isMobile && isOnBase(MOBILE_BASE)) goToBase(DESKTOP_BASE);
-      ticking = false;
-    });
-  }
-
-  if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
-  else if (mq.addListener) mq.addListener(check);
-  window.addEventListener('resize', check, {passive:true});
-  window.addEventListener('orientationchange', check, {passive:true});
-  document.addEventListener('DOMContentLoaded', check);
-  setTimeout(check, 120);
-  // iOS/Safari 지연 대응
-  let kicks = 0; const kickTimer = setInterval(()=>{ kicks++; check(); if (kicks>10) clearInterval(kickTimer); }, 200);
-  window.addEventListener('pageshow', check, {passive:true});
-  document.addEventListener('visibilitychange', check, {passive:true});
-})();
-</script>
 </body>
 </html>

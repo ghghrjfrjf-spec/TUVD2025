@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
   <!-- // 커서 스타일 -->
   <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
   
   <style>
     /* ==================== 전역 변수(색상/최대폭 등) ==================== */
@@ -35,44 +36,13 @@
     /* 스크롤 시 네비게이션 숨김 */
     body.nav-hidden #nav-placeholder,
     body.nav-hidden #nav-placeholder > header {
-      transform: translateY(-110%) !important;
+      transform: translateY(-100%) !important;
     }
     
     /* 전체 화면 레이아웃 + 푸터 하단 고정 */
     html, body { background:#000; }
     .page { background:#000; width:100%; }
 
-
-    .content {
-      max-width: 960px;
-      margin: 6rem auto 4rem;
-      padding: 0 1.5rem;
-    }
-
-    .content h1 {
-      font-size: 3rem;
-      color: #ff3b3b;
-      font-family: 'Georgia', serif;
-      margin-bottom: 1rem;
-    }
-
-    .content h2 {
-      font-size: 1.5rem;
-      font-weight: 400;
-      color: #333;
-      margin-bottom: 2.5rem;
-    }
-
-    .content p {
-      font-size: 1.1rem;
-      margin-bottom: 1.7rem;
-      color: #444;
-    }
-
-    .highlight {
-      color: #ff3b3b;
-      font-weight: bold;
-    }
     
     /* ==================== 상단 네비게이션(공용 Tob_nav 적용 + 스크롤시 숨김) ==================== */
     #nav-placeholder{
@@ -143,15 +113,12 @@
       display: none !important;
     }
     #nav-placeholder nav ul li:hover > ul{ display:none !important; }
-    /* Global font: keep Pretendard to match other pages */
-    /* 페이지 기본 폰트(다른 페이지와 톤 맞춤) */
-    body{ font-family:'Pretendard', system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
 
     /* Decorative ABOUT mark (centered, large serif) */
     /* ABOUT 대제목(Playfair Display 서체) */
     .about-mark{
       display:block;
-      margin:48px 0 0 0; /* align with section spacing */
+      margin:80px 0 6px 0; /* slightly more air + small bottom gap */
       text-align:left;    /* left aligned text */
       font-family:'Playfair Display','Noto Serif KR',serif;
       font-weight:700;
@@ -163,6 +130,25 @@
     }
     @media (max-width:720px){
       .about-mark{ font-size:clamp(32px,10vw,72px); margin-top:32px; }
+    }
+
+    /* === Decorative divider between BLOOM and ABOUT === */
+    .section-divider {
+      position: relative;
+      width: 100%;
+      height: 120px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(255,77,77,0.1) 50%, rgba(255,77,77,0.25) 100%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .section-divider::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,.4) 50%, rgba(255,255,255,0) 100%);
     }
 
     /* Layout */
@@ -199,10 +185,16 @@
       .top-banner.align-left img{ width:min(560px,86vw); margin:0 auto 0 auto; }
     }
     /* 레드 그라데이션 히어로 영역(타이틀/서브/날짜) */
-    .hero{position:relative; overflow:hidden; padding:132px 0 84px; background:linear-gradient(180deg, rgba(255,59,59,.12), rgba(0,0,0,0));}
+    .hero{position:relative; overflow:hidden; padding:64px 0 64px; background:linear-gradient(180deg, rgba(255,59,59,.12), rgba(0,0,0,0));}
     /* Image slot INSIDE the red gradient hero */
-    .hero .container{position:relative; z-index:1}
-    .hero-art{position:absolute; top:8px; right:clamp(-60px, -3vw, -8px); z-index:0; pointer-events:none}
+    .hero .container{position:relative; z-index:2}
+    .hero-art{
+      position:absolute;
+      top:-50px; /* raised higher by 4px */
+      right:clamp(-42px, -3.2vw, -10px);
+      z-index:0;
+      pointer-events:none;
+    }
     .hero-art img{display:block; width:min(440px,34vw); height:auto}
     /* keep text above the art */
     .hero .hero-grid{position:relative; z-index:1}
@@ -212,19 +204,27 @@
     }
     .hero .eyebrow{display:inline-flex; align-items:center; gap:10px; padding:6px 12px; border:1px solid var(--line); border-radius:999px; font-weight:700; letter-spacing:.4px; color:#fff}
     .hero .title{
-      margin:18px 0 12px;
-      font-size:54px;
-      line-height:1.06;
+      margin:8px 0 10px;
+      font-size:clamp(28px, 4vw, 48px);
+      max-width:70%;
+      line-height:1.1;
       font-weight:900;
       letter-spacing:-.5px;
       color:var(--red-600) !important;
     }
-    .hero .subtitle{color:#fff !important; font-size:18px; max-width:860px}
+    .hero .subtitle{
+      color:#fff !important;
+      font-size: clamp(11px, 1.2vw, 17px) !important;
+      line-height: 1.65 !important;
+      opacity: .9 !important;
+      max-width: 62ch !important;
+      margin-top: 6px !important;
+    }
     .hero .cta{margin-top:28px; display:flex; gap:12px; flex-wrap:wrap}
     .btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:12px 18px; border-radius:10px; border:1px solid #222; background:#fff; color:#111; font-weight:800}
 
     /* Hero layout upgrade: left copy + date pill */
-    .hero-grid{display:grid; grid-template-columns:1fr; gap:24px; align-items:start}
+    .hero-grid{display:grid; grid-template-columns:1fr; gap:10px; align-items:start}
     .hero-left{min-width:0}
     .hero-right{display:flex; justify-content:flex-end; align-items:flex-end}
     .date-large{font-weight:900; text-align:right; letter-spacing:.5px; color:#fff; line-height:.9; font-size: clamp(44px, 8vw, 120px)}
@@ -262,6 +262,68 @@
     .split{display:grid; grid-template-columns:1.2fr .8fr; gap:28px}
     .panel{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px}
 
+
+    /* ==== 레이아웃 및 타이포 정리 ==== */
+html, body { overflow-x:hidden; scroll-behavior:smooth; }
+
+/* 섹션 여백 / 컨테이너 간격 */
+.section { padding:72px 0 64px; }
+.container { padding:0 28px; }
+
+/* 히어로 타이틀 및 서브텍스트 개선 */
+.hero { text-align:left; }
+.hero .title { font-size:clamp(44px, 6vw, 68px); }
+.hero .subtitle { font-size:20px; line-height:1.6; opacity:.9; }
+.hero .eyebrow { font-size:14px; letter-spacing:.6px; opacity:.9; }
+
+/* 패널 박스 정돈 */
+.panel {
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+  padding:28px 30px;
+}
+
+/* 미디어 그리드 여백 및 캡션 중앙 정렬 */
+.media-grid { gap:20px !important; }
+.media-grid figcaption {
+  font-size:13px; line-height:1.5; text-align:center;
+  background:rgba(255,255,255,.04);
+  padding:10px 0;
+}
+
+/* 교통정보 섹션 균형 */
+.traffic-table { margin-top:12px; }
+.traffic-cell { line-height:1.7; }
+.traffic-label { background:rgba(255,255,255,.05); font-size:20px; }
+.traffic-body p { margin-bottom:8px; }
+
+/* 지도 및 안내 균형 */
+.venue { gap:24px; align-items:start; }
+.map { box-shadow:0 8px 20px rgba(0,0,0,.35); }
+
+/* 크레딧 / 인물 섹션 스타일 */
+.people-group {
+  background:rgba(255,255,255,.02);
+  border-radius:14px;
+  padding:24px;
+  border:1px solid rgba(255,255,255,.06);
+}
+.people-title { font-size:22px; margin-bottom:12px; }
+.people-list li { font-size:15px; line-height:1.7; }
+
+/* 스크롤 등장 애니메이션 */
+.section, .hero, .venue, .faculty, .traffic-table {
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity .8s ease, transform .8s ease;
+}
+.section.visible, .hero.visible, .venue.visible,
+.faculty.visible, .traffic-table.visible {
+  opacity:1;
+  transform:translateY(0);
+}    
     /* ===== Media gallery polish (logos & posters) ===== */
     .media-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:14px; }
     .media-grid figure{ margin:0; background:var(--card-2); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:none; transition:box-shadow .25s ease; }
@@ -301,6 +363,74 @@
     .venue{display:grid; grid-template-columns:1fr 1fr; gap:16px}
     .venue p {color:#fff !important;}
     .map{background:#0f0f0f; border:1px solid var(--line); border-radius:14px; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center; color:#888}
+    /* Embedded map iframe full-bleed inside the card */
+    .map iframe{ width:100%; height:100%; border:0; border-radius:14px; }
+    /* External map service links placed under the map box */
+    .map-links{ margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
+    .map-links a{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:#fff; font-weight:800; text-decoration:none; }
+    .map-links a:hover{ border-color:#666; background:rgba(255,255,255,.1); }
+
+    /* ============ Traffic Info (교통정보) ============ */
+    .traffic-table{
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      background:linear-gradient(180deg, #121212, #0e0e0e);
+      box-shadow: var(--shadow);
+    }
+    .traffic-row{ display:grid; grid-template-columns:200px 1fr; align-items:stretch; }
+    .traffic-row + .traffic-row{ border-top:1px solid var(--line); }
+
+    .traffic-cell{ padding:20px 22px; color:#fff; }
+
+    /* 좌측 라벨 칼럼: 더 또렷한 대비 + 가운데 정렬 */
+    .traffic-label{
+      font-size:22px; font-weight:900; letter-spacing:.2px; text-align:center;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border-right:1px solid var(--line);
+      display:flex; align-items:center; justify-content:center;
+    }
+
+    /* 본문 문장: 가독성, 줄 간격, 미세한 불릿 */
+    .traffic-body p{ position:relative; margin:0 0 10px; line-height:1.8; padding-left:16px; }
+    .traffic-body p:last-child{ margin-bottom:0; }
+    .traffic-body p b{ color:#fff; }
+    .traffic-body p small{ opacity:.9; }
+    .traffic-body p::before{
+      content:''; position:absolute; left:2px; top:.8em; width:6px; height:6px; border-radius:999px; background:#ff3b3b; opacity:.9;
+    }
+
+    /* 하단 주석 */
+    .traffic-note{ margin-top:14px; font-size:14px; opacity:.85; }
+
+    /* 반응형 */
+    @media (max-width:900px){ .traffic-row{ grid-template-columns:160px 1fr; } .traffic-label{ font-size:20px; } }
+    @media (max-width:720px){ .traffic-row{ grid-template-columns:1fr; } .traffic-label{ text-align:left; justify-content:flex-start; padding-left:18px; border-right:0; border-bottom:1px solid var(--line); } }
+
+    /* Map/venue polish to balance with table */
+    .venue{ display:grid; grid-template-columns:1.1fr .9fr; gap:18px; }
+    .map{ background:#0f0f0f; border:1px solid var(--line); border-radius:14px; aspect-ratio:16/10; box-shadow: var(--shadow); }
+    .map-links{ margin-top:12px; gap:8px; }
+    .map-links a{ background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.14); }
+    .map-links a:hover{ background:rgba(255,255,255,.09); border-color:#666; }
+
+    /* ——— Directions (오시는 길) polish ——— */
+    .venue .panel h2{ display:flex; align-items:center; gap:10px; }
+    .venue .address{ margin:8px 0 12px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.04); color:#fff; font-weight:800; letter-spacing:.2px; }
+    .venue .address .small{ display:block; margin-top:4px; font-size:12px; opacity:.9; font-weight:600; }
+    .venue .dir{ list-style:none; margin:10px 0 0; padding:0; display:grid; gap:10px; }
+    .venue .dir li{ display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:start; padding:12px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.03); color:#fff; }
+    .venue .dir .ic{ width:26px; height:26px; display:inline-grid; place-items:center; border-radius:8px; background:linear-gradient(180deg,#1a1a1a,#0f0f0f); border:1px solid rgba(255,255,255,.12); font-size:14px; font-weight:900; color:#fff; }
+    .venue .dir b{ font-weight:900; color:#fff; }
+    .venue .dir .hint{ display:block; margin-top:6px; font-size:13px; opacity:.9; }
+    .venue .dir .mono{ font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; font-weight:800; letter-spacing:.2px; }
+    .venue .dir .line-2{ background:#3dbf00; color:#000; border-color:#3dbf00; }
+    .venue .dir .walk{ background:#fff; color:#000; }
+    .venue .dir .bus{ background:#1b73ff; }
+    .venue .dir .car{ background:#ff9a1b; }
+    .venue .dir small{ display:block; margin-top:4px; opacity:.8; }
+    .venue .cta-row{ margin-top:12px; }
+    @media (max-width:560px){ .venue .dir li{ grid-template-columns:1fr; } .venue .dir .ic{ width:auto; height:auto; display:inline-block; padding:4px 8px; } }
 
     /* Footer CTA */
     .cta-row{display:flex; gap:10px; flex-wrap:wrap}
@@ -311,14 +441,14 @@
     .people-group{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px}
     .people-title{margin:0 0 12px; display:flex; align-items:center; gap:10px; font-size:20px; font-weight:900; color:#fff}
     .people-title .pill{display:inline-flex; align-items:center; padding:4px 10px; border-radius:999px; background:rgba(255,59,59,.18); border:1px solid var(--line); font-size:12px; font-weight:900; letter-spacing:.3px; color:#fff}
-    .people-list{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px 16px}
+    .people-list{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px 14px}
     .people-list li{position:relative; padding-left:14px; color:#fff}
     .people-list li::before{content:'•'; position:absolute; left:0; top:0; color:var(--red)}
     @media (max-width:900px){ .people-list{grid-template-columns:repeat(2, minmax(0,1fr))} }
     @media (max-width:520px){ .people-list{grid-template-columns:1fr} }
 
     /* Responsive */
-    @media (max-width: 1000px){ .info-grid{grid-template-columns:1fr 1fr} .split{grid-template-columns:1fr} .venue{grid-template-columns:1fr} .cards{grid-template-columns:1fr 1fr} .stats{grid-template-columns:1fr 1fr} .hero{padding:96px 0 56px} .hero .title{font-size:40px} }
+    @media (max-width: 1000px){ .info-grid{grid-template-columns:1fr 1fr} .split{grid-template-columns:1fr} .venue{grid-template-columns:1fr} .cards{grid-template-columns:1fr 1fr} .stats{grid-template-columns:1fr 1fr} .hero{padding:56px 0 48px} .hero .title{font-size:40px} }
     @media (max-width: 520px){ .info-grid{grid-template-columns:1fr} .cards{grid-template-columns:1fr} .stats{grid-template-columns:1fr 1fr} .hero .title{font-size:34px} }
 
     /* ==================== 지도교수 사진 갤러리 ==================== */
@@ -345,7 +475,325 @@
     /* 살짝 떠오르는 효과 */
     .faculty-card{ transition: transform .22s ease, box-shadow .22s ease; }
     .faculty-card:hover{ transform: translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.28); }
+    
+    /* === Compact & Safe Layout Patch (no horizontal scroll, compact spacing) === */
+
+/* 어떤 요소가 옆으로 새도 가로 스크롤이 안 생기도록 */
+html, body { overflow-x: hidden; }
+
+/* 컨테이너 살짝 더 조여서 넘침 방지 */
+.container { max-width: var(--max); margin: 0 auto; padding: 0 20px; box-sizing: border-box; }
+
+/* 제목/본문 크기 조정 (조금 컴팩트) */
+.section h2 { font-size: 24px !important; }              /* 28 → 24 */
+.lead { font-size: 18px !important; line-height: 1.75; } /* 20 → 18 */
+.info-value { font-size: 18px !important; }              /* 20 → 18 */
+
+/* 레이아웃 간격 컴팩트 */
+.split { gap: 20px !important; }                         /* 28 → 20 */
+.media-grid { gap: 12px !important; }                    /* 14 → 12 */
+.cards { gap: 14px !important; }                         /* 16 → 14 */
+.venue { gap: 14px !important; }                         /* 18 → 14 */
+
+/* 히어로 아트가 오른쪽으로 삐져나가 가로 스크롤 만드는 케이스 방지 */
+.hero { overflow: hidden; }
+.hero-art { max-width: 100%; }
+.hero-art img { max-width: 100%; height: auto; }
+
+/* 교통정보 표: 폰트/패딩 조정 + 줄바꿈 안정화 */
+.traffic-table { overflow: hidden; }
+.traffic-cell { padding: 5px 20px !important; }         /* 20/22 → 18/20 */
+.traffic-label { font-size: 20px !important; }           /* 22 → 20 */
+.traffic-body p { word-break: keep-all; hyphens: auto; }
+
+/* 패널들 사이 마진 리듬 통일 */
+.panel + .panel { margin-top: 14px; }
+
+/* 교수 카드 캡션 모바일 압축 */
+@media (max-width: 720px){
+  .faculty-card .cap { padding: 8px 10px; }
+}
+
+/* 아주 작은 화면에서 더 단단하게 */
+@media (max-width: 520px){
+  .section h2 { font-size: 22px !important; }
+  .lead { font-size: 17px !important; }
+}
 </style>
+  <style id="aesthetic-polish-v2">
+    /* ===== Aesthetic Polish v2 (non-breaking, overrides only) ===== */
+    :root{
+      --polish-shadow: 0 10px 28px rgba(0,0,0,.28);
+      --polish-line: rgba(255,255,255,.10);
+      --polish-glow: 0 0 0 rgba(255,59,59,0);
+    }
+
+    /* Safer container width + responsive side paddings (iPad friendly) */
+    .container{
+      max-width: var(--max);
+      padding-left: clamp(18px, 4vw, 36px);
+      padding-right: clamp(18px, 4vw, 36px);
+    }
+
+    /* Prevent accidental horizontal scroll on tablet landscape */
+    html, body{ overflow-x:hidden; }
+
+    /* Section rhythm + subtle separators (no extra markup) */
+    .section{ position:relative; }
+    .section:not(:first-of-type)::before{
+      content:""; position:absolute; left:0; right:0; top:0; height:1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.08), rgba(255,255,255,0));
+      opacity:.6;
+    }
+
+    /* Headings flourish */
+    .section h2{
+      letter-spacing:.2px;
+      text-shadow: 0 1px 0 rgba(0,0,0,.35);
+    }
+    .about-mark{
+      letter-spacing:.4px;
+      background: linear-gradient(180deg, #fff, #f6f6f6 60%, #dcdcdc 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 6px 30px rgba(255,255,255,.06);
+    }
+
+    /* Hero enhancement: soft glow + tighter balance on large tablets */
+    .hero{
+      background-image:
+        radial-gradient(60% 40% at 70% 0%, rgba(255,59,59,.10), rgba(0,0,0,0)),
+        linear-gradient(180deg, rgba(255,59,59,.10), rgba(0,0,0,0));
+    }
+    .hero .title{
+      text-shadow: 0 12px 30px rgba(255,59,59,.12), 0 2px 0 rgba(0,0,0,.25);
+      letter-spacing:-.3px;
+    }
+    .hero-art img{
+      width: min(440px, 36vw);
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,.35));
+    }
+    @media (max-width: 900px){
+      .hero-art img{ width: min(420px, 82vw); }
+    }
+
+    /* Card/panel micro interaction (very subtle) */
+    .panel{
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      will-change: transform;
+    }
+    .panel:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 12px 26px rgba(0,0,0,.34);
+      border-color: rgba(255,255,255,.14);
+    }
+
+    /* Info stripe tiles: balanced padding & hover feedback */
+    .info-grid{ gap: 18px; }
+    .info-item{
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      padding: 16px 18px;
+      transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+    }
+    .info-item:hover{
+      border-color: rgba(255,255,255,.16);
+      box-shadow: 0 10px 24px rgba(0,0,0,.32);
+      transform: translateY(-1px);
+    }
+
+    /* Media grid: crisper hover and stable fit */
+    .media-grid{ gap: 16px; }
+    .media-grid figure{
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--polish-line);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .media-grid figure:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 12px 26px rgba(0,0,0,.34);
+      border-color: rgba(255,255,255,.18);
+    }
+    .media-grid .pad{ padding: 18px; }
+    .media-grid img{ display:block; max-width:100%; height:auto; }
+
+    /* Faculty cards: consistent headroom & gentle hover */
+    .faculty-card{
+      aspect-ratio: 4/5;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .faculty-card:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.32);
+      border-color: rgba(255,255,255,.16);
+    }
+    .faculty-card .cap{
+      background: rgba(0,0,0,.55);
+      border-top: 1px solid rgba(255,255,255,.10);
+    }
+
+    /* Traffic table: denser on tablets without wrapping out */
+    .traffic-cell{ padding: 16px 18px; }
+    .traffic-label{ font-size: 20px; }
+    .traffic-body p{ word-break: keep-all; }
+
+    /* Footer safe area if CSS var is present */
+    main{ padding-bottom: calc(var(--footer-safe, 0px) + 24px); }
+
+    /* Motion preference: tone down transitions for users who prefer less motion */
+    @media (prefers-reduced-motion: reduce){
+      *, *::before, *::after{ transition: none !important; animation: none !important; }
+    }
+  </style>
+  <style>
+/* === Polishing pack (section headings, posters, portraits, info cards, faculty cards) === */
+.section h2{
+  position: relative;
+  padding-bottom: 10px;
+}
+.section h2::after{
+  content: "";
+  position: absolute; left: 0; bottom: 0;
+  width: 88px; height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff3b3b, rgba(255,59,59,.25));
+}
+
+    /* Poster/hero-like image frame */
+    .about-poster{
+      display: block;
+      width: min(880px, 90%);
+      height: auto;
+      margin: 0 auto 24px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,.04), rgba(255,255,255,0));
+      box-shadow: 0 10px 32px rgba(0,0,0,.36);
+    }
+
+    /* ===== BLOOM Section Centered & Responsive ===== */
+    .bloom-section {
+      text-align: center;
+      max-width: 880px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+    .bloom-section h2 {
+      font-size: clamp(24px, 3.5vw, 38px);
+      margin-bottom: 18px;
+      margin-top: -10px;
+      letter-spacing: .3px;
+    }
+    .bloom-section .lead {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #fff;
+      opacity: .95;
+      margin-top: 14px;
+    }
+    .bloom-section strong {
+      color: #ff4d4d;
+      font-weight: 700;
+    }
+    .bloom-section .about-poster {
+      display: block;
+      width: min(800px, 88%);
+      margin: 0 auto 24px;
+      border-radius: 14px;
+      box-shadow: 0 10px 32px rgba(0,0,0,.36);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .bloom-section .about-poster:hover {
+      transform: scale(1.02);
+      box-shadow: 0 16px 36px rgba(0,0,0,.45);
+    }
+
+/* Square-ish portrait or single photos */
+.about-photo{
+  display:block; width:min(880px, 100%); height:auto;
+  margin: 12px auto;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 8px 28px rgba(0,0,0,.32);
+}
+
+/* Info stripe: make each item look like subtle cards (without changing markup) */
+.info-grid{
+  gap: 16px !important;
+}
+.info-item{
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.info-label{ opacity:.95; }
+
+/* Faculty card: use 4:5 for nicer headroom and align to top */
+.faculty-card{ aspect-ratio: 4 / 5; }
+.faculty-card img{ object-position: top center; }
+
+/* === Stronger split between top and ABOUT area === */
+/* 1) Info stripe(기간/장소) 바로 아래에 분리대(레드→투명 그라데이션) */
+.stripe{ position: relative; }
+.stripe::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:-1px;
+  height:132px;
+  background:
+    radial-gradient(140% 120% at 50% 0%, rgba(255,59,59,.20), rgba(255,59,59,0) 60%),
+    linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0));
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  pointer-events:none;
+}
+
+/* 2) ABOUT 구간 전용 배경(아주 미세한 레드 글로우 + 톤 차이) */
+.section--about{
+  position: relative;
+  background:
+    radial-gradient(120% 140% at 50% -10%, rgba(255,59,59,.12), rgba(255,59,59,0) 55%),
+    linear-gradient(180deg, rgba(0,0,0,1), rgba(8,8,8,1));
+}
+.section--about::before{
+  content:"";
+  position:absolute; left:0; right:0; top:0; height:1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.10), rgba(255,255,255,0));
+}
+
+/* 3) BLOOM 포스터 테두리/그림자 살짝 강화(새 배경 위에서 또렷) */
+.section--about .bloom-section .about-poster{
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 14px 36px rgba(0,0,0,.38);
+}
+
+/* 4) Hero 맨 아래도 가는 페이드 추가 → 전환 인지가 쉬움 */
+.hero{ position: relative; }
+.hero::after{
+  content:"";
+  position:absolute;
+  left:0; right:0;
+  bottom:-20px;             /* 장미 하단 곡선 라인에 맞춘 위치 */
+  height:260px;             /* 부드러운 전환을 위한 높이 */
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.88) 100%);
+  pointer-events:none;
+  z-index:1;                /* 이미지 위, 텍스트(.hero .container z-index:2) 아래 */
+}
+
+/* 안전장치: 효과 때문에 가로 스크롤 생기지 않게 */
+html, body{ overflow-x:hidden; }
+  </style>
+</style>
+  <style id="title-serif-upgrade">
+    /* Upgrade the topmost BLOOM title to a refined serif */
+    .hero .title{
+      font-family: 'Playfair Display', 'Noto Serif KR', serif !important;
+      font-weight: 800;              /* bold but elegant */
+      letter-spacing: .02em;         /* slightly more airy tracking */
+      font-feature-settings: "liga" 1, "kern" 1;
+    }
+  </style>
 </head>
 <body>
 
@@ -364,9 +812,8 @@
         <div class="hero-grid">
           <div class="hero-left">
             <span class="eyebrow"><span class="dot" style="background:var(--red);"></span> 27th Graduation Exhibition</span>
-            <h1 class="title">BLOOM — 27th Graduation Exhibition</h1>
-            <p class="subtitle">우리의 시간은 하나의 씨앗처럼 작은 가능성을 품고 시작되었습니다. 순수함과 열정을 더해온 과정은 마침내 꽃이 되었고, 졸업전시 BLOOM에서 그 결실의 순간을 맞이합니다.</p>
-            <div class="date-pill"><span class="yy">2025</span>&nbsp;10.17–20</div>
+            <h1 class="title">ABOUT - BLOOM </h1>
+            <p class="subtitle">우리의 시간은 하나의 씨앗처럼 작은 가능성을 품고 시작되었습니다. 순수함과 열정을 더해온 <br>과정은 마침내 꽃이 되었고, 졸업전시 BLOOM에서 그 결실의 순간을 맞이합니다.</p>
           </div>
         </div>
         <div class="hero-art">
@@ -376,64 +823,38 @@
       </div>
     </section>
     
-    <!-- Info stripe: 기간/장소/관람 정보 -->
-    <section class="stripe">
-      <div class="container info-grid">
-        <div class="info-item"><span class="info-label">기간</span><span class="info-value">2025. 10. 17 — 10. 20</span></div>
-        <div class="info-item"><span class="info-label">장소</span><span class="info-value">부산디자인진흥원 전시홀</span></div>
-        <div class="info-item"><span class="info-label">관람</span><span class="info-value">무료 · AM 10:00 — PM 6:00</span></div>
-      </div>
-    </section>
-    <div class="container"><div class="about-mark">ABOUT</div></div>
+    
+    <div class="section-divider"></div>
+    <div class="container"><div class="about-mark">Explain</div></div>
 
     <!-- Theme & Intro: 전시 주제 설명 + 카테고리 카드 -->
     <section class="section">
-      <div class="container split">
-        <div class="panel">
-          <h2>BLOOM</h2>
-          <img src="/1.Picture/1. 27th Graduation/BLOOM_Poster/가로.jpg" alt="">
-          </div>
-        <div class="panel">
-          <h2>설명</h2>
-          <p class="lead">한 장의 스케치에서 시작된 작은 가능성이, 리서치와 프로토타입, 피드백과 개선을 거쳐 <strong>완성의 순간</strong>을 맞이합니다. 그 여정 전체가 우리가 피워 낸 <strong>꽃</strong>입니다.</p>
-        </div>
+      <div class="bloom-section">
+        <h2>BLOOM Poster</h2>
+        <img class="about-poster" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_Poster/가로.jpg" alt="BLOOM Poster">
+        <p class="lead">한 장의 스케치에서 시작된 작은 가능성이, 리서치와 프로토타입, 피드백과 개선을 거쳐 <strong>완성의 순간</strong>을 맞이합니다. <br> 그 여정 전체가 우리가 피워 낸 <strong>꽃</strong>입니다.</p>
       </div>
+      
       <div class="container" style="margin-top:28px;">
         <div class="panel">
-          <h2>전시</h2>
-          <p class="lead">우리의 지난 시간은 하나의 씨앗처럼 작은 가능성을 품고 있었습니다. 그렇게 우리는 순수함과 열정을 더하며 그 가능성을 키워 왔습니다. 이제 졸업전시 BLOOM에서 각자의 열정과 순수함을 담아낸 꽃을 피웁니다.</p>
-        </div>
-        <div class="panel">
           <h2>로고</h2>
-          <p class="lead">이 로고는 BLOOM의 상징인 ‘장미’와 브랜드 이니셜 ‘B’를 조화롭게 결합하여 디자인되었습니다. 장미는 순수함·열정·아름다움을, ‘B’는 브랜드의 중심과 정체성을 상징합니다. 두 요소를 유기적으로 묶어 시각적 완성도와 상징성을 함께 담아냈습니다.</p>
-          <div class="media-grid">
+            <p class="lead">BLOOM의 상징인 장미와 이니셜 B를 하나의 구조로 엮어 완성했습니다. 장미는 순수·열정·아름다움을, B는 브랜드의 정체성과 중심축을 뜻합니다. 두 요소를 동일한 리듬으로 결합해 상징성과 완성도를 함께 높였습니다.</p>
+        </div>
+
+        <div class="media-grid">
             <figure>
               <div class="pad">
                 <img class="logo-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="BLOOM 장미 심볼마크" onload="this.classList.add('is-loaded')" />
               </div>
               <figcaption>장미 심볼 — 순수함과 열정의 상징</figcaption>
             </figure>
+
             <figure>
               <div class="pad">
                 <img class="logo-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" alt="BLOOM 워드마크" onload="this.classList.add('is-loaded')" />
               </div>
               <figcaption>워드마크 — 브랜드 이니셜 B를 중심으로</figcaption>
             </figure>
-          </div>
-        </div>
-        <div class="panel">
-          <h2>포스터</h2>
-          <p class="lead">포스터는 우리가 피워낸 장미의 순간을 ‘크리스탈 장미’로 표현합니다. 맑고 투명한 결정을 품은 꽃잎은 변치 않는 순수함과 열정을 상징하며, 함께 모여 만들어낸 아름다움과 힘을 보여줍니다.</p>
-          <div class="media-grid">
-            <figure>
-              <img class="poster-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" alt="크리스탈 장미 포스터" onload="this.classList.add('is-loaded')" />
-              <figcaption>Crystal Rose — 투명한 결정 구조로 표현한 순수함</figcaption>
-            </figure>
-            <figure>
-              <img class="poster-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_GUN/Gum.png" alt="BLOOM Gun 포스터" onload="this.classList.add('is-loaded')" />
-              <figcaption>Motion/Contrast — 강렬한 대비로 완성의 순간 강조</figcaption>
-            </figure>
-          </div>
         </div>
       </div>
     </section>
@@ -447,16 +868,15 @@
           <div class="card"><h3>워크숍</h3><p>타이포 포스터, 캐릭터 라이브 드로잉, 프로토타입 스프린트.</p></div>
           <div class="card"><h3>가이드 투어</h3><p>도슨트와 함께 섹션별 의도와 제작 비하인드 소개.</p></div>
         </div>
+
+        <!-- Info stripe: 기간/장소/관람 정보 -->
+    <section class="stripe">
+      <div class="container info-grid">
+        <div class="info-item"><span class="info-label">기간</span><span class="info-value">2025. 10. 17 — 10. 20</span></div>
+        <div class="info-item"><span class="info-label">장소</span><span class="info-value">부산디자인진흥원 전시홀</span></div>
+        <div class="info-item"><span class="info-label">관람</span><span class="info-value">무료 · AM 10:00 — PM 6:00</span></div>
       </div>
     </section>
-
-    <!-- Stats: 전시 관련 숫자 지표 -->
-    <section class="section stripe">
-      <div class="container stats">
-        <div class="stat"><div class="num">27</div><div class="cap">기수</div></div>
-        <div class="stat"><div class="num">40+</div><div class="cap">참여 디자이너</div></div>
-        <div class="stat"><div class="num">80+</div><div class="cap">프로젝트</div></div>
-        <div class="stat"><div class="num">5</div><div class="cap">카테고리</div></div>
       </div>
     </section>
 
@@ -464,37 +884,82 @@
     <section class="section">
       <div class="container venue">
         <div class="panel">
-          <h2>오시는 길</h2>
-          <p class="lead">부산광역시 해운대구 센텀동로 57 부산디자인진흥원<br>지하철 2호선 센텀시티역 2,4번 출구 도보 10분
-            2번출구 : 스타벅스앞 - 좌회전 - 300m직진 
-            4번출구 : 대우트럼프월드센텀앞 - 우회전 - 300m직진</p>
-          <div class="cta-row">
-            <a class="btn" href="#">네이버 지도</a>
-            <a class="btn outline" href="#">카카오맵</a>
+          
+          <h2>교통정보</h2>
+
+          <div class="traffic-table">
+            <div class="traffic-row">
+              <div class="traffic-cell traffic-label">지하철</div>
+              <div class="traffic-cell traffic-body">
+                <p>2번출구 : 스타벅스 앞 - 좌회전 - <b>300m</b> 직진 <small>(도보 10분 소요)</small></p>
+                <p>4번출구 : 대우트럼프월드센텀 - 우회전 - <b>300m</b> 직진</p>
+              </div>
+            </div>
+
+            <div class="traffic-row">
+              <div class="traffic-cell traffic-label">시내버스</div>
+              <div class="traffic-cell traffic-body">
+                <p>센텀시티역 하차 : 1001, 1002, 139, 141, 155, 36, 39, 40, 5, 5-1, 63</p>
+                <p>삼성홈플러스 하차 : 100-1, 31, 115-1, 307, 200, 100</p>
+                <p>센텀벤처타운 하차 : 181</p>
+                <p>부산디자인진흥원 하차 : 115</p>
+              </div>
+            </div>
+
+            <div class="traffic-row">
+              <div class="traffic-cell traffic-label">승용차</div>
+              <div class="traffic-cell traffic-body">
+                <p>경부고속도로 : 부산톨게이트 → 원동IC → 해운대방면 → 수비사거리</p>
+                <p>남해고속도로 : 부산톨게이트 → 동서고가로 → 황령산터널 → 수비사거리</p>
+              </div>
+            </div>
+
           </div>
+          <div class="traffic-note">* 내부가 혼잡하여 대중교통을 추천 드립니다</div>
         </div>
-        <div class="map">지도 영역(이미지/임베드 예정)</div>
+        <div class="map">
+          <iframe
+            title="부산디자인진흥원 지도"
+            src="https://www.google.com/maps?hl=ko&output=embed&q=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90&z=18"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="map-links">
+          <a href="https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">네이버 지도에서 열기</a>
+          <a href="https://map.kakao.com/?q=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">카카오맵에서 열기</a>
+          <a href="https://www.google.com/maps/search/?api=1&query=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">Google 지도에서 열기</a>
+        </div>
       </div>
     </section>
 
-    <!-- Thanks/Credits: 지도교수/운영/도슨트 -->
+
+    <!-- ==================== Credits (졸업전시 크레딧) ==================== -->
+    <section class="section">
+      
+      <div class="container panel">
+        <h2>Credits</h2>
+
+        <!-- 행사 타이틀 -->
+        <p class="lead" style="margin:0 0 22px;">
+          제 27회 동명대학교 시각디자인학과 졸업작품 전시회
+        </p>
+
+          <!-- Thanks/Credits: 지도교수/운영/도슨트 -->
     <section class="section">
       <div class="container panel">
         <h2>Thanks to</h2>
         <div class="people">
           <div class="people-group">
-
-            <h3 class="people-title"><span class="pill">Advisor</span> 총장님</h3>
-            <h3 class="people-title"><span class="pill">Advisor</span> 지도교수님</h3>
-            <ul class="people-list"></ul>
+            <h3 class="people-title"><span class="pill">Advisor</span>동명대학교 총장 이상천</h3>
+            <img class="about-photo" src="../../1.Picture/3.%20Graduate_Propasser/총장님.jpeg" alt="총장님">
+          </div>
     <section class="faculty">
       <div class="container">
-        <ul class="faculty-gallery">
-          <!--
-            예시 파일명: 정원준.jpg, 김재익.jpg, 박규태.jpg, 장경숙.jpg, 김정은.jpg, 원종윤.jpg, 선정훈.jpg
-            👉 파일명이 다르면 아래 src만 해당 파일명으로 바꿔주세요.
-            👉 이미지 로드에 실패하면 자동으로 "이름" 플레이스홀더가 보입니다.
-          -->
+        <div class="people-group" style="margin-top:16px;">
+          <h3 class="people-title"><span class="pill">Designers</span>동명대학교 시각디자인학과 교수님</h3>
+          <ul class="people-list">            
           <li class="faculty-card" data-name="정원준" data-filename="정원준교수님.jpeg">
             <img loading="lazy" alt="정원준 교수님" src="" onerror="handleFacultyError(this)" />
             <div class="cap">
@@ -554,14 +1019,41 @@
         </ul>
       </div>
     </section>
-          </div>
-          <div class="cta-row">
-            <a class="btn outline" href="#">Operation</a>
-            <a class="btn outline" href="#">Docent</a>
-          </div>
+       <!-- 졸업준비위원회 -->
+       <div class="people-group" style="margin-top:16px;">
+        <h3 class="people-title"><span class="pill">Committee</span> 졸업준비위원회</h3>
+        <ul class="people-list">
+          <li><strong>위원장</strong> 최자연</li>
+          <li><strong>부위원장</strong> 박은제</li>
+          <li><strong>편집팀</strong> 김준성, 김혜연, 이영현, 차은지, 황만규</li>
+          <li><strong>홍보팀</strong> 안정연, 김혜림, 배유진, 박은제</li>
+          <li><strong>전시팀</strong> 김사율, 이다현, 이혜주</li>
+          <li><strong>감사</strong> 안예진</li>
+          <li><strong>총무</strong> 홍화정</li>
+        </ul>
+      </div>
+
+        <!-- 디자이너 명단 -->
+        <div class="people-group" style="margin-top:16px;">
+          <h3 class="people-title"><span class="pill">Designers</span> 디자이너</h3>
+          <ul class="people-list">
+            <li>김나연</li><li>김민진</li><li>김사율</li><li>김유빈</li><li>김준성</li><li>김지우</li><li>김혜림</li><li>김혜연</li><li>남예주</li><li>라영강</li><li>박은제</li><li>배유진</li><li>배주아</li><li>범상우</li><li>서은선</li><li>설가심</li><li>안예진</li><li>안정연</li><li>양유성</li><li>왕몽연</li><li>윤민주</li><li>이다현</li><li>이서진</li><li>이수빈</li><li>이은경</li><li>이주영</li><li>이혜주</li><li>장세희</li><li>장주아</li><li>장청청</li><li>전우곤</li><li>주하우</li><li>지영현</li><li>차은지</li><li>최민원</li><li>최순주</li><li>최영인</li><li>최자연</li><li>한패달</li><li>홍화정</li><li>황만규</li><li>황예빈</li>
+          </ul>
         </div>
+
+      
+
+        <!-- 제작 -->
+        <div class="people-group" style="margin-top:16px;">
+          <h3 class="people-title"><span class="pill">Web</span> 홈페이지 디자인 및 개발</h3>
+          <ul class="people-list">
+            <li>안정연</li>
+          </ul>
+        </div>
+
       </div>
     </section>
+
   </main>
 
   <!-- Fullscreen image viewer (click any gallery image) -->
@@ -571,11 +1063,6 @@
   <div id="footer-placeholder"></div>
 
   <script>
-    /* ==================== 스크립트: 네비게이션 로더 ====================
-       - Tob_nav.html을 불러와 로고 교체/링크 정규화/드롭다운 제거
-       - 헤더 높이만큼 spacer를 만들어 겹침 방지
-       - 스크롤 방향에 따라 헤더를 숨김/표시
-    ==================== */
     // 네비게이션 HTML 삽입 (로고 교체 + 링크 정규화)
     fetch('../../2.PageElement/Tob_nav/Tob_nav.html', {cache: "no-store"})
       .then(res => res.text())
@@ -849,6 +1336,7 @@
       });
     });
   })();
+  
 </script>
 
   <script>
@@ -867,5 +1355,14 @@
       window.addEventListener('keydown', function(e){ if(e.key==='Escape' && dlg.open) dlg.close(); });
     })();
   </script>
+  <script>
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting) e.target.classList.add('visible');
+      });
+    },{threshold:.1});
+    document.querySelectorAll('.section,.hero,.venue,.faculty,.traffic-table')
+      .forEach(el=>observer.observe(el));
+    </script>
 </body>
 </html>

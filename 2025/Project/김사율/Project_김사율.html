@@ -130,10 +130,11 @@
     h1::after {
       content: "";
       display: block;
-      width: 64px;
-      height: 3px;
-      background: var(--red);
-      margin-top: 10px;
+      height: 1px;                          /* 얇은 선 */
+      background-color: rgba(255,255,255,0.22); /* 효과 없이 라인만 */
+      margin-top: 6px;
+      /* 제목보다 훨씬 오른쪽으로 길게 (뷰포트 기준 확장) */
+      width: clamp(100%, calc(100% + 80vw), 620px);
     }
 
     h2 {
@@ -180,7 +181,7 @@
       color: #eaeaea;
       line-height: 1.8;
       white-space: pre-line;
-      margin-top: 10px;
+      margin-top: 0;
     }
 
     .profile-role {
@@ -346,15 +347,51 @@
   display: flex;
   flex-direction: column;    /* 가로 → 세로 */
   align-items: flex-start;   /* 왼쪽 정렬 */
-  gap: 10px;                 /* 요소 간 간격 */
+  gap: 4px;                 /* 요소 간 간격 */
 }
 
 /* h1의 밑줄(::after) 다음에 적당한 여백 */
 .text-content h1 + .hashtags{
-  margin-top: 6px;
+  margin-top: 0; /* h1 오른쪽에 붙게 위 여백 제거 */
 }
 
 .text-content .hashtags{ margin: 0; }
+
+/* 제목과 해시태그를 한 줄에 (오른쪽 배치) */
+.name-row{
+  display: inline-flex;
+  align-items: baseline;   /* 글줄 기준선 맞춤 */
+  gap: 10px;               /* 제목-해시태그 간격 */
+  flex-wrap: wrap;         /* 공간 부족 시 줄바꿈 허용 */
+}
+.name-row .hashtags{
+  display: inline-flex;
+  margin: 0;
+  padding: 4px 10px;       /* 살짝 컴팩트 */
+  font-size: 0.9rem;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+/* ===== 제목 오른쪽 장미 마크 ===== */
+.name-wrap{ position: relative; }
+
+.rose-mark{
+  position: absolute;
+  right: -28rem;         /* 화면 오른쪽 여백 */
+  top: 50%;            /* 제목 줄과 수직 정렬 */
+  transform: translateY(-60%);
+  width: 68px;         /* 크기 (필요시 60~72px 조절) */
+  height: auto;
+  opacity: .96;
+  pointer-events: none; /* 클릭 방해 X */
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,.25));
+}
+
+/* 모바일에서 살짝 축소 */
+@media (max-width: 900px){
+  .rose-mark{ right: 1rem; width: 54px; transform: translateY(-55%); }
+}
 
     /* 수상/경력 블록 톤 다운 + 간격 */
     .won{ opacity:.9; line-height:1.7; }
@@ -602,8 +639,19 @@
   <div class="profile-container">
     <div class="profile-right">
       <div class="text-content">
-        <h1>큐패스</h1>
-        <div class="hashtags"># UX/UI</div>
+        <div class="name-wrap">
+          <div class="name-row">
+            <h1>큐패스</h1>
+            <div class="hashtags"># UX/UI</div>
+          </div>
+          <!-- 오른쪽 장미 마크 -->
+          <img
+            class="rose-mark"
+            src="../../../1.Picture/1.%2027th%20Graduation/BLOOM_ROSE/BLOOM_ROSE_RIGHT.png"
+            alt="장미 마크"
+            onerror="this.onerror=null; this.src='../../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png';"
+          />
+        </div>
         <p class="message">
           MZ들을 위한 스마트 웨이팅 솔루션, 큐 패스
 
@@ -955,6 +1003,26 @@
   })();
   </script>
   
+  <script>
+  window.addEventListener('resize', () => {
+    const width = window.innerWidth;
+    const current = window.location.pathname;
+    if (width <= 800 && !current.includes('Project-mobile_김사율.html')) {
+      window.location.href = '../../../2025/Project/김사율/Project-mobile_김사율.html';
+    } else if (width > 800 && current.includes('Project-mobile_김사율.html')) {
+      window.location.href = '../../../2025/Project/김사율/Project_김사율.html';
+    }
+  });
+
+  // 초기 로드 시 한 번만 체크
+  window.addEventListener('load', () => {
+    const width = window.innerWidth;
+    const current = window.location.pathname;
+    if (width <= 800 && !current.includes('Project-mobile_김사율.html')) {
+      window.location.href = '../../../2025/Project/김사율/Project-mobile_김사율.html';
+    }
+  });
+  </script>
 </body>
 </html>
 

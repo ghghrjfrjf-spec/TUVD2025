@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>김나연 | TUVD 27th Graduate Exhibition (Mobile)</title>
+
+  <!-- 상단 네비/푸터/커서: 경로 그대로 유지 -->
+  <link rel="stylesheet" href="../../../2.PageElement/Footer/Footer.css" />
+
+  <style>
+   :root{
+    --bg:#000; --text:#fff; --muted:#bdbdbd; --line:#222; --red:#ff2b2b;
+    --container: 960px;
+    --footer-h: 52px; /* runtime will update this */
+    /* 카드 보더 및 이름 정렬 조정 */
+    --card-border: 1px;
+    --name-left-nudge: 0px;
+  }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Pretendard',system-ui,-apple-system,sans-serif}
+    html, body { height: 100%; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ===== 헤더 (모바일 전용) ===== */
+    .m-header{
+      position:sticky; top:0; z-index:1000;
+      height:64px; min-height:64px; max-height:64px; /* 🔒 exact 64px height */
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 14px; /* 🔒 0×14px padding */
+      box-sizing:border-box;
+      background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      border-bottom:1px solid rgba(255,255,255,.12);
+      transition:transform .5s ease; will-change:transform;
+    }
+    .m-title{ font:800 16px/1 Pretendard, system-ui, -apple-system, sans-serif; letter-spacing:.2px; }
+    .m-header .logo{ display:flex; align-items:center; gap:8px; text-decoration:none; color:#fff; height:32px; }
+    .m-header .logo img{ max-height:32px; display:block; }
+    .m-header .logo-text{ display:flex; flex-direction:column; line-height:1; }
+    .m-header .logo-text .main{ font-size:15px; font-weight:800; color:#fff; margin:0 0 2px 0; }
+    .m-header .logo-text .sub{ font-size:14px; font-weight:800; color:#ff4d4d; letter-spacing:.2px; }
+
+    .m-menu-btn{ width:40px; height:40px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; background:transparent; border:none; box-shadow:none; cursor:pointer; overflow:hidden; }
+    .m-menu-btn img{ width:20px; height:20px; display:block; }
+    .m-menu-btn:hover{ border:1px solid rgba(255,255,255,.18); }
+    .m-menu-btn:active{ border:1px solid rgba(255,255,255,.28); }
+
+    /* ===== 모바일 메뉴 오버레이 ===== */
+    .m-menu{ position:fixed; top:64px; right:0; bottom:0; width:260px; background:rgba(255,255,255,0.10); color:#fff; z-index:9999; display:flex; flex-direction:column; padding:0; margin:0; overflow:auto; transform:translateX(100%); transition:transform .35s ease, background .25s ease; box-shadow:-8px 0 24px rgba(0,0,0,0.35); backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); border-left:1px solid rgba(255,255,255,0.18); }
+    body.nav-open .m-menu{ transform:translateX(0); }
+    .menu-overlay{ content:''; position:fixed; left:0; top:64px; right:0; bottom:0; background:rgba(0,0,0,.35); z-index:900; display:none; }
+    body.nav-open .menu-overlay{ display:block; }
+    .m-menu ul{ list-style:none; padding:0; margin:0; }
+    .m-menu li a{ display:flex; align-items:center; height:64px; padding:0 20px; color:#fff; text-decoration:none; font:800 22px/1 Pretendard, system-ui, -apple-system, sans-serif; border-top:1px solid rgba(255,255,255,.18); background:transparent; text-shadow:0 1px 0 rgba(0,0,0,.3); }
+    .m-menu li:first-child a{ border-top:none; }
+    .m-menu li a:hover{ background:rgba(255,255,255,.08); }
+    .m-menu li a:active{ background:rgba(255,255,255,.16); }
+
+    .nav-line{ position:fixed; left:0; right:0; top:64px; height:2px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%); transform: scaleX(0); transform-origin: left center; transition: transform .45s ease, opacity .3s ease; opacity:.95; z-index:1001; pointer-events:none; }
+    body.nav-open .nav-line{ transform: scaleX(1); }
+
+    @media (max-width: 375px){
+      .m-header{ height:56px; min-height:56px; max-height:56px; }
+      .m-menu{ top:56px; }
+      .menu-overlay{ top:56px; }
+      .nav-line{ top:56px; }
+      .m-menu li a{ height:56px; font-size:20px; padding:0 18px; }
+      .m-menu-btn{ width:36px; height:36px; }
+      .m-menu-btn img{ width:22px; height:22px; }
+    }
+
+    /* ===== 모바일 레이아웃 (단순한 1컬럼) ===== */
+    .wrap{max-width:var(--container);margin:0 auto;padding:16px 16px 80px;}
+    .profile{
+      display:grid; grid-template-columns:1fr; gap:16px;
+    }
+
+    .name{
+      display:flex; 
+      align-items:flex-end; 
+      gap:8px; 
+      padding-bottom:6px;
+      border-bottom:1px solid rgba(255,255,255,.18);
+      margin-top: 20px;
+      padding-left: var(--name-left-nudge, 1px); /* fine-tune alignment with image's inner edge */
+    }
+    .name h1{
+      margin:0;
+      font-size:28px;
+      line-height:1.1;
+      color:#c0392b;
+      font-weight:800;
+      letter-spacing:.3px;
+      margin-left: 15px; /* 이미지 왼쪽 라인에 정확히 맞춤 */
+      text-align: left; /* 혹시 가운데 정렬 방지 */
+    }
+    .name h2{margin:0 0 2px 0;font-size:14px;color:#9b9b9b;font-weight:700;letter-spacing:.2px}
+
+    /* Email pill next to name */
+    .name{
+      display:flex;
+      align-items:flex-end;
+      gap:8px;
+      padding-bottom:6px;
+      border-bottom:1px solid rgba(255,255,255,.18);
+      margin-top: 20px;
+      padding-left: calc(var(--card-border) + var(--name-left-nudge, 0px)); /* 이미지 안쪽 라인 맞춤 */
+    }
+
+    .name .email-pill{
+      margin-left: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: #101010;
+      color: #e6e6e6;
+      font-size: 11px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: .2px;
+      white-space: nowrap;
+    }
+    @media (min-width: 480px){
+      .name .email-pill{ font-size: 12px; }
+    }
+
+    .tagline{
+      margin:6px 0 8px 0; 
+      align-items: center;
+      text-align: center;
+      font-size:16px; 
+      font-weight: 600;
+      line-height:1.7; 
+      color:#f0f0f0}
+
+    .hashtags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+    .hashtag{padding:6px 12px;border-radius:999px;border:1px solid #333;background:#111;color:#cfcfcf;font-weight:700;font-size:13px}
+
+    /* 이미지: 플립/틸트 제거하고 고정 카드로 */
+    .card{
+  border: var(--card-border) solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  background:#0d0d0d;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+    .card img{
+      display:block;
+      width:100%;
+      height:auto;
+      transform: translateZ(0); /* iOS/Safari: force layer */
+    }
+
+    /* --- Intro 3D flip animation (mobile) --- */
+    /* Rotate a wrapper so a back face can appear during the spin */
+    .card .spin-target{
+      display:block;
+      position:relative;
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    /* Two faces: front (normal), back (rotated 180deg) */
+    .card .spin-target .face{
+      width:100%;
+      height:auto;
+      display:block;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    .card .spin-target .face.back{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+    }
+
+    /* Play the spin on the wrapper so both faces are used */
+    .card.spin-in .spin-target{
+      animation: spinY 1.6s cubic-bezier(.22,.61,.36,1) both;
+    }
+
+    @keyframes spinY{
+      from{ transform: rotateY(0deg) translateZ(0); -webkit-transform: rotateY(0deg) translateZ(0); }
+      to  { transform: rotateY(360deg) translateZ(0); -webkit-transform: rotateY(360deg) translateZ(0); }
+    }
+
+    /* Avoid flicker on iOS/Safari during 3D transforms */
+    .card, .card *{
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce){
+      .card.spin-in{ animation: none !important; }
+    }
+
+    /* 연락처 */
+    .meta{
+      display:block;
+      margin-top:8px;
+      text-align:center;
+    }
+
+    .meta .pill{
+      display:inline-block;
+      padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
+      background:#0f0f0f;color:#e9e9e9;font-size:13px
+    }
+
+    /* Q&A — 심플 카드 (센터 정렬) */
+    .qna{
+      margin:48px auto 0;            /* 가운데 배치 */
+      width:100%;
+      max-width:640px;               /* 폭 제한 후 중앙 */
+    }
+    .qna h3{margin:0 0 12px 0;font-size:20px;text-align:center}
+    .qa{border:1px solid #1f1f1f;border-radius:12px;background:#111;margin:12px 0;overflow:hidden;text-align:left}
+    .qa .q{padding:10px 12px;background:#1c1c1c;font-weight:800;font-size:14px;color:#e0e0e0}
+    .qa .a{padding:12px;color:#d7d7d7;line-height:1.7;font-size:15px}
+
+    /* 버튼: 맨 위로 */
+    .scroll-btn{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:99999; /* 맨 위 */
+      display:none;
+      align-items:center;
+      justify-content:center;
+      width:44px; height:44px;
+      border-radius:30px;
+      background:#000;
+      color:#fff; font-weight:900; letter-spacing:.3px;
+      box-shadow:0 6px 18px rgba(0,0,0,.35);
+      cursor:pointer;
+    }
+    .scroll-btn:hover{ color:#ff3b3b; box-shadow:0 6px 22px rgba(255,59,59,.25); }
+    .scroll-btn:active{transform:scale(.98)}
+
+    /* 데스크톱 상에서도 보되, 효과는 최소화 */
+    @media (min-width: 768px){
+      .wrap{padding:24px 24px 100px}
+      .name h1{font-size:32px}
+      .tagline{font-size:18px}
+    }
+
+    footer{
+      position:static; /* page-bottom (not viewport) */
+      margin-top:auto; /* push footer to bottom when content is short */
+      width:100%;
+      background:#000;
+      color:#f3f3f3;
+      border-top:1px solid var(--line);
+      padding:10px 12px;
+      box-sizing:border-box;
+      font-size:12px;
+      text-align:center;
+    }
+    /* === HEADER SIZE LOCK — match global hamburger spec === */
+    .m-header{ height:64px !important; min-height:64px !important; max-height:64px !important; padding:0 14px !important; }
+    .m-header .logo{ gap:8px !important; height:32px !important; }
+    .m-header .logo img{ max-height:32px !important; display:block; }
+    .m-header .logo-text{ line-height:1 !important; }
+    .m-header .logo-text .main{ font-size:15px !important; font-weight:800 !important; margin:0 0 2px 0 !important; }
+    .m-header .logo-text .sub{ font-size:14px !important; font-weight:800 !important; color:#ff4d4d !important; letter-spacing:.2px !important; }
+    .m-menu-btn{ width:40px !important; height:40px !important; border-radius:10px !important; }
+    .m-menu-btn img{ width:20px !important; height:20px !important; display:block !important; }
+    .nav-line{ top:64px !important; }
+    .menu-overlay{ top:64px !important; }
+    .m-menu{ top:64px !important; }
+    @media (max-width:375px){
+      .m-header{ height:56px !important; min-height:56px !important; max-height:56px !important; }
+      .m-menu{ top:56px !important; }
+      .menu-overlay{ top:56px !important; }
+      .nav-line{ top:56px !important; }
+      .m-menu li a{ height:56px !important; font-size:20px !important; padding:0 18px !important; }
+      .m-menu-btn{ width:36px !important; height:36px !important; }
+      .m-menu-btn img{ width:22px !important; height:22px !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 상단: 제목 + 햄버거 버튼 -->
+  <header class="m-header">
+    <a class="logo" aria-label="BLOOM" href="../../Main.html">
+      <img src="/1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="BLOOM 로고" decoding="async" />
+      <span class="logo-text">
+        <strong class="main">TUVD</strong>
+        <span class="sub">27th Graduate Exhibition</span>
+      </span>
+    </a>
+    <button id="menuBtn" class="m-menu-btn" aria-label="메뉴 열기" aria-expanded="false">
+      <img src="/1.Picture/Another/Menu.png" alt="메뉴" />
+    </button>
+  </header>
+  <div class="nav-line" aria-hidden="true"></div>
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <nav class="m-menu" id="mMenu" aria-label="모바일 메뉴">
+    <ul>
+      <li><a href="../../Main.html">HOME</a></li>
+      <li><a href="../../About.html">ABOUT</a></li>
+      <li><a href="../../Project.html">PROJECT</a></li>
+      <li><a href="../../Designer.html">DESIGNER</a></li>
+      <li><a href="../../Guest.html">GUEST BOOK</a></li>
+    </ul>
+  </nav>
+
+      <main class="wrap" role="main">
+        <section class="profile">
+          <header class="name">
+            <h1>김나연</h1>
+            <h2>KIM NAYEON</h2>
+            <span class="email-pill" aria-label="이메일">E-mail • cyclic1312@gmail.com</span>
+          </header>
+          
+          <figure class="card" aria-label="프로필 사진">
+            <a class="spin-target" href="/1.Picture/1. 27th Graduation/Profile/김나연.jpeg " aria-label="프로젝트 페이지로 이동">
+              <!-- 앞면 -->
+              <img class="face front" src="/1.Picture/1. 27th Graduation/Profile/KIM NAYEON.jpeg" alt="김나연 프로필 사진 (앞면)" loading="eager" decoding="async" />
+              <!-- 뒷면: 필요 시 다른 이미지로 교체하세요 -->
+              <img class="face back" src="/1.Picture/2. Graduate/Graduate_Logo/KIM NAYEON.jpg" alt="김나연 프로필 사진 (뒷면)" loading="eager" decoding="async" />
+            </a>
+            <p class="tagline">“디자인으로 전하고 싶은 마음,<br> 드디어 형태가 되다.”</p>
+          </figure>
+          <div class="meta">
+            <span class="pill">Project 페이지로 이동하려면 사진을 탭하세요</span>
+          </div>
+          <section class="qna" aria-label="Q&A">
+            <h3>Q&A</h3>
+            <article class="qa">
+              <div class="q">Q. 졸업하는 지금, ‘입학할 당시의 나’에게 한 마디 한다면?</div>
+              <div class="a">더 놀아라</div>
+            </article>
+            <article class="qa">
+              <div class="q">Q. 학과/전공 덕분에 바뀐 나의 모습은?</div>
+              <div class="a">끈기</div>
+            </article>
+            <article class="qa">
+              <div class="q">Q. 시험 기간 내가 주로 했던 현실도피는?</div>
+              <div class="a">잠자기</div>
+            </article>
+          </section>
+        </section>
+      </main>
+
+  <!-- 맨 위로 -->
+  <button onclick="scrollToTop()" id="scrollTopBtn" class="scroll-btn">▲</button>
+
+  <!-- 푸터 그대로 주입 -->
+  <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
+
+<script>
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const btn = document.getElementById('menuBtn');
+    const menu = document.getElementById('mMenu');
+    const overlay = document.getElementById('menuOverlay');
+    if (!btn || !menu) return;
+  
+    function toggle() {
+      const open = !document.body.classList.contains('nav-open');
+      document.body.classList.toggle('nav-open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+    }
+  
+    btn.addEventListener('click', toggle);
+    if (overlay) overlay.addEventListener('click', toggle);
+    menu.addEventListener('click', (e)=>{
+      if(e.target.closest('a')) document.body.classList.remove('nav-open');
+    });
+  });
+  </script>
+
+<script>
+// [UI] 맨 위로 버튼(노출/숨김 + 스무스 스크롤)
+// 맨 위로 버튼 동작
+document.addEventListener("DOMContentLoaded", function () {
+  const scrollBtn = document.getElementById("scrollTopBtn");
+  window.addEventListener("scroll", function () {
+    if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1) {
+      scrollBtn.style.display = "flex";
+    } else {
+      scrollBtn.style.display = "none";
+    }
+  });
+  // 스무스 스크롤로 최상단 이동 함수 노출
+  window.scrollToTop = function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });  
+  };
+});
+</script>
+
+<script>
+// [네비게이션] 스크롤 방향 감지 → 숨김/표시
+(function bindHideNavOnScroll(){
+  const THRESH = 6;   // 조금 더 내려가야 반응 (불필요한 깜빡임 방지)
+  const TOPSAFE = 48;  // 상단에서는 좀 더 오래 보이게
+
+  let lastY = window.pageYOffset || 0;
+  let ticking = false;
+
+  function applyState(y, dy){
+    if (y <= TOPSAFE){
+      document.body.classList.remove('nav-hidden');
+      return;
+    }
+    if (Math.abs(dy) < THRESH) return;
+    if (dy > 0){
+      document.body.classList.add('nav-hidden');   // 아래로 → 숨김
+    }else{
+      document.body.classList.remove('nav-hidden'); // 위로 → 표시
+    }
+  }
+
+  function onScroll(){
+    const y = window.pageYOffset || 0;
+    const dy = y - lastY;
+    lastY = y;
+    if (!ticking){
+      ticking = true;
+      requestAnimationFrame(() => { applyState(y, dy); ticking = false; });
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive:true });
+  ['wheel','touchmove','touchstart','keydown'].forEach(evt => {
+    window.addEventListener(evt, onScroll, { passive:true });
+  });
+
+  // 초기 상태
+  requestAnimationFrame(() => applyState(window.pageYOffset || 0, 0));
+})();
+
+</script>
+<script>
+  // [라우팅] 화면 너비 기준 페이지 전환
+  // (>=640px → Designer_김나연.html, <=639px → Designer-mobile_김나연.html)
+  (function responsiveRoute(){
+    const DESKTOP_BASE = 'Designer_김나연';          // 파일명(확장자 제외)
+    const MOBILE_BASE  = 'Designer-mobile_김나연';   // 파일명(확장자 제외)
+
+    // 현재 URL에서 "실제" 베이스 파일명을 얻는다.
+    // - 퍼센트 인코딩(한글 %EA...)을 디코드
+    // - index.html 형태면 상위 폴더명을 파일명으로 간주
+    function getCurrentBase(){
+      const parts = location.pathname.split('/').filter(Boolean).map(s => {
+        try { return decodeURIComponent(s); } catch(_) { return s; }
+      });
+      let last = parts[parts.length - 1] || '';
+      if (/^index\.html?$/i.test(last)) {
+        last = parts[parts.length - 2] || last; // .../폴더/index.html → 폴더명이 베이스
+      }
+      // 확장자 제거
+      return last.replace(/\.html?$/i, '').toLowerCase();
+    }
+
+    // 같은 디렉터리에서 대상 파일로 이동 (한글 파일명 안전하게 인코딩)
+    function goToBase(base){
+      const baseDir = location.pathname.replace(/[^/]*$/, '');
+      const file = encodeURIComponent(base) + '.html';
+      location.replace(baseDir + file);
+    }
+
+    const mq = window.matchMedia('(max-width: 639px)');
+    let ticking = false;
+
+    function check(){
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(() => {
+        const current = getCurrentBase();
+        const isMobile = mq.matches;
+        if (isMobile && current === DESKTOP_BASE.toLowerCase()) {
+          goToBase(MOBILE_BASE);
+        } else if (!isMobile && current === MOBILE_BASE.toLowerCase()) {
+          goToBase(DESKTOP_BASE);
+        }
+        ticking = false;
+      });
+    }
+
+    // 변화 감지
+    if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
+    else if (mq.addListener) mq.addListener(check);
+    window.addEventListener('resize', check, {passive:true});
+    window.addEventListener('orientationchange', check, {passive:true});
+    document.addEventListener('DOMContentLoaded', check);
+
+    // 초기/지연 체크 (iOS/Safari 대응)
+    setTimeout(check, 120);
+    let kicks = 0;
+    const kickTimer = setInterval(()=>{ kicks++; check(); if (kicks > 10) clearInterval(kickTimer); }, 200);
+    window.addEventListener('pageshow', check, {passive:true});
+    document.addEventListener('visibilitychange', check, {passive:true});
+  })();
+</script>
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  try{
+    const prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduce) return;
+
+    // Per-page session key; add ?spin=1 to URL to force during testing
+    const KEY = 'intro_spin_done:' + location.pathname;
+    const force = /[\?&]spin=1\b/.test(location.search);
+    // Always show animation on reload (disable session lock)
+    // if you want one-time behavior, re-enable the above line
+
+    const card = document.querySelector('.card');
+    if (!card) return;
+
+    // Small delay to ensure layout is ready (prevents iOS flicker)
+    setTimeout(() => { card.classList.add('spin-in'); }, 60);
+
+    const cleanup = () => {
+      card.classList.remove('spin-in');
+      // Do not store session flag — always allow on refresh
+    };
+    card.addEventListener('animationend', cleanup, { once: true });
+    // Fallback in case animationend doesn't fire
+    setTimeout(cleanup, 1500);
+  }catch(e){ /* no-op */ }
+});
+</script>
+</body>
+</html>

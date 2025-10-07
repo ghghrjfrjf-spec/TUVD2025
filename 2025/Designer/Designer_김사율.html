@@ -758,18 +758,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   font-weight: 800;
   font-size: 30px;
   color: #ffffff;
   background: rgba(0, 0, 0, 0.26);
+  opacity: 0;                 /* 기본 숨김 */
+  visibility: hidden;         /* 기본 숨김 */
+  transform: translateY(10px);
+  transition: opacity .3s ease, transform .3s ease, visibility .3s; 
 }
 
 @media (hover:hover) {
-  .profile-left .pflip .pflip-back:hover .hover-hint {
-    opacity: 0;
-    transform: translateY(100);
+  /* 뒤집히지 않았을 때에만 호버 힌트 표시 */
+  .profile-left .pflip:not(.is-flipped):hover .hover-hint {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
+}
+/* 카드가 뒤집힌 상태에서는 힌트 강제 숨김 */
+.profile-left .pflip.is-flipped .hover-hint {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(10px) !important;
 }
 
 .text-content .role-line {

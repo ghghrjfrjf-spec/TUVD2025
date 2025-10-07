@@ -10,6 +10,11 @@
   <style>
     :root{ --line: rgba(255,255,255,.12); }
     html,body{ margin:0; padding:0; background:#000; color:#fff; }
+    html, body { height: 100%; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    * {
+      color: #000;
+    }
 
     /* ===== 헤더 (모바일 전용) ===== */
     .m-header{
@@ -138,15 +143,13 @@
     .stage{ background:#000; line-height:0; padding-bottom:72px; }
 
     footer{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
+      position:static; /* 페이지 하단 고정 */
+      margin-top:auto;
       width:100%;
       background:#000;
-      color: #f3f3f3;
+      color:#f3f3f3;
       border-top:1px solid var(--line);
-      padding:6px 10px;
+      padding:10px 12px;
       box-sizing:border-box;
       font-size:12px;
       text-align:center;

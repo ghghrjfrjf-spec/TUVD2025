@@ -31,7 +31,9 @@
       max-width:100%;
       overflow-x:hidden; /* 🚫 prevent horizontal scroll on iPad Pro */
       -webkit-text-size-adjust:100%;
+      min-height:100%;
     }
+body{ display:flex; flex-direction:column; min-height:100vh; }
 *{ box-sizing:border-box; }
 
     /* ===== 헤더 (모바일 전용) ===== */
@@ -98,7 +100,7 @@
 
     
     /* ===== 페이지 타이틀/툴바 ===== */
-    .stage{ padding:18px 14px 84px; }
+    .stage{ padding:18px 14px 24px; }
     h1.page-title{ font:900 34px/1.15 Playfair Display, serif; text-align:center; margin:18px 0 18px; letter-spacing:.2px; }
 
     .toolbar{ display:flex; align-items:center; justify-content:center; gap:10px; padding:8px 2px 10px; border-bottom:none; position:static; top:auto; background:transparent; }
@@ -152,7 +154,7 @@ contain:content;
     .cap .t{ font-weight:800; font-size:14px; line-height:1.25; color:#fff; }
     .cap .m{ margin-top:6px; font-size:12px; color:#d0d0d0; }
 
-    footer{ position:fixed; left:0; right:0; bottom:0; height:auto; padding:6px 10px; background:#000; border-top:1px solid var(--line); text-align:center; font-size:12px; color:#f3f3f3; }
+    footer{ position:static; margin-top:auto; height:auto; padding:6px 10px; background:#000; border-top:1px solid var(--line); text-align:center; font-size:12px; color:#f3f3f3; }
 
     /* Final safety net: prevent any element from exceeding viewport width */
     @supports (width: min(100%, 100vw)){
@@ -168,6 +170,7 @@ contain:content;
       margin-right:auto;
       /* prevent scaled children from creating overflow */
       overflow-x: hidden;
+      flex: 1 0 auto;
     }
     /* make sure scalable area never exceeds the viewport width before scaling */
     @supports (width: min(100%, 100vw)){

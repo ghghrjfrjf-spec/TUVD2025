@@ -3,129 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BLOOM — 모바일</title>
+  <title>Designer — 모바일</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&amp;display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" />
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" />
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" />
   <style>
-    :root{ --line: rgba(255,255,255,.12); }
-    html,body{ margin:0; padding:0; background:#000; color:#fff; }
-
-    /* ===== 헤더 (모바일 전용) ===== */
-    .m-header{
-      position:sticky; top:0; z-index:1000;
-      height:64px; display:flex; align-items:center; justify-content:space-between;
-      padding:0 14px; box-sizing:border-box;
-      background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-      border-bottom:1px solid rgba(255,255,255,.12);
-      transition:transform .5s ease; will-change:transform;
+    :root{
+      --line: rgba(255,255,255,.12);
+      --font-title: 'Playfair Display', 'Noto Serif KR', serif;
+      --font-body: 'Pretendard', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     }
-    .m-title{ font:800 16px/1 Pretendard, system-ui, -apple-system, sans-serif; letter-spacing:.2px; }
-
-    /* 로고: Main.html과 동일한 위치/크기로 */
-    .m-header .logo{
-      display:flex; align-items:center; gap:8px;
-      text-decoration:none; color:#fff;
+    html,body{
+      margin:0;
+      padding:0;
+      background:#000;
+      color:#fff;
+      height:100%;
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
     }
-    .m-header .logo img{
-      max-height:32px;
-      display:block;
-    }
-    .m-header .logo-text{
-      display:flex; flex-direction:column;
-      /* 줄 간격 타이트하게 */
-      line-height:1;
-    }
-    .m-header .logo-text .main{
-      font-size:15px; font-weight:800; color:#fff;
-      /* 아래 간격 2px */
-      display:block; margin:0 0 2px 0;
-    }
-    .m-header .logo-text .sub{
-      font-size:14px; font-weight:800; color:#ff4d4d;
-      display:block; letter-spacing:.2px;
-    }
-
-    /* 햄버거 버튼: 미니멀/얇은 스타일, hover/active에만 테두리 */
-    .m-menu-btn{
-      width:40px; height:40px; border-radius:10px;
-      display:inline-flex; align-items:center; justify-content:center;
-      background:transparent; border:none; box-shadow:none; cursor:pointer; overflow:hidden;
-    }
-    .m-menu-btn img{ width:20px; height:20px; display:block; }
-
-    /* hover/active 시에만 미세한 테두리 표시 (시각 피드백) */
-    .m-menu-btn:hover{ border:1px solid rgba(255,255,255,.18); }
-    .m-menu-btn:active{ border:1px solid rgba(255,255,255,.28); }
-
-    /* ===== 모바일 메뉴 오버레이 ===== */
-    .m-menu{
-      position:fixed; top:64px; right:0; bottom:0; width:260px;
-      /* 투명한 유리 느낌 */
-      background:rgba(255,255,255,0.10);
-      color:#fff; z-index:9999;
-      display:flex; flex-direction:column; padding:0; margin:0; overflow:auto;
-      transform:translateX(100%); transition:transform .35s ease, background .25s ease;
-      box-shadow:-8px 0 24px rgba(0,0,0,0.35);
-      backdrop-filter: blur(16px) saturate(160%);
-      -webkit-backdrop-filter: blur(16px) saturate(160%);
-      border-left:1px solid rgba(255,255,255,0.18);
-    }
-    body.nav-open .m-menu{ transform:translateX(0); }
-    /* 반투명 배경 */
-    .menu-overlay{
-      content:''; position:fixed; left:0; top:64px; right:0; bottom:0;
-      background:rgba(0,0,0,.35); z-index:900; display:none;
-    }
-    body.nav-open .menu-overlay{ display:block; }
-
-    .m-menu ul{ list-style:none; padding:0; margin:0; }
-    .m-menu li a{
-      display:flex; align-items:center; height:64px; padding:0 20px;
-      color:#fff; text-decoration:none; font:800 22px/1 Pretendard, system-ui, -apple-system, sans-serif;
-      border-top:1px solid rgba(255,255,255,.18);
-      /* 유리 위에 텍스트만 */
-      background:transparent;
-      text-shadow:0 1px 0 rgba(0,0,0,.3);
-    }
-    .m-menu li:first-child a{ border-top:none; }
-    .m-menu li a:hover{ background:rgba(255,255,255,.08); }
-
-    .m-menu li a:active{ background:rgba(255,255,255,.16); }
-
-    /* ===== 햄버거 클릭 시 나타나는 라인(글라스 상단바 아래) ===== */
-    .nav-line{
-      position:fixed; left:0; right:0; top:64px; height:2px;
-      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%);
-      transform: scaleX(0); transform-origin: left center;
-      transition: transform .45s ease, opacity .3s ease;
-      opacity:.95;
-      /* 헤더 위, 오버레이 아래 */
-      z-index:1001;
-      pointer-events:none;
-    }
-    body.nav-open .nav-line{ transform: scaleX(1); }
-
-    /* 작은 화면(아이폰 SE)에서 헤더 높이 56px 대응 */
-    @media (max-width: 375px){
-      .nav-line{ top:56px; }
-    }
+    
+    body { min-height: 100vh; display: flex; flex-direction: column; }
 
     /* 콘텐츠: 포스터와 푸터 */
     .poster{ display:block; width:100%; height:auto; margin:0 auto; }
-    /* .rose-left{
-      display:block;
-      max-width:50%;  절반 정도 크기 
-      height:auto;
-      margin:40px 0 0 10px;  위에서 조금 내리고 왼쪽으로 붙임 
-    } */
-    /* .gun-poster{
-      display:block;
-      width:80%;
-      max-width:500px;
-      height:auto;
-      margin:30px auto 0 auto;  위쪽 여백 주고 중앙 정렬 
-    } */
+   
     .promo-video{
       display:block; width:100%; height:auto;
       /* 아래 여백으로 푸터 고정 높이 피함 */
@@ -134,32 +41,28 @@
       /* 로딩 중 배경 */
       background:#000;
     }
+    
     /* 푸터(고정)와 겹치지 않도록 여백 확보 */
     .stage{ background:#000; line-height:0; padding-bottom:72px; }
 
     footer{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      width:100%;
-      background:#000;
+      position: static;             /* 페이지 하단에 위치 */
+      margin-top: 48px !important;             /* 콘텐츠가 짧을 때 하단 정렬 */
+      width: 100%;
+      background: #000;
       color: #f3f3f3;
-      border-top:1px solid var(--line);
-      padding:6px 10px;
-      box-sizing:border-box;
-      font-size:12px;
-      text-align:center;
-    }
-
-    /* 작은 화면(아이폰 SE) 폰트/여백 조정 */
-    @media (max-width: 375px){
-      .m-header{ height:56px; }
-      .m-menu{ top:56px; }
-      .menu-overlay{ top:56px; }
-      .m-menu li a{ height:56px; font-size:20px; padding:0 18px; }
-      .m-menu-btn{ width:36px; height:36px; }
-      .m-menu-btn img{ width:22px; height:22px; }
+      border-top: 1px solid var(--line);
+      height: 36px;                 /* 고정 높이 */
+      min-height: 36px;
+      padding: 0 12px;              /* 상하 여백 제거 */
+      box-sizing: border-box;
+      display: flex;                /* 수직 중앙 정렬 */
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      line-height: 1;               /* 브라우저 기본값 보정 */
+      text-align: center;
+      font-family: 'Pretendard', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     }
 
     .poster-wrapper{
@@ -194,70 +97,500 @@
       /* 살짝 투명하게 */
       opacity:0.6;
     }
+    
+    /* === 모바일 디자이너 그리드 전용 스타일 (헤더/푸터 건드리지 않음) === */
+    /* 상단 필터바 (All | Staff) — pill 스타일 */
+    .m-filter{ display:flex; justify-content:center; align-items:center; gap:10px; margin:0 0 10px; }
+    .m-filter .pill{
+      appearance:none; -webkit-appearance:none; -moz-appearance:none;
+      background:transparent;
+      color:#cfcfcf;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:9999px;
+      padding:8px 16px;
+      font-family: var(--font-body);
+      font-weight:800;
+      font-size:15px;
+      letter-spacing:0;
+      cursor:pointer;
+      line-height:1;
+      user-select:none;
+    }
+    .m-filter .pill:hover{ border-color:#888; color:#fff; }
+    .m-filter .pill.is-active{
+      color:#FF4D4D;
+      background:#FF4D4D2E; /* 18% alpha */
+      border-color:#FF4D4D;
+    }
+    .m-filter .pill:focus-visible{
+      outline:2px solid #FF4D4D; outline-offset:2px;
+    }
+    .m-filter .sep{ opacity:.6; font-weight:700; }
+    .m-design{ padding:20px 0 80px; }
+    .m-design .title{
+      font-family: var(--font-title);
+      font-weight: 800;          /* visually closer to the sample */
+      font-size: 34px;           /* match inspector screenshot */
+      line-height: 1.15;
+      letter-spacing: 0;
+      text-align: center;
+      margin: 18px 0;            /* top/bottom 18px */
+      text-transform: uppercase;
+    }
+
+    /* 초성 네비: 완전 둥근 pill, 활성 표시 */
+    .m-alpha-nav{ position:sticky; top:64px; z-index:5; display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:8px 12px 10px; margin:0 auto 8px; background:rgba(0,0,0,.65); backdrop-filter:blur(4px); border-bottom:1px solid rgba(255,255,255,.08); }
+    .m-alpha-nav a{ width:30px; height:30px; border-radius:9999px; display:inline-flex; align-items:center; justify-content:center; font-family: var(--font-body); font-weight:800; font-size:13px; color:#cfcfcf; text-decoration:none; border:1px solid rgba(255,255,255,.22); transition: background .2s ease, color .2s ease, border-color .2s ease; }
+    .m-alpha-nav a:hover{ color:#fff; border-color:#888; }
+    .m-alpha-nav a.is-active{ background:#ff3b3b; color:#000; border-color:transparent; }
+
+    /* 카드 그리드: 2열 고정 */
+    .m-grid{ width:100%; padding:0 12px; box-sizing:border-box; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
+    .m-card{ display:block; text-decoration:none; color:inherit; background:#0a0a0a; border:1px solid rgba(255,255,255,.12); border-radius:10px; overflow:hidden; }
+    .m-card img{ width:100%; aspect-ratio:3 / 4; object-fit:cover; display:block; }
+    .m-card .meta{ padding:10px 10px 12px; }
+    .m-card .meta .ko{ font-family: var(--font-body); font-weight:800; font-size:16px; line-height:1.25; letter-spacing:-0.2px; color:#fff; }
+    .m-card .meta .en{ font-family: var(--font-body); margin-top:4px; font-weight:500; font-size:12px; letter-spacing:-0.1px; color:#cfcfcf; }
+    .m-card .meta .badge{ margin-left:6px; font-size:11px; font-weight:700; color:rgba(255,255,255,.7); }
+
+    /* 섹션 제목(초성) */
+    .m-section{ margin:18px 0 10px; padding:0 12px; }
+    .m-section .alpha-title{ font-size:14px; font-weight:900; color:#ff3b3b; }
+
+    @media (min-width:641px){ /* 태블릿~데스크톱에서도 보기 좋게 */
+      .m-design{ max-width:720px; margin:0 auto; }
+      .m-alpha-nav{ top:84px; max-width:720px; border-radius:10px; justify-content:center; }
+      .m-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+    }
+
+    /* 팀 보조 네비: Staff 탭 전용 (All에서는 숨김) */
+    .m-team-nav{
+      position:sticky; top:64px; z-index:5;
+      display:none;           /* Staff에서만 보여줌 */
+      flex-wrap:wrap; justify-content:center;
+      gap:8px; padding:8px 12px 10px; margin:0 auto 8px;
+      background:rgba(0,0,0,.65);
+      backdrop-filter:blur(4px);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .m-team-nav a{
+      height:30px; padding:0 12px; border-radius:9999px;
+      display:inline-flex; align-items:center; justify-content:center;
+      font-family: var(--font-body); font-weight:800; font-size:13px; color:#cfcfcf; text-decoration:none;
+      border:1px solid rgba(255,255,255,.22);
+      transition: background .2s ease, color .2s ease, border-color .2s ease;
+    }
+    .m-team-nav a:hover{ color:#fff; border-color:#888; }
+    .m-team-nav a.is-active{ background:#ff3b3b; color:#000; border-color:transparent; }
+    .m-team-nav .break{ flex-basis:100%; height:0; }
+
+    @media (min-width:641px){
+      .m-team-nav{ top:84px; max-width:720px; border-radius:10px; justify-content:center; }
+    }
+
+    /* 버튼: 맨 위로 */
+    .scroll-btn{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:99999; /* 맨 위 */
+      display:none;
+      align-items:center;
+      justify-content:center;
+      width:44px; height:44px;
+      border-radius:30px;
+      background:#000;
+      color:#fff; font-weight:900; letter-spacing:.3px;
+      box-shadow:0 6px 18px rgba(0,0,0,.35);
+      cursor:pointer;
+    }
+    .scroll-btn:hover{ color:#ff3b3b; box-shadow:0 6px 22px rgba(255,59,59,.25); }
+    .scroll-btn:active{transform:scale(.98)}
+
   </style>
 </head>
 
 
 <body>
-  <!-- 상단: 제목 + 햄버거 버튼 -->
-  <header class="m-header">
-    <a class="logo" aria-label="BLOOM" href="Main.html">
-      <img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="BLOOM 로고" decoding="async" />
-      <span class="logo-text">
-        <strong class="main">TUVD</strong>
-        <span class="sub">27th Graduate Exhibition</span>
-      </span>
-    </a>
-    <button id="menuBtn" class="m-menu-btn" aria-label="메뉴 열기" aria-expanded="false">
-      <img src="../../1.Picture/Another/Menu.png" alt="메뉴" />
-    </button>
-  </header>
-  <div class="nav-line" aria-hidden="true"></div>
-  <div class="menu-overlay" id="menuOverlay"></div>
+  <div id="m-header-placeholder"></div>
+<script>
+  (function(){
+    const mount = document.getElementById("m-header-placeholder");
+    fetch("../../2.PageElement/Mobile-header/mobile-header.html")
+      .then(res => res.text())
+      .then(html => {
+        mount.innerHTML = html;
+        // === 헤더 내부 링크를 현재 디렉터리 기준으로 정규화 ===
+        (function fixLinks(){
+          const baseDir = location.pathname.replace(/[^/]*$/, '');
+          const scope = mount; // 헤더가 주입된 영역
+          // 로고 및 메뉴 내 모든 앵커
+          const anchors = scope.querySelectorAll('a');
+          anchors.forEach(a => {
+            const raw = a.getAttribute('href');
+            if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:')) return;
+            try{
+              // 원래 href를 절대경로로 해석
+              const abs = new URL(raw, location.href);
+              // 파일명(마지막 세그먼트)만 추출
+              const file = abs.pathname.split('/').pop();
+              if (!file) return;
+              // 현재 디렉터리 기준으로 링크 재설정
+              a.setAttribute('href', baseDir + file);
+            }catch(e){ /* no-op */ }
+          });
+        })();
+        // === 햄버거 토글 바인딩 (include된 스크립트가 실행되지 않으므로 여기서 연결) ===
+        const btn = document.getElementById('menuBtn');
+        const menu = document.getElementById('mMenu');
+        const overlay = document.getElementById('menuOverlay');
+        if (!btn || !menu) return;
+        function setState(open){
+          document.body.classList.toggle('nav-open', open);
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+        }
+        function toggle(){ setState(!document.body.classList.contains('nav-open')); }
+        btn.addEventListener('click', toggle);
+        if (overlay) overlay.addEventListener('click', () => setState(false));
+        // 메뉴 링크 클릭 시 자동 닫힘
+        menu.addEventListener('click', (e)=>{ if(e.target.closest('a')) setState(false); });
+        // ESC로 닫기 (선택)
+        window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') setState(false); });
+      })
+      .catch(err => console.error("모바일 헤더 로드 오류:", err));
+  })();
+</script>
 
-  <!-- 모바일 메뉴(링크 연결 제거 요청: # 처리) -->
-   <nav class="m-menu" id="mMenu" aria-label="모바일 메뉴">
-    <ul>
-      <li><a href="Main.html">HOME</a></li>
-      <li><a href="About.html#">ABOUT</a></li>
-      <li><a href="Project.html#">PROJECT</a></li>
-      <li><a href="Designer.html#">DESIGNER</a></li>
-      <li><a href="Guest.html">GUEST BOOK</a></li>
-    </ul>
-  </nav>
 
-  <script>
-    // 햄버거 버튼으로 오버레이 열고/닫기
-    (function(){
-      const btn = document.getElementById('menuBtn');
-      const menu = document.getElementById('mMenu');
-      if(!btn || !menu) return;
+  <main class="m-design" id="mDesignRoot">
+    <h1 class="title">DESIGNER</h1>
+    <nav class="m-filter" aria-label="보기 필터">
+      <button id="mTabAll" class="pill is-active" type="button" aria-pressed="true">All</button>
+      <span class="sep" aria-hidden="true">|</span>
+      <button id="mTabStaff" class="pill" type="button" aria-pressed="false">Staff</button>
+    </nav>
+    <nav class="m-alpha-nav" id="mAlphaNav" aria-label="초성 내비게이션"></nav>
+    <nav class="m-team-nav" id="mTeamNav" aria-label="팀 내비게이션"></nav>
+    <div id="mSections"></div>
+  </main>
 
-      const overlay = document.getElementById('menuOverlay');
-      function toggle(){
-        const open = !document.body.classList.contains('nav-open');
-        document.body.classList.toggle('nav-open', open);
-        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-      }
-      btn.addEventListener('click', toggle);
-      if(overlay){ overlay.addEventListener('click', toggle); }
+  <!-- 맨 위로 -->
+  <button onclick="scrollToTop()" id="scrollTopBtn" class="scroll-btn">▲</button>
+ 
+  <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
 
-      // 메뉴 항목 탭 시 닫기(링크는 모두 '#')
-      menu.addEventListener('click', (e)=>{
-        if(e.target.closest('a')) document.body.classList.remove('nav-open');
+<script>
+// [UI] 맨 위로 버튼(노출/숨김 + 스무스 스크롤)
+// 맨 위로 버튼 동작
+document.addEventListener("DOMContentLoaded", function () {
+  const scrollBtn = document.getElementById("scrollTopBtn");
+  window.addEventListener("scroll", function () {
+    if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1) {
+      scrollBtn.style.display = "flex";
+    } else {
+      scrollBtn.style.display = "none";
+    }
+  });
+  // 스무스 스크롤로 최상단 이동 함수 노출
+  window.scrollToTop = function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });  
+  };
+});
+
+
+// === 모바일 디자이너: 데이터 → 초성 섹션 → 2열 카드 렌더 ===
+(function(){
+  // 1) 데이터 소스 — 이름, 영문, 이미지 경로, 스태프 정보
+  //    필요 인원 추가 시 아래 배열에 객체를 더하세요.
+  const people = [
+    {ko:'김사율', en:'KIM SAYUL', img:'/1.Picture/1. 27th Graduation/Profile/KIM SAYUL.jpeg', team:'전시팀'},
+    {ko:'김준성', en:'KIM JUNSEONG', img:'/1.Picture/1. 27th Graduation/Profile/KIM JUNESONG.jpeg', team:'편집팀', badge:'팀장'},
+    {ko:'김혜림', en:'KIM HYERIM', img:'/1.Picture/1. 27th Graduation/Profile/KIM HYERIM.jpeg', team:'홍보팀'},
+    {ko:'김혜연', en:'KIM HYEYEON', img:'/1.Picture/1. 27th Graduation/Profile/KIM HYEYEON.jpg', team:'편집팀'},
+    {ko:'남예주', en:'NAM YEJU', img:'/1.Picture/1. 27th Graduation/Profile/NAM YEJU.jpg'},
+    {ko:'박은제', en:'PARK EUNJE', img:'/1.Picture/1. 27th Graduation/Profile/PARK EUNJE.jpeg', team:'홍보팀', badge:'부위원장'},
+    {ko:'배유진', en:'BAE YUJIN', img:'/1.Picture/1. 27th Graduation/Profile/BAE YUJIN.jpeg', team:'홍보팀'},
+    {ko:'안예진', en:'AN YEJIN', img:'/1.Picture/1. 27th Graduation/Profile/AN YEJIN.jpeg', team:'총무&감사', badge:'총무'},
+    {ko:'안정연', en:'AN JEONG YEON', img:'/1.Picture/1. 27th Graduation/Profile/AN JEONGYEON.jpeg', team:'홍보팀', badge:'팀장'},
+    {ko:'이다현', en:'LEE DAHYEON', img:'/1.Picture/1. 27th Graduation/Profile/LEE DAHYEON.jpeg', team:'전시팀'},
+    {ko:'이혜주', en:'LEE HYEJU', img:'/1.Picture/1. 27th Graduation/Profile/LEE HYEJU.jpeg', team:'전시팀'},
+    {ko:'지영현', en:'JI YEONGHYEON', img:'/1.Picture/1. 27th Graduation/Profile/JI YEONGHYEON.jpeg', team:'편집팀'},
+    {ko:'차은지', en:'CHA EUNJI', img:'/1.Picture/1. 27th Graduation/Profile/CHA EUNJI.jpeg', team:'편집팀'},
+    {ko:'최자연', en:'CHOI JAYEON', img:'/1.Picture/1. 27th Graduation/Profile/CHOI JAYEON.jpeg', team:'전시팀', badge:'위원장'},
+    {ko:'홍화정', en:'HONG HWAJUNG', img:'/1.Picture/1. 27th Graduation/Profile/HONG HWAJUNG.jpeg', team:'총무&감사', badge:'감사'},
+    {ko:'황만규', en:'HWANG MANGYU', img:'/1.Picture/1. 27th Graduation/Profile/HWANG MANGYU.jpeg', team:'편집팀'},
+    {ko:'김나연', en:'KIM NAYEON', img:'/1.Picture/1. 27th Graduation/Profile/KIM NAYEON.jpeg'},
+    {ko:'김민진', en:'KIM MINJIN', img:'/1.Picture/1. 27th Graduation/Profile/KIM MINJIN.jpeg'},
+    {ko:'김유빈', en:'KIM YUBIN', img:'/1.Picture/1. 27th Graduation/Profile/KIM YUBIN.jpeg'},
+    {ko:'김지우', en:'KIM JIU', img:'/1.Picture/1. 27th Graduation/Profile/KIM JIU.jpeg'},
+    {ko:'라영강', en:'LUO YONGKANG / 罗永康', img:'/1.Picture/1. 27th Graduation/Profile/LUO YONGKSNG.jpeg'},
+    {ko:'량역운', en:'LIANG YIYUN', img:'/1.Picture/1. 27th Graduation/Profile/LIANG YIYUN.jpeg'},
+    {ko:'배주아', en:'BA EJUA', img:'/1.Picture/1. 27th Graduation/Profile/BA EJUA.jpeg'},
+    {ko:'범상우', en:'FAN XIANGYU / 范祥宇', img:'/1.Picture/1. 27th Graduation/Profile/FAX XIANGYU.jpeg'},
+    {ko:'서은선', en:'SEO EUNSUN', img:'/1.Picture/1. 27th Graduation/Profile/SEO EUNSUN.jpeg'},
+    {ko:'설가심', en:'XUE KEXIN / 薛可心', img:'/1.Picture/1. 27th Graduation/Profile/XUE KEXIN.jpeg'},
+    {ko:'양유성', en:'YANG YUSEONG', img:'/1.Picture/1. 27th Graduation/Profile/YANG YESEONG.jpeg'},
+    {ko:'왕몽연', en:'WANG MENGRAN / 王梦然', img:'/1.Picture/1. 27th Graduation/Profile/WANG MENGRAN.jpeg'},
+    {ko:'윤민주', en:'YOON MINJU', img:'/1.Picture/1. 27th Graduation/Profile/YOON MINJU.jpeg'},
+    {ko:'이서진', en:'LEE SEOJIN', img:'/1.Picture/1. 27th Graduation/Profile/LEE SONJIN.jpeg'},
+    {ko:'이수빈', en:'LEE SUBIN', img:'/1.Picture/1. 27th Graduation/Profile/LEE SUBIN.jpeg'},
+    {ko:'이은경', en:'LEE EUNGYEONG', img:'/1.Picture/1. 27th Graduation/Profile/LEE EUNGYEONG.jpeg'},
+    {ko:'이주영', en:'LEE JUYEONG', img:'/1.Picture/1. 27th Graduation/Profile/LEE JUYEONG.jpeg'},
+    {ko:'장세희', en:'JANG SEHEE', img:'/1.Picture/1. 27th Graduation/Profile/JANG SEHEE.jpeg'},
+    {ko:'장주아', en:'JANG JUAH', img:'/1.Picture/1. 27th Graduation/Profile/JANG JUAH.jpeg'},
+    {ko:'장청청', en:'ZHANG QINGQING / 张晴晴', img:'/1.Picture/1. 27th Graduation/Profile/ZHANG QINGQING.jpeg'},
+    {ko:'전우곤', en:'JEON WOOGON / 田雨坤', img:'/1.Picture/1. 27th Graduation/Profile/JEONG WOOSON.jpeg'},
+    {ko:'주하우', en:'ZHOU HANGYU / 周航宇', img:'/1.Picture/1. 27th Graduation/Profile/ZHOU HANGYU.jpeg'},
+    {ko:'최민원', en:'CHOI MINWON', img:'/1.Picture/1. 27th Graduation/Profile/CHOI MINWON.jpeg'},
+    {ko:'최순주', en:'CHOI SOONJU', img:'/1.Picture/1. 27th Graduation/Profile/CHOI SOONJU.jpeg'},
+    {ko:'최영인', en:'CHOI YOUNGIN', img:'/1.Picture/1. 27th Graduation/Profile/CHOI YOUNGIN.jpeg'},
+    {ko:'한패달', en:'HAN PEIDA / 韩沛达', img:'/1.Picture/1. 27th Graduation/Profile/HAN PEIDA.jpeg'},
+    {ko:'황예빈', en:'HWANG YEBIN', img:'/1.Picture/1. 27th Graduation/Profile/HWANG YEBIN.jpeg'}
+  ];
+
+ // 2) 링크/이미지 경로 헬퍼 (헤더/푸터 건드리지 않음)
+function baseDir(){
+  // 현재 파일이 있는 디렉터리 (끝에 / 유지)
+  return location.pathname.replace(/[^/]*$/, '');
+}
+function rootPrefix(){
+  // /2025/ 이후의 깊이에 따라 1.Picture 상대경로 보정
+  const p = location.pathname.replace(/\\/g,'/');
+  const key = '/2025/';
+  const idx = p.toLowerCase().lastIndexOf(key);
+  if (idx === -1) return ''; // 못 찾으면 무보정
+  const after = p.slice(idx + key.length); // "Design-mobile.html" 또는 "Designer/김나연/Designer-mobile_김나연.html"
+  const depth = (after.match(/\//g) || []).length;
+  // /2025/ 바로 아래면 depth=0 → ../
+  // /2025/Designer/... 처럼 더 깊으면 depth>=1 → ../../
+  return depth === 0 ? '../' : '../../';
+}
+const RP = rootPrefix();
+
+// 이미지 경로 보정: "/1.Picture/..." → "../1.Picture/..." 또는 "../../1.Picture/..."
+function imgSrc(src){
+  if (!src) return src;
+  if (src.startsWith('/1.Picture/')) return src.replace('/1.Picture/', RP + '1.Picture/');
+  return src.replace(/^\.?\/*/, RP);
+}
+
+// 디테일 링크: 현재 디렉터리 기준 "Designer/{이름}/Designer-mobile_{이름}.html"
+const DESIGNER_BASE = baseDir() + 'Designer/';
+const detailUrl = (ko) => `${DESIGNER_BASE}${encodeURIComponent(ko)}/Designer-mobile_${encodeURIComponent(ko)}.html`;
+  // 3) 초성 계산 (한글) → ㄱ,ㄴ,ㄷ...,ㅎ 맵핑 후 일부는 대분류로 묶음
+  const ALPH = ['ㄱ','ㄴ','ㄹ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅎ'];
+  const CHOSEONG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  function getChoseong(ch){
+    const code = ch.charCodeAt(0);
+    if (code < 0xAC00 || code > 0xD7A3) return 'ㅇ';
+    const idx = Math.floor((code - 0xAC00) / 28 / 21);
+    const cs = CHOSEONG[idx];
+    return ({'ㄲ':'ㄱ','ㄸ':'ㄷ','ㅃ':'ㅂ','ㅆ':'ㅅ','ㅉ':'ㅈ'}[cs]) || cs;
+  }
+
+  // 공통 참조
+    const $nav = document.getElementById('mAlphaNav');
+    const $teamNav = document.getElementById('mTeamNav');
+    const $sections = document.getElementById('mSections');
+
+    // 팀 보조 네비 생성 (한 번만)
+$teamNav.innerHTML = '';
+const TEAM_ORDER = ['위원장','부위원장','편집팀','홍보팀','전시팀','총무&감사'];
+TEAM_ORDER.forEach((t, i)=>{
+  const a = document.createElement('a');
+  a.href = `#team-${encodeURIComponent(t)}`;
+  a.textContent = t;
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    // active 표시
+    $teamNav.querySelectorAll('a').forEach(x=>x.classList.remove('is-active'));
+    a.classList.add('is-active');
+    // 섹션 스크롤
+    const target = document.getElementById(`team-${encodeURIComponent(t)}`);
+    if (!target) return;
+    const y = target.getBoundingClientRect().top + window.pageYOffset;
+    const header = document.querySelector('#m-header-placeholder header');
+    const hH = header ? header.offsetHeight : 0;
+    window.scrollTo({ top: Math.max(0, y - hH - 12), behavior: 'smooth' });
+  });
+  $teamNav.appendChild(a);
+  // --- 두 줄로 고정: 3번째 뒤에 줄바꿈 스팬 삽입 ---
+  if (i === 2) {
+    const br = document.createElement('span');
+    br.className = 'break';
+    $teamNav.appendChild(br);
+  }
+});
+
+  // 4) 초성 내비 생성 (한 번만)
+  $nav.innerHTML = '';
+  ALPH.forEach(a=>{
+    const link = document.createElement('a');
+    link.href = `#sec-${encodeURIComponent(a)}`;
+    link.textContent = a;
+    link.addEventListener('click', (e)=>{
+      e.preventDefault();
+      document.querySelectorAll('.m-alpha-nav a').forEach(x=>x.classList.remove('is-active'));
+      link.classList.add('is-active');
+      const target = document.getElementById(`sec-${encodeURIComponent(a)}`);
+      if (!target) return; // 현재 필터에서 섹션이 없을 수 있음
+      const y = target.getBoundingClientRect().top + window.pageYOffset;
+      const header = document.querySelector('#m-header-placeholder header');
+      const hH = header ? header.offsetHeight : 0;
+      window.scrollTo({ top: Math.max(0, y - hH - 12), behavior: 'smooth' });
+    });
+    $nav.appendChild(link);
+  });
+
+  // 5) 렌더 함수: 필터모드(all|staff)에 따라 섹션/카드 구성
+  function renderSections(mode){
+    const coll = new Intl.Collator('ko', {usage:'sort', sensitivity:'base', numeric:true});
+    // 공통: 섹션 컨테이너 초기화
+    $sections.innerHTML = '';
+
+    if (mode === 'staff') {
+      // 탭에 따른 내비 토글: Staff에서는 팀 보조 네비만 표시
+      $nav.style.display = 'none';
+      $teamNav.style.display = 'flex';
+
+      // 팀 네비 활성 초기화
+      $teamNav.querySelectorAll('a').forEach(x=>x.classList.remove('is-active'));
+
+      // ===== STAFF 전용 섹션 구성 =====
+      const ORDER = [
+        { id:'위원장',   title:'위원장',   list: people.filter(p=>p.badge==='위원장') },
+        { id:'부위원장', title:'부위원장', list: people.filter(p=>p.badge==='부위원장') },
+        // 팀 섹션은 역할자(위원장/부위원장)를 제외
+        { id:'편집팀',   title:'편집팀',   list: people.filter(p=>p.team==='편집팀'  && p.badge!=='위원장' && p.badge!=='부위원장') },
+        { id:'홍보팀',   title:'홍보팀',   list: people.filter(p=>p.team==='홍보팀'  && p.badge!=='위원장' && p.badge!=='부위원장') },
+        { id:'전시팀',   title:'전시팀',   list: people.filter(p=>p.team==='전시팀'  && p.badge!=='위원장' && p.badge!=='부위원장') },
+        { id:'총무&감사', title:'총무&감사', list: people.filter(p=>p.team==='총무&감사'&& p.badge!=='위원장' && p.badge!=='부위원장') },
+      ];
+
+      ORDER.forEach(({id, title, list})=>{
+        if (!list || !list.length) return;
+
+        // 정렬: 홍보팀은 팀장 우선, 나머지는 이름순
+        list.sort((a,b)=>{
+          if (title==='홍보팀'){
+            const la = (a.badge==='팀장') ? 1:0; 
+            const lb = (b.badge==='팀장') ? 1:0;
+            if (la !== lb) return lb - la; // 팀장 먼저
+          }
+          return coll.compare(a.ko,b.ko);
+        });
+
+        const sec = document.createElement('section');
+        sec.id = `team-${encodeURIComponent(id)}`;
+        sec.className = 'm-section';
+
+        const h = document.createElement('div');
+        h.className = 'alpha-title';
+        h.textContent = title;
+
+        const grid = document.createElement('div');
+        grid.className = 'm-grid';
+
+        list.forEach(p=>{
+          const aTag = document.createElement('a');
+          aTag.className = 'm-card';
+          aTag.href = detailUrl(p.ko);
+          aTag.innerHTML = `
+            <img src="${imgSrc(p.img)}" alt="${p.ko}" loading="lazy" decoding="async">
+            <div class="meta">
+              <div class="ko">${p.ko}${p.team ? `<span class="badge">${p.badge ? `${p.team} ${p.badge}` : p.team}</span>` : ''}</div>
+              <div class="en">${p.en || ''}</div>
+            </div>`;
+          grid.appendChild(aTag);
+        });
+
+        sec.appendChild(h);
+        sec.appendChild(grid);
+        $sections.appendChild(sec);
       });
 
-      // 바깥 스크롤 시 닫힘(선택)
-      window.addEventListener('scroll', () => {
-        if(document.body.classList.contains('nav-open')){
-          document.body.classList.remove('nav-open');
-          btn.setAttribute('aria-expanded', 'false');
-          btn.setAttribute('aria-label', '메뉴 열기');
-        }
-      }, { passive:true });
-    })();
-  </script>
+      // 기본 활성 표시: 첫 팀 링크
+      const firstTeamLink = $teamNav.querySelector('a');
+      if (firstTeamLink) {
+        $teamNav.querySelectorAll('a').forEach(x=>x.classList.remove('is-active'));
+        firstTeamLink.classList.add('is-active');
+      }
+
+    } else {
+      // ===== ALL 모드: 초성 네비만 표시 =====
+      $nav.style.display = '';
+      $teamNav.style.display = 'none';
+
+      const source = people.slice();
+
+      // 초성 그룹 구성
+      const groups = Object.fromEntries(ALPH.map(a=>[a, []]));
+      source.forEach(p=>{
+        const k = getChoseong(p.ko.trim()[0]);
+        (groups[k] || groups['ㅇ']).push(p);
+      });
+
+      // 그룹별 정렬
+      Object.values(groups).forEach(arr=>arr.sort((a,b)=>coll.compare(a.ko,b.ko)));
+
+      // 섹션 생성
+      ALPH.forEach(a=>{
+        const list = groups[a];
+        if (!list || !list.length) return;
+
+        const sec = document.createElement('section');
+        sec.id = `sec-${encodeURIComponent(a)}`;
+        sec.className = 'm-section';
+
+        const h = document.createElement('div');
+        h.className = 'alpha-title';
+        h.textContent = a;
+
+        const grid = document.createElement('div');
+        grid.className = 'm-grid';
+
+        list.forEach(p=>{
+          const aTag = document.createElement('a');
+          aTag.className = 'm-card';
+          aTag.href = detailUrl(p.ko);
+          aTag.innerHTML = `
+            <img src="${imgSrc(p.img)}" alt="${p.ko}" loading="lazy" decoding="async">
+            <div class="meta">
+              <div class="ko">${p.ko}${p.team ? `<span class="badge">${p.badge ? `${p.team} ${p.badge}` : p.team}</span>` : ''}</div>
+              <div class="en">${p.en || ''}</div>
+            </div>`;
+          grid.appendChild(aTag);
+        });
+
+        sec.appendChild(h);
+        sec.appendChild(grid);
+        $sections.appendChild(sec);
+      });
+    }
+  }
+
+  // 6) 탭 바인딩 (All | Staff)
+  const $tabAll = document.getElementById('mTabAll');
+  const $tabStaff = document.getElementById('mTabStaff');
+  function setTab(mode){
+    const isAll = mode==='all';
+    $tabAll.classList.toggle('is-active', isAll);
+    $tabStaff.classList.toggle('is-active', !isAll);
+    if ($tabAll.tagName === 'BUTTON') {
+      $tabAll.setAttribute('aria-pressed', isAll ? 'true' : 'false');
+      $tabStaff.setAttribute('aria-pressed', !isAll ? 'true' : 'false');
+    }
+  }
+  $tabAll.addEventListener('click', ()=>{ setTab('all'); renderSections('all'); });
+  $tabStaff.addEventListener('click', ()=>{ setTab('staff'); renderSections('staff'); });
+
+  // 초기 렌더: All
+  setTab('all');
+  renderSections('all');
+})();
+</script>
+
 <script>
 // [라우팅] 화면 너비 기준 페이지 전환 // (>=640: Main.html, <=639: Main-mobile.html)
 (function responsiveRoute(){

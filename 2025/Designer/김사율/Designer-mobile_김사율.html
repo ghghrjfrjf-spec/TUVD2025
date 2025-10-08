@@ -5,105 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>김사율 | TUVD 27th Graduate Exhibition (Mobile)</title>
 
-  <!-- 상단 네비/푸터/커서: 경로 그대로 유지 -->
-  <link rel="stylesheet" href="../../../2.PageElement/Footer/Footer.css" />
 
   <style>
    :root{
-    --bg:#000; --text:#fff; --muted:#bdbdbd; --line:#222; --red:#ff2b2b;
+    --bg:#000; --text:#fff; --muted:#bdbdbd; --line: rgba(255,255,255,.12); --red:#ff2b2b;
     --container: 960px;
     --footer-h: 52px; /* runtime will update this */
     /* 카드 보더 및 이름 정렬 조정 */
     --card-border: 1px;
     --name-left-nudge: 0px;
-  }
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Pretendard',system-ui,-apple-system,sans-serif}
-    html, body { height: 100%; }
-    body { min-height: 100vh; display: flex; flex-direction: column; }
-
-    /* ===== 헤더 (모바일 전용) ===== */
-    .m-header{
-      position:sticky; top:0; z-index:1000;
-      height:64px; min-height:64px; max-height:64px; /* 🔒 exact 64px height */
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0 14px; /* 🔒 0×14px padding */
-      box-sizing:border-box;
-      background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-      border-bottom:1px solid rgba(255,255,255,.12);
-      transition:transform .5s ease; will-change:transform;
+    --qna-width: 400px;
+    --awards-max: 300px;
+    --awards-side-gap: 16px;
+   }
+    html,body{ 
+      margin:0; 
+      padding:0; 
+      background:#000; 
+      color:#fff;
+      height:100%;
     }
-    .m-title{ font:800 16px/1 Pretendard, system-ui, -apple-system, sans-serif; letter-spacing:.2px; }
-    .m-header .logo{ display:flex; align-items:center; gap:8px; text-decoration:none; color:#fff; height:32px; }
-    .m-header .logo img{ max-height:32px; display:block; }
-    .m-header .logo-text{ display:flex; flex-direction:column; line-height:1; }
-    .m-header .logo-text .main{ font-size:15px; font-weight:800; color:#fff; margin:0 0 2px 0; }
-    .m-header .logo-text .sub{ font-size:14px; font-weight:800; color:#ff4d4d; letter-spacing:.2px; }
+    body { min-height:100vh; display:flex; flex-direction:column; padding-top: var(--header-h); }
 
-    .m-menu-btn{ width:40px; height:40px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; background:transparent; border:none; box-shadow:none; cursor:pointer; overflow:hidden; }
-    .m-menu-btn img{ width:20px; height:20px; display:block; }
-    .m-menu-btn:hover{ border:1px solid rgba(255,255,255,.18); }
-    .m-menu-btn:active{ border:1px solid rgba(255,255,255,.28); }
-
-    /* ===== 모바일 메뉴 오버레이 ===== */
-    .m-menu{ position:fixed; top:64px; right:0; bottom:0; width:260px; background:rgba(255,255,255,0.10); color:#fff; z-index:9999; display:flex; flex-direction:column; padding:0; margin:0; overflow:auto; transform:translateX(100%); transition:transform .35s ease, background .25s ease; box-shadow:-8px 0 24px rgba(0,0,0,0.35); backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); border-left:1px solid rgba(255,255,255,0.18); }
-    body.nav-open .m-menu{ transform:translateX(0); }
-    .menu-overlay{ content:''; position:fixed; left:0; top:64px; right:0; bottom:0; background:rgba(0,0,0,.35); z-index:900; display:none; }
-    body.nav-open .menu-overlay{ display:block; }
-    .m-menu ul{ list-style:none; padding:0; margin:0; }
-    .m-menu li a{ display:flex; align-items:center; height:64px; padding:0 20px; color:#fff; text-decoration:none; font:800 22px/1 Pretendard, system-ui, -apple-system, sans-serif; border-top:1px solid rgba(255,255,255,.18); background:transparent; text-shadow:0 1px 0 rgba(0,0,0,.3); }
-    .m-menu li:first-child a{ border-top:none; }
-    .m-menu li a:hover{ background:rgba(255,255,255,.08); }
-    .m-menu li a:active{ background:rgba(255,255,255,.16); }
-
-    .nav-line{ position:fixed; left:0; right:0; top:64px; height:2px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%); transform: scaleX(0); transform-origin: left center; transition: transform .45s ease, opacity .3s ease; opacity:.95; z-index:1001; pointer-events:none; }
-    body.nav-open .nav-line{ transform: scaleX(1); }
-
-    @media (max-width: 375px){
-      .m-header{ height:56px; min-height:56px; max-height:56px; }
-      .m-menu{ top:56px; }
-      .menu-overlay{ top:56px; }
-      .nav-line{ top:56px; }
-      .m-menu li a{ height:56px; font-size:20px; padding:0 18px; }
-      .m-menu-btn{ width:36px; height:36px; }
-      .m-menu-btn img{ width:22px; height:22px; }
-    }
-
-    /* ===== 모바일 레이아웃 (단순한 1컬럼) ===== */
-    .wrap{max-width:var(--container);margin:0 auto;padding:16px 16px 80px;}
-    .profile{
-      display:grid; grid-template-columns:1fr; gap:16px;
-    }
 
     .name{
       display:flex; 
       align-items:flex-end; 
+      justify-content:center;         /* ⬅ 가운데 정렬 */
       gap:8px; 
       padding-bottom:6px;
       border-bottom:1px solid rgba(255,255,255,.18);
       margin-top: 20px;
-      padding-left: var(--name-left-nudge, 1px); /* fine-tune alignment with image's inner edge */
+      padding-left: 0;                 /* ⬅ 왼쪽 여백 제거 */
+      text-align:center;               /* ⬅ 텍스트 가운데 */
+      width:100%;
     }
     .name h1{
       margin:0;
-      font-size:28px;
-      line-height:1.1;
-      color:#c0392b;
-      font-weight:800;
+      font-size:24px;
+      line-height:1.12;
+      color:#c0392b;                 /* 더 선명한 레드 */
+      font-weight:800;               /* 제목 강조 */
       letter-spacing:.3px;
-      margin-left: 15px; /* 이미지 왼쪽 라인에 정확히 맞춤 */
-      text-align: left; /* 혹시 가운데 정렬 방지 */
+      margin-left: 0;                /* 이미지 왼쪽 라인에 정확히 맞춤 */
+      text-align:left;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased;
     }
-    .name h2{margin:0 0 2px 0;font-size:14px;color:#9b9b9b;font-weight:700;letter-spacing:.2px}
+    .name h2{
+      margin:0 0 2px 0;
+      font-size:11px;
+      color:#9b9b9b;
+      font-weight:700;
+      letter-spacing:.2px}
+
 
     /* Email pill next to name */
     .name{
       display:flex;
       align-items:flex-end;
+      justify-content:center;          /* ⬅ 가운데 정렬 */
       gap:8px;
       padding-bottom:6px;
       border-bottom:1px solid rgba(255,255,255,.18);
       margin-top: 20px;
-      padding-left: calc(var(--card-border) + var(--name-left-nudge, 0px)); /* 이미지 안쪽 라인 맞춤 */
+      padding-left: 0;                  /* ⬅ 왼쪽 여백 제거 */
+      text-align:center;                /* ⬅ 텍스트 가운데 */
+      width:100%;
     }
 
     .name .email-pill{
@@ -113,7 +81,7 @@
       border: 1px solid rgba(255,255,255,.22);
       background: #101010;
       color: #e6e6e6;
-      font-size: 11px;
+      font-size: 10px;
       line-height: 1;
       font-weight: 700;
       letter-spacing: .2px;
@@ -123,6 +91,10 @@
       .name .email-pill{ font-size: 12px; }
     }
 
+    .name{
+      white-space: normal;              /* ⬅ 줄바꿈 허용 */
+      overflow-x: visible;              /* ⬅ 가로 스크롤 제거 */
+    }
     .tagline{
       margin:6px 0 8px 0; 
       align-items: center;
@@ -132,25 +104,174 @@
       line-height:1.7; 
       color:#f0f0f0}
 
+    /* ===== Bio paragraph (message) ===== */
+    .message{
+      margin: 6px auto;              /* 세로 여백 더 줄이기 */
+      padding: 6px 12px;             /* 안쪽 여백 축소 */
+      width: fit-content;             
+      max-width: 90%;
+      text-align: center;
+      font-size: 25px;
+      line-height: 1.5;              /* 줄간격 약간 축소 */
+      color: #ececec;
+      letter-spacing: 0.1px;
+      display: block;
+    }
+
+    .card figcaption.message{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      width:100%;
+    } 
+
+    .message .message-scroll{
+      display:block;
+      white-space:normal;      /* 줄바꿈 허용 */
+      min-width:auto;
+      padding-right:0;
+      text-align:center;       /* 내부 텍스트도 중앙 */
+      margin:0 auto;           /* 블록 자체도 가운데 */
+      width:100%;
+    }
+    .card + .message{ margin-top: 12px; }
+    @media (max-width:480px){
+      .message{
+        font-size:14.5px;
+        line-height:1.6;     /* 줄간격 소폭 축소 */
+        padding-top:8px;     /* 위 여백 축소 */
+        padding-bottom:8px;  /* 아래 여백 크게 축소 */
+      }
+    }
+
     .hashtags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
     .hashtag{padding:6px 12px;border-radius:999px;border:1px solid #333;background:#111;color:#cfcfcf;font-weight:700;font-size:13px}
 
+    /* ===== Awards (Message 아래, Hashtag 위) — refreshed layout ===== */
+    .awards{
+      margin:50px auto 16px; /* ↑ 윗부분과 더 떨어뜨림 */
+      /* 화면이 넓어지면 함께 늘어나되, 최대치만 변수로 제한 */
+      width: min(var(--awards-max, 640px), calc(100vw - (var(--awards-side-gap, 16px) * 2)));
+      padding:12px 14px;
+      max-width:none;
+      text-align:left;                   /* 좌정렬로 정보 가독성 향상 */
+      color:#ececec;
+      background:#0e0e0e;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:12px;
+      box-shadow:0 10px 24px rgba(0,0,0,.28);
+    }
+    .awards-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:2px 0 10px;
+      font-weight:800;
+      font-size:14px;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+      color:#f5f5f5;                     /* 은은한 레드 톤 */
+    }
+    .awards-title .emoji{ font-size:16px; line-height:1; }
+    .awards-rule{
+      flex:1 1 auto;                     /* 가변 길이 */
+      height:1px;                        /* 얇게 */
+      background:linear-gradient(90deg, rgba(236, 236, 236, 0.65), rgba(255, 183, 183, 0.25));
+      border-radius:1px;
+    }
+    .awards-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    /* 개별 수상 카드 */
+    .award{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px 12px;
+      align-items:center;
+      padding:10px 10px;
+      background:#0b0b0b;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:10px;
+    }
+    .award-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:44px;
+      height:24px;
+      padding:0 5px;
+      border-radius:50px;
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:.2px;
+      color:#4c4c4c;
+      background:rgb(255, 255, 255);
+      box-shadow:0 6px 16px rgba(255, 202, 202, 0.25);
+      border:1px solid rgba(255,255,255,.18);
+      justify-self: center;
+      grid-column: 1 / -1;
+    }
+    .award-body{
+      display:flex;
+      flex-direction:column;
+      align-items:center;      /* ⬅ 수평 중앙 정렬 */
+      text-align:center;       /* ⬅ 내부 텍스트 중앙 정렬 */
+      min-width:0;
+      width:100%;
+      grid-column: 1 / -1;
+    }
+    .award-name{
+      font-size:14px;
+      font-weight:700;
+      color:#f2f2f2;
+      line-height:1.35;
+      word-break:keep-all;
+      text-align:center;       /* ⬅ 텍스트 중앙 정렬 */
+      width:100%;              /* ⬅ 가로 전체 사용 */
+      margin:0 auto;           /* ⬅ 가운데 맞춤 안정화 */
+    }
+    .award-meta{
+      margin-top:3px;
+      font-size:12px;
+      color:#bfbfbf;
+      letter-spacing:.2px;
+    }
+    /* 작은 화면 미세 튜닝 */
+    @media (max-width:420px){
+      .awards{ padding:12px; }
+      .award{ padding:9px 10px; }
+      .award-name{ font-size:13.5px; }
+      .award-badge{ height:22px; min-width:40px; font-size:11px; }
+    }
+
+    @media (min-width: 600px){
+      .awards{ padding:14px 16px; }
+      .awards-grid{ grid-template-columns: 1fr 1fr; gap:12px; }
+    }
     /* 이미지: 플립/틸트 제거하고 고정 카드로 */
-    .card{
-  border: var(--card-border) solid var(--line);
-  border-radius:14px;
-  overflow:hidden;
-  background:#0d0d0d;
-  perspective: 1000px;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
+        .card{
+          border: var(--card-border) solid var(--line);
+          border-radius:14px;
+          overflow:hidden;
+          background:#0d0d0d;
+          perspective: 1000px;
+          transform-style: preserve-3d;
+          will-change: transform;
+          box-shadow:0 14px 36px rgba(0,0,0,.45);   /* 더 깊은 그림자 */
+          backdrop-filter:saturate(110%);
+          -webkit-backdrop-filter:saturate(110%);
+          margin-bottom: 8px;
+        }
 
     .card img{
       display:block;
       width:100%;
       height:auto;
       transform: translateZ(0); /* iOS/Safari: force layer */
+      border-radius:12px;
     }
 
     /* --- Intro 3D flip animation (mobile) --- */
@@ -170,6 +291,7 @@
       display:block;
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
+      border-radius:12px;
     }
     .card .spin-target .face.back{
       position:absolute;
@@ -205,7 +327,7 @@
     /* 연락처 */
     .meta{
       display:block;
-      margin-top:8px;
+      margin-top:20px;
       text-align:center;
     }
 
@@ -217,9 +339,9 @@
 
     /* Q&A — 심플 카드 (센터 정렬) */
     .qna{
-      margin:48px auto 0;            /* 가운데 배치 */
-      width:100%;
-      max-width:640px;               /* 폭 제한 후 중앙 */
+      margin:48px auto 0;              /* 가운데 배치 */
+      width:min(var(--qna-width, 520px), 92vw);  /* 가로 더 좁게 (변수로 조절) */
+      max-width:none;                   /* 상위 제한 해제 */
     }
     .qna h3{margin:0 0 12px 0;font-size:20px;text-align:center}
     .qa{border:1px solid #1f1f1f;border-radius:12px;background:#111;margin:12px 0;overflow:hidden;text-align:left}
@@ -253,65 +375,113 @@
     }
 
     footer{
-      position:static; /* page-bottom (not viewport) */
-      margin-top:auto; /* push footer to bottom when content is short */
+      position:static;                 /* 페이지 하단 정렬 (콘텐츠를 덮지 않음) */
+      margin-top:auto;                 /* 콘텐츠가 짧으면 아래로 밀기 */
       width:100%;
       background:#000;
       color:#f3f3f3;
       border-top:1px solid var(--line);
-      padding:10px 12px;
+      height:36px;                     /* 🔒 고정 높이 */
+      min-height:36px;                 /* 안전장치 */
+      padding:0 12px;                  /* 수직 0: 고정 높이 유지 */
       box-sizing:border-box;
+      display:flex;                    /* 수직/수평 가운데 정렬 */
+      align-items:center;
+      justify-content:center;
       font-size:12px;
+      line-height:1;
       text-align:center;
+      font-family:'Pretendard', system-ui, -apple-system, sans-serif;
     }
-    /* === HEADER SIZE LOCK — match global hamburger spec === */
-    .m-header{ height:64px !important; min-height:64px !important; max-height:64px !important; padding:0 14px !important; }
-    .m-header .logo{ gap:8px !important; height:32px !important; }
-    .m-header .logo img{ max-height:32px !important; display:block; }
-    .m-header .logo-text{ line-height:1 !important; }
-    .m-header .logo-text .main{ font-size:15px !important; font-weight:800 !important; margin:0 0 2px 0 !important; }
-    .m-header .logo-text .sub{ font-size:14px !important; font-weight:800 !important; color:#ff4d4d !important; letter-spacing:.2px !important; }
-    .m-menu-btn{ width:40px !important; height:40px !important; border-radius:10px !important; }
-    .m-menu-btn img{ width:20px !important; height:20px !important; display:block !important; }
-    .nav-line{ top:64px !important; }
-    .menu-overlay{ top:64px !important; }
-    .m-menu{ top:64px !important; }
-    @media (max-width:375px){
-      .m-header{ height:56px !important; min-height:56px !important; max-height:56px !important; }
-      .m-menu{ top:56px !important; }
-      .menu-overlay{ top:56px !important; }
-      .nav-line{ top:56px !important; }
-      .m-menu li a{ height:56px !important; font-size:20px !important; padding:0 18px !important; }
-      .m-menu-btn{ width:36px !important; height:36px !important; }
-      .m-menu-btn img{ width:22px !important; height:22px !important; }
-    }
+   
+
   </style>
 </head>
 <body>
-  <!-- 상단: 제목 + 햄버거 버튼 -->
-  <header class="m-header">
-    <a class="logo" aria-label="BLOOM" href="../../Main.html">
-      <img src="/1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="BLOOM 로고" decoding="async" />
-      <span class="logo-text">
-        <strong class="main">TUVD</strong>
-        <span class="sub">27th Graduate Exhibition</span>
-      </span>
-    </a>
-    <button id="menuBtn" class="m-menu-btn" aria-label="메뉴 열기" aria-expanded="false">
-      <img src="/1.Picture/Another/Menu.png" alt="메뉴" />
-    </button>
-  </header>
-  <div class="nav-line" aria-hidden="true"></div>
-  <div class="menu-overlay" id="menuOverlay"></div>
-  <nav class="m-menu" id="mMenu" aria-label="모바일 메뉴">
-    <ul>
-      <li><a href="../../Main.html">HOME</a></li>
-      <li><a href="../../About.html">ABOUT</a></li>
-      <li><a href="../../Project.html">PROJECT</a></li>
-      <li><a href="../../Designer.html">DESIGNER</a></li>
-      <li><a href="../../Guest.html">GUEST BOOK</a></li>
-    </ul>
-  </nav>
+  <div id="mobile-header-host" data-src="../../../2.PageElement/Mobile-header/mobile-header.html"></div>
+  <script>
+    (function(){
+      var host = document.getElementById('mobile-header-host');
+      if(!host) return;
+      var src = host.getAttribute('data-src');
+      if(!src){ console.warn('mobile-header: data-src not set'); return; }
+
+      fetch(src, { cache: 'no-store' })
+        .then(function(res){
+          if(!res.ok) throw new Error('HTTP ' + res.status);
+          return res.text();
+        })
+        .then(function(html){
+          host.innerHTML = html;
+
+          // === Normalize header links to /2025/*-mobile.html (absolute) ===
+          (function fixHeaderLinks(){
+            var scope = host;
+            var anchors = scope.querySelectorAll('a[href]');
+            anchors.forEach(function(a){
+              var raw = a.getAttribute('href');
+              if (!raw) return;
+              // keep external URLs, hashes, mail/tel untouched
+              if (/^(https?:)?\/\//i.test(raw)) return;
+              if (raw.startsWith('#')) return;
+              if (raw.startsWith('mailto:') || raw.startsWith('tel:')) return;
+
+              var cleaned = raw.replace(/[#?].*$/, '');
+              var segs = cleaned.split('/').filter(Boolean);
+              var last = segs.length ? segs[segs.length - 1] : cleaned;
+              var base = last.replace(/\.html?$/i, '').toLowerCase();
+
+              base = base
+                .replace(/^index$|^home$/, 'main')
+                .replace(/^projects?$/, 'project')
+                .replace(/^designs?$/, 'design')
+                .replace(/^guests?$/, 'guest');
+
+              function toMobile(name){
+                switch(name){
+                  case 'main':    return '/2025/Main-mobile.html';
+                  case 'project': return '/2025/Project-mobile.html';
+                  case 'design':  return '/2025/Design-mobile.html';
+                  case 'about':   return '/2025/About-mobile.html';
+                  case 'guest':   return '/2025/Guest-mobile.html';
+                  case 'gallery': return '/2025/Gallery-mobile.html';
+                  default:        return null;
+                }
+              }
+
+              var target = toMobile(base);
+              if (target) a.setAttribute('href', target);
+            });
+          })();
+
+          // === Hamburger wiring (same as main) ===
+          var btn     = host.querySelector('#menuBtn');
+          var menu    = host.querySelector('#mMenu');
+          var overlay = host.querySelector('#menuOverlay');
+
+          function setState(open){
+            document.body.classList.toggle('nav-open', open);
+            if(btn){
+              btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+              btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+            }
+          }
+          function toggle(){ setState(!document.body.classList.contains('nav-open')); }
+
+          if(btn){ btn.addEventListener('click', toggle); }
+          if(overlay){ overlay.addEventListener('click', function(){ setState(false); }); }
+          if(menu){
+            menu.addEventListener('click', function(e){
+              if(e.target.closest('a')) setState(false);
+            });
+          }
+          window.addEventListener('keydown', function(e){ if(e.key === 'Escape') setState(false); });
+        })
+        .catch(function(err){
+          console.error('Failed to load mobile header:', err);
+        });
+    })();
+  </script>
 
       <main class="wrap" role="main">
         <section class="profile">
@@ -320,20 +490,27 @@
             <h2>KIM SAYUL</h2>
             <span class="email-pill" aria-label="이메일">E-mail • cyclic1312@gmail.com</span>
           </header>
-          
+
+      
           <figure class="card" aria-label="프로필 사진">
             <a class="spin-target" href="../../../2025/Project/김사율/Project_김사율.html" aria-label="프로젝트 페이지로 이동">
               <!-- 앞면 -->
-              <img class="face front" src="../../../1.Picture/1.%2027th%20Graduation/Profile/KIM SAYUL.jpeg" alt="김사율 프로필 사진 (앞면)" loading="eager" decoding="async" />
+              <img class="face front" src="../../../1.Picture/1.%2027th%20Graduation/Profile/KIM%20SAYUL.jpeg" alt="김사율 프로필 사진 (앞면)" loading="eager" decoding="async" />
               <!-- 뒷면: 필요 시 다른 이미지로 교체하세요 -->
-              <img class="face back" src="/1.Picture/2. Graduate/Graduate_Logo/KIM SAYUL.jpg" alt="김사율 프로필 사진 (뒷면)" loading="eager" decoding="async" />
+              <img class="face back" src="../../../1.Picture/2.%20Graduate/Graduate_Logo/KIM%20SAYUL.jpg" alt="김사율 프로필 사진 (뒷면)" loading="eager" decoding="async" />
             </a>
-            <p class="tagline">“디자인으로 전하고 싶은 마음,<br> 드디어 형태가 되다.”</p>
+            <figcaption class="message">
+              <div class="message-scroll">
+                “디자인으로 전하고 싶은 마음, <br> 드디어 형태가 되다.”
+              </div>
+            </figcaption>
           </figure>
           <div class="meta">
             <span class="pill">Project 페이지로 이동하려면 사진을 탭하세요</span>
           </div>
-          <section class="qna" aria-label="Q&A">
+          
+
+          <section class="qna" aria-label="Q&amp;A">
             <h3>Q&A</h3>
             <article class="qa">
               <div class="q">Q. 졸업하는 지금, ‘입학할 당시의 나’에게 한 마디 한다면?</div>
@@ -345,7 +522,7 @@
             </article>
             <article class="qa">
               <div class="q">Q. 시험 기간 내가 주로 했던 현실도피는?</div>
-              <div class="a">잠자기</div>
+              <div class="a">잠자기/div>
             </article>
           </section>
         </section>
@@ -357,29 +534,6 @@
   <!-- 푸터 그대로 주입 -->
   <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
 
-<script>
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const btn = document.getElementById('menuBtn');
-    const menu = document.getElementById('mMenu');
-    const overlay = document.getElementById('menuOverlay');
-    if (!btn || !menu) return;
-  
-    function toggle() {
-      const open = !document.body.classList.contains('nav-open');
-      document.body.classList.toggle('nav-open', open);
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-    }
-  
-    btn.addEventListener('click', toggle);
-    if (overlay) overlay.addEventListener('click', toggle);
-    menu.addEventListener('click', (e)=>{
-      if(e.target.closest('a')) document.body.classList.remove('nav-open');
-    });
-  });
-  </script>
 
 <script>
 // [UI] 맨 위로 버튼(노출/숨김 + 스무스 스크롤)
@@ -400,48 +554,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-<script>
-// [네비게이션] 스크롤 방향 감지 → 숨김/표시
-(function bindHideNavOnScroll(){
-  const THRESH = 6;   // 조금 더 내려가야 반응 (불필요한 깜빡임 방지)
-  const TOPSAFE = 48;  // 상단에서는 좀 더 오래 보이게
-
-  let lastY = window.pageYOffset || 0;
-  let ticking = false;
-
-  function applyState(y, dy){
-    if (y <= TOPSAFE){
-      document.body.classList.remove('nav-hidden');
-      return;
-    }
-    if (Math.abs(dy) < THRESH) return;
-    if (dy > 0){
-      document.body.classList.add('nav-hidden');   // 아래로 → 숨김
-    }else{
-      document.body.classList.remove('nav-hidden'); // 위로 → 표시
-    }
-  }
-
-  function onScroll(){
-    const y = window.pageYOffset || 0;
-    const dy = y - lastY;
-    lastY = y;
-    if (!ticking){
-      ticking = true;
-      requestAnimationFrame(() => { applyState(y, dy); ticking = false; });
-    }
-  }
-
-  window.addEventListener('scroll', onScroll, { passive:true });
-  ['wheel','touchmove','touchstart','keydown'].forEach(evt => {
-    window.addEventListener(evt, onScroll, { passive:true });
-  });
-
-  // 초기 상태
-  requestAnimationFrame(() => applyState(window.pageYOffset || 0, 0));
-})();
-
-</script>
 <script>
   // [라우팅] 화면 너비 기준 페이지 전환
   // (>=640px → Designer_김사율.html, <=639px → Designer-mobile_김사율.html)
@@ -502,7 +614,6 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener('pageshow', check, {passive:true});
     document.addEventListener('visibilitychange', check, {passive:true});
   })();
-</script>
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function(){

@@ -8,108 +8,9 @@
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" />
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" />
   <style>
-    :root{ --line: rgba(255,255,255,.12); }
+    :root{ --line: rgba(255,255,255,.12); --nav-h: 64px; }
     html,body{ margin:0; padding:0; background:#000; color:#fff; }
-
-    /* ===== 헤더 (모바일 전용) ===== */
-    .m-header{
-      position:sticky; top:0; z-index:1000;
-      height:64px; display:flex; align-items:center; justify-content:space-between;
-      padding:0 14px; box-sizing:border-box;
-      background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-      border-bottom:1px solid rgba(255,255,255,.12);
-      transition:transform .5s ease; will-change:transform;
-    }
-    .m-title{ font:800 16px/1 Pretendard, system-ui, -apple-system, sans-serif; letter-spacing:.2px; }
-
-    /* 로고: Main.html과 동일한 위치/크기로 */
-    .m-header .logo{
-      display:flex; align-items:center; gap:8px;
-      text-decoration:none; color:#fff;
-    }
-    .m-header .logo img{
-      max-height:32px;
-      display:block;
-    }
-    .m-header .logo-text{
-      display:flex; flex-direction:column;
-      /* 줄 간격 타이트하게 */
-      line-height:1;
-    }
-    .m-header .logo-text .main{
-      font-size:15px; font-weight:800; color:#fff;
-      /* 아래 간격 2px */
-      display:block; margin:0 0 2px 0;
-    }
-    .m-header .logo-text .sub{
-      font-size:14px; font-weight:800; color:#ff4d4d;
-      display:block; letter-spacing:.2px;
-    }
-
-    /* 햄버거 버튼: 미니멀/얇은 스타일, hover/active에만 테두리 */
-    .m-menu-btn{
-      width:40px; height:40px; border-radius:10px;
-      display:inline-flex; align-items:center; justify-content:center;
-      background:transparent; border:none; box-shadow:none; cursor:pointer; overflow:hidden;
-    }
-    .m-menu-btn img{ width:20px; height:20px; display:block; }
-
-    /* hover/active 시에만 미세한 테두리 표시 (시각 피드백) */
-    .m-menu-btn:hover{ border:1px solid rgba(255,255,255,.18); }
-    .m-menu-btn:active{ border:1px solid rgba(255,255,255,.28); }
-
-    /* ===== 모바일 메뉴 오버레이 ===== */
-    .m-menu{
-      position:fixed; top:64px; right:0; bottom:0; width:260px;
-      /* 투명한 유리 느낌 */
-      background:rgba(255,255,255,0.10);
-      color:#fff; z-index:9999;
-      display:flex; flex-direction:column; padding:0; margin:0; overflow:auto;
-      transform:translateX(100%); transition:transform .35s ease, background .25s ease;
-      box-shadow:-8px 0 24px rgba(0,0,0,0.35);
-      backdrop-filter: blur(16px) saturate(160%);
-      -webkit-backdrop-filter: blur(16px) saturate(160%);
-      border-left:1px solid rgba(255,255,255,0.18);
-    }
-    body.nav-open .m-menu{ transform:translateX(0); }
-    /* 반투명 배경 */
-    .menu-overlay{
-      content:''; position:fixed; left:0; top:64px; right:0; bottom:0;
-      background:rgba(0,0,0,.35); z-index:900; display:none;
-    }
-    body.nav-open .menu-overlay{ display:block; }
-
-    .m-menu ul{ list-style:none; padding:0; margin:0; }
-    .m-menu li a{
-      display:flex; align-items:center; height:64px; padding:0 20px;
-      color:#fff; text-decoration:none; font:800 22px/1 Pretendard, system-ui, -apple-system, sans-serif;
-      border-top:1px solid rgba(255,255,255,.18);
-      /* 유리 위에 텍스트만 */
-      background:transparent;
-      text-shadow:0 1px 0 rgba(0,0,0,.3);
-    }
-    .m-menu li:first-child a{ border-top:none; }
-    .m-menu li a:hover{ background:rgba(255,255,255,.08); }
-
-    .m-menu li a:active{ background:rgba(255,255,255,.16); }
-
-    /* ===== 햄버거 클릭 시 나타나는 라인(글라스 상단바 아래) ===== */
-    .nav-line{
-      position:fixed; left:0; right:0; top:64px; height:2px;
-      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%);
-      transform: scaleX(0); transform-origin: left center;
-      transition: transform .45s ease, opacity .3s ease;
-      opacity:.95;
-      /* 헤더 위, 오버레이 아래 */
-      z-index:1001;
-      pointer-events:none;
-    }
-    body.nav-open .nav-line{ transform: scaleX(1); }
-
-    /* 작은 화면(아이폰 SE)에서 헤더 높이 56px 대응 */
-    @media (max-width: 375px){
-      .nav-line{ top:56px; }
-    }
+    .nav-spacer{ height: 28px; }
 
     /* 콘텐츠: 포스터와 푸터 */
     .poster{ display:block; width:100%; height:auto; margin:0 auto; }
@@ -153,15 +54,6 @@
       text-align:center;
     }
 
-    /* 작은 화면(아이폰 SE) 폰트/여백 조정 */
-    @media (max-width: 375px){
-      .m-header{ height:56px; }
-      .m-menu{ top:56px; }
-      .menu-overlay{ top:56px; }
-      .m-menu li a{ height:56px; font-size:20px; padding:0 18px; }
-      .m-menu-btn{ width:36px; height:36px; }
-      .m-menu-btn img{ width:22px; height:22px; }
-    }
 
     .poster-wrapper{
       position:relative;
@@ -197,7 +89,7 @@
     }
     /* ====== Profile/Project section (base styles copied from desktop) ====== */
     :root { --container: 1200px; }
-    .profile-container { position: relative; z-index:1; display:flex; align-items:center; justify-content:space-between; background:#000; color:#fff; flex-wrap:wrap; padding:24px 1.5rem 24px; gap:24px; max-width:1200px; margin:0 auto; box-sizing:border-box; }
+    .profile-container { position: relative; z-index:1; display:flex; align-items:center; justify-content:space-between; background:#000; color:#fff; flex-wrap:wrap; padding:12px 1.5rem 20px; gap:24px; max-width:1200px; margin:0 auto; box-sizing:border-box; }
     .profile-right { flex:1 1 520px; max-width:560px; padding:0 2rem; text-align:left; display:flex; flex-direction:column; gap:16px; margin-right:auto; }
     .profile-card { order:2; flex:0 0 auto; background:transparent !important; border:none !important; padding:0 !important; text-align:center; display:flex; align-items:center; justify-content:center; position:relative; margin-left:auto; box-shadow:none !important; max-width:420px; }
 
@@ -206,7 +98,7 @@
       margin-top: -96px; /* move card further upward */
     }
     @media (max-width: 900px) {
-      .profile-container{ padding: 20px 1rem 20px; }
+      .profile-container{ padding: 10px 1rem 16px; }
       .profile-card {
         margin-left:0;
         margin-top: -64px;
@@ -298,7 +190,7 @@
        ========================= */
     @media (max-width: 800px){
       /* layout & spacing */
-      .profile-container{ padding:28px 16px 20px; gap:20px; max-width: 100%; }
+      .profile-container{ padding:12px 16px 16px; gap:20px; max-width: 100%; }
       .profile-right{ order:2; max-width:none; padding:0; text-align:left; }
       .profile-card{ order:1; margin:0 auto; max-width:340px; }
 
@@ -330,26 +222,33 @@
       .hero{ width: 94%; margin-top: 10px; border-radius: 12px; }
 
       /* spacer is not needed for this mobile page */
-      .nav-spacer{ height: 0 !important; }
     }
 
     /* 푸터(고정)와 겹치지 않도록 여백 확보 */
     .stage{ 
-        background:#000; 
-        line-height:0; 
-        padding-bottom:100px; }
+      background:#000; 
+      line-height:0; 
+      padding-bottom:72px; 
+    }
 
     footer{
-      position:static; /* 페이지 하단 고정 */
-      margin-top:70px;
+      position:static;             /* 페이지 하단 고정(콘텐츠 뒤덮지 않음) */
+      margin-top:auto;             /* 콘텐츠가 짧으면 하단으로 밀기 */
       width:100%;
       background:#000;
       color:#f3f3f3;
       border-top:1px solid var(--line);
-      padding:10px 12px;
+      height:36px;                 /* 🔒 고정 높이 */
+      min-height:36px;             /* 안전장치 */
+      padding:0 12px;              /* 수직 0 → 고정 높이 유지 */
       box-sizing:border-box;
+      display:flex;                /* 수직 가운데 정렬 */
+      align-items:center;
+      justify-content:center;
       font-size:12px;
+      line-height:1;               /* 브라우저 기본 line-height 차이 제거 */
       text-align:center;
+      font-family:'Pretendard', system-ui, -apple-system, sans-serif; /* 폰트 차이로 인한 높이 오차 제거 */
     }
 
 
@@ -378,32 +277,78 @@
 
 
 <body>
-  <!-- 상단: 제목 + 햄버거 버튼 -->
-  <header class="m-header">
-    <a class="logo" aria-label="BLOOM" href="Main.html">
-      <img src="/1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="BLOOM 로고" decoding="async" />
-      <span class="logo-text">
-        <strong class="main">TUVD</strong>
-        <span class="sub">27th Graduate Exhibition</span>
-      </span>
-    </a>
-    <button id="menuBtn" class="m-menu-btn" aria-label="메뉴 열기" aria-expanded="false">
-      <img src="/1.Picture/Another/Menu.png" alt="메뉴" />
-    </button>
-  </header>
-  <div class="nav-line" aria-hidden="true"></div>
-  <div class="menu-overlay" id="menuOverlay"></div>
+  <div id="m-header-placeholder"></div>
+  <div class="nav-spacer" aria-hidden="true"></div>
+  <script>
+    (function(){
+      const mount = document.getElementById("m-header-placeholder");
+      fetch("../../../2.PageElement/Mobile-header/mobile-header.html")
+        .then(res => res.text())
+        .then(html => {
+          mount.innerHTML = html;
+          // === 헤더 내부 링크를 현재 디렉터리 기준으로 정규화 ===
+          (function fixLinks(){
+            const scope = mount; // 헤더가 주입된 영역
+            const anchors = scope.querySelectorAll('a[href]');
 
-  <!-- 모바일 메뉴 (정상 링크 연결) -->
-  <nav class="m-menu" id="mMenu" aria-label="모바일 메뉴">
-    <ul>
-      <li><a href="../../Main.html">HOME</a></li>
-      <li><a href="../../About.html">ABOUT</a></li>
-      <li><a href="../../Project.html">PROJECT</a></li>
-      <li><a href="../../Designer.html">DESIGNER</a></li>
-      <li><a href="../../Guest.html">GUEST BOOK</a></li>
-    </ul>
-  </nav>
+            // 현재 경로에서 /2025/ 같은 연도 루트 추출 (없으면 /)
+            const yearMatch = location.pathname.match(/\/20\d{2}\//);
+            const yearBase  = yearMatch ? yearMatch[0] : '/';
+
+            // 원하는 최종 모바일 경로 매핑 (게스트/갤러리: 서브폴더 없이 루트 바로 아래)
+            const MOBILE_MAP = {
+              home:    'Main-mobile.html',
+              main:    'Main-mobile.html',
+              about:   'About-mobile.html',
+              project: 'Project-mobile.html',
+              design:  'Design-mobile.html',
+              guest:   'Guest-mobile.html',
+              gallery: 'Gallery-mobile.html'
+            };
+
+            anchors.forEach(a => {
+              const raw = a.getAttribute('href');
+              // 해시/메일/전화/절대 URL은 스킵
+              if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:') ||
+                  /^[a-zA-Z][a-zA-Z0-9+.+-]*:/.test(raw)) {
+                return;
+              }
+
+              try{
+                // 어떤 형태든 절대경로로 해석 후 파일명만 뽑음
+                const abs = new URL(raw, location.href);
+                let base = abs.pathname.split('/').pop() || '';
+                base = base.toLowerCase().replace(/\.html?$/,'').replace(/-mobile$/,'');
+
+                // 키가 매핑되면 /YYYY/ + 대상 모바일 파일로 강제 연결
+                if (MOBILE_MAP[base]) {
+                  a.setAttribute('href', (yearBase + MOBILE_MAP[base]).replace(/\/\/+/g,'/'));
+                }
+                // 매핑 안되면 그대로 둠 (헤더 외부 링크/특수 링크 대비)
+              }catch(e){ /* no-op */ }
+            });
+          })();
+          // === 햄버거 토글 바인딩 (include된 스크립트가 실행되지 않으므로 여기서 연결) ===
+          const btn = document.getElementById('menuBtn');
+          const menu = document.getElementById('mMenu');
+          const overlay = document.getElementById('menuOverlay');
+          if (!btn || !menu) return;
+          function setState(open){
+            document.body.classList.toggle('nav-open', open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+          }
+          function toggle(){ setState(!document.body.classList.contains('nav-open')); }
+          btn.addEventListener('click', toggle);
+          if (overlay) overlay.addEventListener('click', () => setState(false));
+          // 메뉴 링크 클릭 시 자동 닫힘
+          menu.addEventListener('click', (e)=>{ if(e.target.closest('a')) setState(false); });
+          // ESC로 닫기 (선택)
+          window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') setState(false); });
+        })
+        .catch(err => console.error("모바일 헤더 로드 오류:", err));
+    })();
+  </script>
 
   <!-- ===== Project content (mobile) : profile + flip card + hero images ===== -->
   <div class="profile-container">
@@ -416,24 +361,24 @@
           </div>
         </div>
         <p class="message">
-MZ들을 위한 스마트 웨이팅 솔루션, 큐 패스
+          MZ들을 위한 스마트 웨이팅 솔루션, 큐 패스
 
-큐패스(Qpass)는 대기문화를 새롭게 정의하는 웨이팅 전문 애플리케이션입니다.
-
-식당이나 매장에서 긴 줄을 서지 않고도 모바일로 간편하게 대기 등록을 할 수 있으며, 실시간으로 순서를 확인하고 알림을 받아 편리하게 입장할 수 있습니다.
-단순한 웨이팅 관리에 그치지 않고, 사용자들이 대기 중에도 즐길 수 있는 스냅 기능을 통해 인증문화를 접목시켜 차별화된 경험을 제공합니다.
-
-큐 패스의 기획의도는 불편한 대기를 효율적으로 개선함과 동시에, 대기시간을 새로운 소통과 재미의 공간으로 확장하는 데 있습니다.
-        </p>
+          큐패스(Qpass)는 대기문화를 새롭게 정의하는 웨이팅 전문 애플리케이션입니다.
+          
+          식당이나 매장에서 긴 줄을 서지 않고도 모바일로 간편하게 대기 등록을 할 수 있으며, 실시간으로 순서를 확인하고 알림을 받아 편리하게 입장할 수 있습니다.
+          단순한 웨이팅 관리에 그치지 않고, 사용자들이 대기 중에도 즐길 수 있는 스냅 기능을 통해 인증문화를 접목시켜 차별화된 경험을 제공합니다.
+          
+          큐 패스의 기획의도는 불편한 대기를 효율적으로 개선함과 동시에, 대기시간을 새로운 소통과 재미의 공간으로 확장하는 데 있습니다.
+         </p>
       </div>
     </div>
 
     <div class="profile-card">
-      <a class="flip-link" href="../../../2025/Designer/김사율/Designer_김사율.html" aria-label="디자이너 페이지로 이동">
+      <a class="flip-link" href="../../../2025/Designer/김사율/Designer_김사율.html" aria-label="디자이너 페이지로 이동">
         <div class="flip-container" id="sayulFlip_m">
           <div class="flipper">
             <div class="front">
-              <img class="profile-img" src="../../../1.Picture/2.%20Graduate/Graduate_Logo/KIM%20SAYUL.jpg" alt="김사율 프로필 사진" />
+              <img class="profile-img" src="../../../1.Picture/2.%20Graduate/Graduate_Logo/KIM SAYUL.jpg" alt="김사율 프로필 사진" />
             </div>
             <div class="back">
               <img class="profile-img" src="/1.Picture/1. 27th Graduation/Profile/KIM SAYUL.jpeg" alt="김사율 프로필 뒷면" />
@@ -496,38 +441,6 @@ MZ들을 위한 스마트 웨이팅 솔루션, 큐 패스
   </script>
 
   <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
-  <script>
-    // 햄버거 버튼으로 오버레이 열고/닫기
-    (function(){
-      const btn = document.getElementById('menuBtn');
-      const menu = document.getElementById('mMenu');
-      if(!btn || !menu) return;
-
-      const overlay = document.getElementById('menuOverlay');
-      function toggle(){
-        const open = !document.body.classList.contains('nav-open');
-        document.body.classList.toggle('nav-open', open);
-        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-      }
-      btn.addEventListener('click', toggle);
-      if(overlay){ overlay.addEventListener('click', toggle); }
-
-      // 메뉴 항목 탭 시 닫기(링크는 모두 '#')
-      menu.addEventListener('click', (e)=>{
-        if(e.target.closest('a')) document.body.classList.remove('nav-open');
-      });
-
-      // 바깥 스크롤 시 닫힘(선택)
-      window.addEventListener('scroll', () => {
-        if(document.body.classList.contains('nav-open')){
-          document.body.classList.remove('nav-open');
-          btn.setAttribute('aria-expanded', 'false');
-          btn.setAttribute('aria-label', '메뉴 열기');
-        }
-      }, { passive:true });
-    })();
-  </script>
 <script>
 // [라우팅] 화면 너비 기준 페이지 전환 (모바일 ↔ 데스크톱)
 // <=799px : Project-mobile_김사율.html
@@ -603,45 +516,6 @@ MZ들을 위한 스마트 웨이팅 솔루션, 큐 패스
     }
   })();
 
-// [네비게이션] 스크롤 방향 감지 → 숨김/표시
-(function bindHideNavOnScroll(){
-  const THRESH = 6;   // 조금 더 내려가야 반응 (불필요한 깜빡임 방지)
-  const TOPSAFE = 48;  // 상단에서는 좀 더 오래 보이게
-
-  let lastY = window.pageYOffset || 0;
-  let ticking = false;
-
-  function applyState(y, dy){
-    if (y <= TOPSAFE){
-      document.body.classList.remove('nav-hidden');
-      return;
-    }
-    if (Math.abs(dy) < THRESH) return;
-    if (dy > 0){
-      document.body.classList.add('nav-hidden');   // 아래로 → 숨김
-    }else{
-      document.body.classList.remove('nav-hidden'); // 위로 → 표시
-    }
-  }
-
-  function onScroll(){
-    const y = window.pageYOffset || 0;
-    const dy = y - lastY;
-    lastY = y;
-    if (!ticking){
-      ticking = true;
-      requestAnimationFrame(() => { applyState(y, dy); ticking = false; });
-    }
-  }
-
-  window.addEventListener('scroll', onScroll, { passive:true });
-  ['wheel','touchmove','touchstart','keydown'].forEach(evt => {
-    window.addEventListener(evt, onScroll, { passive:true });
-  });
-
-  // 초기 상태
-  requestAnimationFrame(() => applyState(window.pageYOffset || 0, 0));
-})();
 
 </script>
 </body>

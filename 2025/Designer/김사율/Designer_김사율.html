@@ -75,7 +75,7 @@
       padding: 12px 2rem 24px;
       min-height: 90vh;
       box-sizing: border-box;
-      gap: 36px;   /* 텍스트와 이미지 간 간격 확대 (데스크톱) */
+      gap: 100px;   /* 텍스트와 이미지 간 간격 확대 (데스크톱) */
       max-width: 1200px;
       margin: 0 auto;
       margin-bottom: 150px;   /* 프로필과 Q&A 사이 간격 크게 */
@@ -175,7 +175,7 @@
     .profile-right .message {
       text-align: left;
       position: relative;
-      top: -48px;           /* 메시지만 위로 올림 (권장 범위: -16 ~ -40px) */
+      top: -90px;           /* 메시지만 위로 올림 (권장 범위: -16 ~ -40px) */
       margin: 0 0 28px;
     }
 
@@ -197,8 +197,13 @@
       color: #eaeaea;
       line-height: 1.8;
       white-space: pre-line;
-    }
 
+      font-weight: 600; 
+      font-size:40px; 
+      color: #e6e6e6; 
+      line-height:1.9; 
+    }
+    
 
     .profile-role {
       color: var(--text);
@@ -327,7 +332,7 @@
       max-width: var(--container);
       margin-top: -40px;
       padding: 12px 2rem 24px;
-      gap: 36px;   /* 동일 값으로 통일: 덮어쓰기 방지 */
+      gap: 40px;   /* 동일 값으로 통일: 덮어쓰기 방지 */
       left: 12px;  /* 동일 이동값 유지 */
     }
 
@@ -340,12 +345,7 @@
       color: #cfcfcf; 
       margin-top: 8px; }
 
-    .message{ 
-      font-weight: 600; 
-      font-size:40px; 
-      color: #e6e6e6; 
-      line-height:1.9; 
-    }
+   
 
     .contact-info{ color:#bdbdbd; }
 
@@ -363,7 +363,7 @@
       gap: 10px;
       margin: 0 0 6px;      /* 위/아래 기본 간격만 */
       position: relative;    /* 국소 이동 */
-      top: -70px;            /* 이름 줄만 위로 올림 (필요시 -16 ~ -32px 조절) */
+      top: -75px;            /* 이름 줄만 위로 올림 (필요시 -16 ~ -32px 조절) */
       padding-bottom: 8px;   /* 밑줄과 이름 사이 여백 */
       position: relative;    /* ::after 기준 */
       padding-right: 80px; /* 우측 장식 이미지 자리 확보 */
@@ -388,7 +388,7 @@
     }
     @media (max-width: 900px){
       .name-line { padding-right: 64px; }
-      .name-line::after { right: 56px; }
+      .name-line::after { right: 68px; }
       .name-mark { height: 36px; bottom: -3px; }
     }
     @media (max-width: 900px){

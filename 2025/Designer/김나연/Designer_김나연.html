@@ -64,19 +64,18 @@
 
     .profile-container {
       position: relative;
-      left: 12px;  /* 시각적으로 우측으로 12px 이동 */
       z-index: 1;
       display: flex;
       align-items: flex-end;   /* 좌/우 컬럼 하단을 동일 선에 맞춤 */
-      justify-content: center;   /* 좌우 중앙 정렬 */
+      justify-content: space-between;   /* 좌우 컬럼 균등 배치 */
       background-color: var(--bg);
       color: var(--text);
       flex-wrap: wrap;
-      padding: 12px 2rem 24px;
+      padding: 12px 2rem 25x;
       min-height: 90vh;
       box-sizing: border-box;
-      gap: 36px;   /* 텍스트와 이미지 간 간격 확대 (데스크톱) */
-      max-width: 1200px;
+      gap: 120px; /* 이미지와 글자 간격을 더 넓힘 */
+      max-width: 1300px;
       margin: 0 auto;
       margin-bottom: 150px;   /* 프로필과 Q&A 사이 간격 크게 */
       margin-top: 16px;
@@ -103,6 +102,7 @@
       flex: 1 1 420px;
       text-align: center;
       position: relative;
+      transform: translateX(40px); /* 오른쪽 이동 확대 */
     }
 
     /* Profile card */
@@ -175,12 +175,13 @@
     .profile-right .message {
       text-align: left;
       position: relative;
-      top: -70px;           /* 메시지만 위로 올림 (권장 범위: -16 ~ -40px) */
+      top: -50px;           /* 메시지만 위로 올림 (권장 범위: -16 ~ -40px) */
       margin: 0 0 28px;
     }
 
+
     @media (max-width: 900px){
-      .profile-right .message { top: -36px; }
+      .profile-right .message{ max-width: 100%; margin: 6px 0 20px; }
     }
 
     .profile-right .text-content {
@@ -192,15 +193,18 @@
       .profile-right .text-content { top: 0; }
     }
 
+    /* .message 스타일: tidy unified paragraph style */
     .message {
-      font-size: 1.05rem;
-      color: #eaeaea;
-      line-height: 1.8;
-      white-space: pre-line;
-      font-weight: 600; 
-      font-size:20px; 
-      color: #e6e6e6; 
-      line-height:1.9; 
+      font-size: clamp(15px, 1.9vw, 18px);
+      line-height: 1.85;
+      font-weight: 500;
+      color: #e8e8e8;
+      letter-spacing: .1px;
+      word-break: keep-all;        /* 한글 단어 중간 줄바꿈 방지 */
+      overflow-wrap: break-word;   /* 긴 영문/이메일도 줄바꿈 */
+      white-space: pre-line;       /* 작성한 줄바꿈 유지 */
+      text-align: left;
+      text-rendering: optimizeLegibility;
     }
 
 
@@ -328,11 +332,12 @@
 
     /* 프로필 영역: 비주얼 정리 + 간격 조정 */
     .profile-container{
-      max-width: var(--container);
+      max-width: 1300px;
       margin-top: -40px;
       padding: 12px 2rem 24px;
-      gap: 36px;   /* 동일 값으로 통일: 덮어쓰기 방지 */
-      left: 12px;  /* 동일 이동값 유지 */
+      gap: 57px;   /* 텍스트-이미지 간격 크게 */
+      left: 0;     /* 좌측 치우침 제거 */
+      justify-content: space-between; /* 양쪽 컬럼 균등 배치 */
     }
 
     .profile-right{
@@ -362,23 +367,24 @@
       gap: 10px;
       margin: 0 0 6px;      /* 위/아래 기본 간격만 */
       position: relative;    /* 국소 이동 */
-      top: -70px;            /* 이름 줄만 위로 올림 (필요시 -16 ~ -32px 조절) */
+      top: -40px;            /* 이름 줄만 위로 올림 (필요시 -16 ~ -32px 조절) */
       padding-bottom: 8px;   /* 밑줄과 이름 사이 여백 */
       position: relative;    /* ::after 기준 */
-      padding-right: 80px; /* 우측 장식 이미지 자리 확보 */
+      padding-right: 50px; /* 우측 장식 이미지 자리 확보 */
     }
     .name-line::after {
       content: "";
       position: absolute;
-      left: 0;
-      right: 72px;            /* 우측 장식 이미지 만큼 여백 */
+      left: 0;                 /* 왼쪽은 유지 */
+      right: 80px;             /* 기존 60px → 80px, 총 20px 더 짧게 */
       bottom: 0;
       height: 1px;
       background: rgba(255,255,255,.18);
+      width: 82.3%;
     }
     .name-mark {
       position: absolute;
-      right: 0;
+      right: 38px;
       bottom: -4px;         /* 밑줄 위로 살짝 겹치게 */
       height: 48px;         /* 데스크톱 크기 */
       width: auto;
@@ -387,7 +393,7 @@
     }
     @media (max-width: 900px){
       .name-line { padding-right: 64px; }
-      .name-line::after { right: 56px; }
+      .name-line::after { right: 68px; } /* 기존 56px → 68px, 살짝 더 짧게 */
       .name-mark { height: 36px; bottom: -3px; }
     }
     @media (max-width: 900px){
@@ -452,7 +458,8 @@
 
     /* 반응형: 모바일에서 간격과 비율 재조정 */
     @media (max-width: 900px){
-      .profile-container{ padding: 0 1.25rem 12px; gap:24px; }   /* 모바일에서도 간격 확대 */
+      .profile-container{ padding: 0 1.25rem 12px; gap:28px; }
+      .profile-left{ transform: none; }
       .profile-right{ max-width:none; }
       .hero{ width: 94%; margin-top: 10px; }
     }
@@ -604,11 +611,13 @@
     .meta-list li.accent {
       border-color: rgba(255,43,43,.5);
     }
+
     .awards {
       margin: 8px 0 0;
       padding-left: 18px;
       color: #ddd;
     }
+
     .awards li {
       margin: .25rem 0;
     }
@@ -651,6 +660,34 @@
       line-height: 1.7;
     }
 
+    /* ===== Awards (수상 경력) — centered banner style ===== */
+    .awards-section{
+      max-width: 1200px;
+      text-align: left;
+    }
+
+    .awards-heading{
+      margin: 0px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      color: #dcdcdc;
+      margin-top: 10px;
+    }
+
+    .awards-list{
+      list-style: none;
+      margin: 6px 0 10px;
+    }
+
+    .awards-list li{
+      font-weight: 500;
+      font-size: 13px;
+      letter-spacing: .3px;
+      color: #959595;
+      line-height: 1.25;
+    }
+    
     /* ===== Bottom Q&A (Interview) — consolidated & clean ===== */
     .qna-bottom {
       max-width: 980px;
@@ -806,6 +843,21 @@
   margin-top: 2px;     /* role-line 바로 아래 여백 */
 }
 
+.awards-rule{
+  /* shorter line */
+  width: 1000px;
+  max-width: 50%;
+  /* thin */
+  height: 1px;
+  border: 0;
+  /* new color (soft red gradient, left-aligned) */
+  background: rgb(129, 129, 129); /* spacing */
+  margin: 8px 0 12px 0;
+  display: block;
+}
+@media (max-width: 900px){
+  .awards-rule{ width: 140px; }
+}
 </style>
 </head>
 
@@ -824,16 +876,23 @@
         <div class="name-line">
           <h1>김나연</h1>
           <h2>KIM NAYEON</h2>
-          <img class="name-mark" src="/1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미 마크" />
+          <img class="name-mark" src="../../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미 마크" />
         </div>
         <p class="message">
-          대학을 다니면서 인생 첫 졸업작품을 준비를 해보는데 
+          "대학을 다니면서 인생 첫 졸업작품을 준비를 해보는데 
           우역곡절 끝에 4년동안 공부해온 걸 보여드린다는 점이 쑥쓰럽고 
           한편으로는 앞으로 무궁무진한 모습들을 펼칠 수 있다는 생각에 
           기대가 됩니다. 이 졸업작품이 마지막이 작품이 아닌 사회에 
-          첫 디딤돌 이라고 생각이 들어 매우 기대가 되고 두근거립니다.
+          첫 디딤돌 이라고 생각이 들어 매우 기대가 되고 두근거립니다."
         </p>
-        <div class="won">넥스트랩 2024 초광역 GPT-AI 활용 창업경진대회 은상</div>
+        <!-- Awards -->
+      <section class="awards-section" aria-label="수상 경력">
+ 
+        <h3 class="awards-heading">수상&경력</h3>
+        <ul class="awards-list">
+          <li>2024 넥스트랩 초광역 GPT‑AI 활용 창업경진대회 은상</li>
+        </ul>
+    <hr class="awards-rule">
         <div class="role-line">
           <div class="hashtags"># 밝은</div>
           <div class="hashtags"># 독특한</div>
@@ -849,11 +908,11 @@
         <figure class="pflip" role="button" tabindex="0" aria-label="프로필 카드 뒤집기">
           <div class="pflip-inner">
             <div class="pflip-face pflip-front">
-              <img class="profile-img" src="/1.Picture/1. 27th Graduation/Profile/KIM NAYEON.jpeg" alt="김나연 프로필 사진">
+              <img class="profile-img" src="../../../1.Picture/1.%2027th%20Graduation/Profile/KIM%20NAYEON.jpeg" alt="김나연 프로필 사진">
             </div>
             <div class="pflip-face pflip-back">
-              <a class="pflip-link" href="../../../2025/Project/김나연/Project_김나연.html" aria-label="프로젝트 페이지로 이동">
-                <img class="profile-img back-img" src="/1.Picture/2. Graduate/Graduate_Logo/KIM NAYEON.jpg" alt="김나연 프로필 사진 (후면)">
+              <a class="pflip-link" href="../../Project/김나연/Project_김나연.html" aria-label="프로젝트 페이지로 이동">
+                <img class="profile-img back-img" src="../../../1.Picture/2.%20Graduate/Graduate_Logo/KIM%20NAYEON.jpg" alt="김나연 프로필 사진 (후면)">
                 <div class="hover-hint" aria-hidden="true">프로젝트 페이지로 이동</div>
               </a>
             </div>
@@ -863,6 +922,8 @@
     </div>
   </div>
 
+  
+  </section>
   <!-- End of profile-container -->
   <section class="qna-bottom">
     <h2 class="qna-title">Q&A</h2>

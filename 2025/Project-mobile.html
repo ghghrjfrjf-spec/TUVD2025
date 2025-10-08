@@ -11,18 +11,24 @@
       --line: rgba(255,255,255,.12);
       --content-max: 1000px; /* clamp width for big tablets like iPad Pro */
       --side-pad: 16px;      /* safe side padding on all widths */
+      --nav-h: 64px; /* canonical TUVD mobile header height */
+      --font-title: 'Playfair Display', serif;                     /* 제목 전용 */
+      --font-body: 'Noto Sans KR', system-ui, -apple-system, 
+                  'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* 본문 전용 */
     }
+    
     /* Prevent any content from exceeding the viewport */
-    main, header, nav, .stage, .search-bar, .filter-scroll, .toolbar-count, .grid {
+    main, .stage, .search-bar, .filter-scroll, .toolbar-count, .grid {
       width: min(100vw, 100%);
       max-width: 100vw;
     }
 
-/* Force text wrapping to avoid layout overflow */
-*, *::before, *::after {
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
+    /* Force text wrapping to avoid layout overflow (scoped to content area) */
+    #fit-root *, #fit-root *::before, #fit-root *::after {
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
     html,body{
       margin:0;
       padding:0;
@@ -33,75 +39,15 @@
       overflow-x:hidden; /* 🚫 prevent horizontal scroll on iPad Pro */
       -webkit-text-size-adjust:100%;
       min-height:100%;
+      font-family: var(--font-body); /* ...기존 속성 유지 */
     }
-body{ display:flex; flex-direction:column; min-height:100vh; }
-*{ box-sizing:border-box; }
+        
+    body{ display:flex; flex-direction:column; min-height:100vh; }
+    #fit-root, #fit-root *{ box-sizing: border-box; }
 
-    /* ===== 헤더 (모바일 전용) ===== */
-    .m-header{
-      position:sticky; top:0; z-index:1000;
-      height:64px; display:flex; align-items:center; justify-content:space-between;
-      padding:0 14px; box-sizing:border-box;
-      background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-      border-bottom:1px solid rgba(255,255,255,.12);
-      transition:transform .5s ease; will-change:transform;
-    }
-    .m-header .logo{ display:flex; align-items:center; gap:8px; text-decoration:none; color:#fff; }
-    .m-header .logo img{ max-height:32px; display:block; }
-    .m-header .logo-text{ display:flex; flex-direction:column; line-height:1; }
-    .m-header .logo-text .main{ font-size:15px; font-weight:800; color:#fff; margin:0 0 2px 0; }
-    .m-header .logo-text .sub{ font-size:14px; font-weight:800; color:#ff4d4d; letter-spacing:.2px; }
-
-    .m-menu-btn{ width:40px; height:40px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; background:transparent; border:none; box-shadow:none; cursor:pointer; overflow:hidden; }
-    .m-menu-btn img{ width:20px; height:20px; display:block; }
-    .m-menu-btn:hover{ border:1px solid rgba(255,255,255,.18); }
-    .m-menu-btn:active{ border:1px solid rgba(255,255,255,.28); }
-
-    /* ===== 모바일 메뉴 오버레이 ===== */
-    .m-menu{ position:fixed; top:64px; right:0; bottom:0; width:260px; background:rgba(255,255,255,0.10); color:#fff; z-index:9999; display:flex; flex-direction:column; padding:0; margin:0; overflow:auto; transform:translateX(100%); transition:transform .35s ease, background .25s ease; box-shadow:-8px 0 24px rgba(0,0,0,0.35); backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); border-left:1px solid rgba(255,255,255,0.18); contain: layout;}
-    body.nav-open .m-menu{ transform:translateX(0); }
-    .menu-overlay{ content:''; position:fixed; left:0; top:64px; right:0; bottom:0; background:rgba(0,0,0,.35); z-index:900; display:none; }
-    body.nav-open .menu-overlay{ display:block; }
-    .m-menu ul{ list-style:none; padding:0; margin:0; }
-    .m-menu li a{ display:flex; align-items:center; height:64px; padding:0 20px; color:#fff; text-decoration:none; font:800 22px/1 'Pretendard', 'Playfair Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; border-top:1px solid rgba(255,255,255,.18); background:transparent; text-shadow:0 1px 0 rgba(0,0,0,.3); }
-    .m-menu li:first-child a{ border-top:none; }
-    .m-menu li a:hover{ background:rgba(255,255,255,.08); }
-    .m-menu li a:active{ background:rgba(255,255,255,.16); }
-    /* Prevent layout overflow for iPad/tablet widths (640–1039px) */
-@media (min-width: 640px) and (max-width: 1039px) {
-  h1.page-title,
-  .search-bar .search-wrap,
-  .filter-scroll,
-  .toolbar-count,
-  .grid {
-    width: min(100%, var(--content-max));
-    max-width: var(--content-max);
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: var(--side-pad);
-    padding-right: var(--side-pad);
-  }
-}
-/* iPad / large tablet clamp (prevents horizontal page scroll at 768–1366 widths) */
-@media (min-width: 640px) and (max-width: 1366px){
-  .stage,
-  .search-bar .search-wrap,
-  .filter-scroll,
-  .toolbar-count,
-  .grid{
-    width:min(100%, var(--content-max));
-    max-width:var(--content-max);
-    margin-left:auto;
-    margin-right:auto;
-    padding-left:var(--side-pad);
-    padding-right:var(--side-pad);
-  }
-}
-    @media (max-width: 375px){ .m-header{ height:56px; } .m-menu{ top:56px; } .menu-overlay{ top:56px; } .m-menu li a{ height:56px; font-size:20px; padding:0 18px; } .m-menu-btn{ width:36px; height:36px; } .m-menu-btn img{ width:22px; height:22px; } }
-
-    
     /* ===== 페이지 타이틀/툴바 ===== */
-    .stage{ padding:18px 14px 24px; }
+    /* ===== 페이지 타이틀/툴바 ===== */
+    .stage{ padding:18px 14px 72px; }
     h1.page-title{
       font:900 34px/1.15 'Playfair Display', serif;
       text-align:center;
@@ -136,7 +82,7 @@ body{ display:flex; flex-direction:column; min-height:100vh; }
     .pill:hover{ background:rgba(255,255,255,.08); color:#ff4d4d; }
     .pill.is-active{ background:rgba(255,77,77,.18); color:#ff4d4d; }
 
-    .search-bar{ position:sticky; top:64px; z-index:950; background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); border-bottom:1px solid rgba(255,255,255,.12); padding:10px 12px; }
+    .search-bar{ position:sticky; top:var(--nav-h); z-index:950; background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); border-bottom:1px solid rgba(255,255,255,.12); padding:10px 12px; }
     .search-bar .search-wrap{ position:relative; display:block; }
     .search-bar .search-input{ width:100%; max-width:none; height:42px; padding:0 14px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:#151515; color:#eee; font-size:15px; }
     .toolbar-count{ display:flex; justify-content:flex-end; font-size:12px; color:#bbb; padding:4px 2px 0; }
@@ -163,11 +109,29 @@ contain:content;
     .cap .t{ font-weight:800; font-size:14px; line-height:1.25; color:#fff; font-family: 'Pretendard', 'Playfair Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .cap .m{ margin-top:6px; font-size:12px; color:#d0d0d0; font-family: 'Pretendard', 'Playfair Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 
-    footer{ position:static; margin-top:auto; height:auto; padding:6px 10px; background:#000; border-top:1px solid var(--line); text-align:center; font-size:12px; color:#f3f3f3; }
+    footer{
+      position:static;             /* 콘텐츠 뒤덮지 않음 */
+      margin-top:auto;             /* 내용이 짧아도 하단 정렬 */
+      width:100%;
+      background:#000;
+      color:#f3f3f3;
+      border-top:1px solid var(--line);
+      height:36px;                 /* 🔒 고정 높이 (33 → 36) */
+      min-height:36px;             /* 안전장치 */
+      padding:0 12px;              /* 수직 0 → 높이 고정 유지 */
+      box-sizing:border-box;
+      display:flex;                /* 수직 가운데 정렬 */
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      line-height:1;               /* 브라우저 기본 line-height 차이 제거 */
+      text-align:center;
+      font-family: 'Pretendard', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
 
     /* Final safety net: prevent any element from exceeding viewport width */
     @supports (width: min(100%, 100vw)){
-      :where(body) > *{ width:min(100%, 100vw); }
+      :where(body) > :not(#m-header-placeholder){ width:min(100%, 100vw); }
     }
 
     /* === View-fit scaler (iPad Pro: shrink content to fit without horizontal scroll) === */
@@ -185,34 +149,59 @@ contain:content;
     @supports (width: min(100%, 100vw)){
       #fit-root{ width: min(100%, 100vw); }
     }
+
   </style>
 </head>
 <body>
-  <!-- 상단: 제목 + 햄버거 버튼 -->
-  <header class="m-header">
-    <a class="logo" aria-label="BLOOM" href="Main.html">
-      <img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="BLOOM 로고" decoding="async" />
-      <span class="logo-text">
-        <strong class="main">TUVD</strong>
-        <span class="sub">27th Graduate Exhibition</span>
-      </span>
-    </a>
-    <button id="menuBtn" class="m-menu-btn" aria-label="메뉴 열기" aria-expanded="false">
-      <img src="../../1.Picture/Another/Menu.png" alt="메뉴" />
-    </button>
-  </header>
-  <div class="menu-overlay" id="menuOverlay"></div>
-
-  <!-- 모바일 메뉴 -->
-  <nav class="m-menu" id="mMenu" aria-label="모바일 메뉴">
-    <ul>
-      <li><a href="Main.html">HOME</a></li>
-      <li><a href="About.html">ABOUT</a></li>
-      <li><a href="Project.html">PROJECT</a></li>
-      <li><a href="Designer.html">DESIGNER</a></li>
-      <li><a href="Guest.html">GUEST BOOK</a></li>
-    </ul>
-  </nav>
+  <div id="m-header-placeholder"></div>
+  <script>
+    (function(){
+      const mount = document.getElementById("m-header-placeholder");
+      fetch("../../2.PageElement/Mobile-header/mobile-header.html")
+        .then(res => res.text())
+        .then(html => {
+          mount.innerHTML = html;
+          // === 헤더 내부 링크를 현재 디렉터리 기준으로 정규화 ===
+          (function fixLinks(){
+            const baseDir = location.pathname.replace(/[^/]*$/, '');
+            const scope = mount; // 헤더가 주입된 영역
+            // 로고 및 메뉴 내 모든 앵커
+            const anchors = scope.querySelectorAll('a');
+            anchors.forEach(a => {
+              const raw = a.getAttribute('href');
+              if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:')) return;
+              try{
+                // 원래 href를 절대경로로 해석
+                const abs = new URL(raw, location.href);
+                // 파일명(마지막 세그먼트)만 추출
+                const file = abs.pathname.split('/').pop();
+                if (!file) return;
+                // 현재 디렉터리 기준으로 링크 재설정
+                a.setAttribute('href', baseDir + file);
+              }catch(e){ /* no-op */ }
+            });
+          })();
+          // === 햄버거 토글 바인딩 (include된 스크립트가 실행되지 않으므로 여기서 연결) ===
+          const btn = document.getElementById('menuBtn');
+          const menu = document.getElementById('mMenu');
+          const overlay = document.getElementById('menuOverlay');
+          if (!btn || !menu) return;
+          function setState(open){
+            document.body.classList.toggle('nav-open', open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+          }
+          function toggle(){ setState(!document.body.classList.contains('nav-open')); }
+          btn.addEventListener('click', toggle);
+          if (overlay) overlay.addEventListener('click', () => setState(false));
+          // 메뉴 링크 클릭 시 자동 닫힘
+          menu.addEventListener('click', (e)=>{ if(e.target.closest('a')) setState(false); });
+          // ESC로 닫기 (선택)
+          window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') setState(false); });
+        })
+        .catch(err => console.error("모바일 헤더 로드 오류:", err));
+    })();
+  </script>
 
   <!-- 본문 (스케일 컨테이너) -->
   <div id="fit-root">
@@ -238,28 +227,10 @@ contain:content;
     </div>
     <section id="list" class="grid" aria-live="polite"></section>
   </main>
-  </div><!-- /#fit-root -->
-
+  </div>
   <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
 
   <script>
-    // 햄버거 토글
-    (function(){
-      const btn = document.getElementById('menuBtn');
-      const menu = document.getElementById('mMenu');
-      const overlay = document.getElementById('menuOverlay');
-      if(!btn || !menu) return;
-      function toggle(){
-        const open = !document.body.classList.contains('nav-open');
-        document.body.classList.toggle('nav-open', open);
-        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-      }
-      btn.addEventListener('click', toggle);
-      overlay && overlay.addEventListener('click', toggle);
-      menu.addEventListener('click', (e)=>{ if(e.target.closest('a')) document.body.classList.remove('nav-open'); });
-    })();
-
     // === Auto-fit scaler (keeps all content inside viewport width on big tablets) ===
     (function fitToViewportWidth(){
       const root = document.getElementById('fit-root');
@@ -344,37 +315,57 @@ contain:content;
       let items = [];
       let currentFilter = 'all';
 
+      // 현재 페이지(2025 디렉터리)의 절대 디렉터리 경로 (끝에 슬래시 포함)
+      const __BASE_DIR__ = location.pathname.replace(/[^/]*$/, '');
       // Helper: convert desktop personal-project href to mobile counterpart
       function toMobileHref(href){
-        if(!href) return href;
+        // Build a robust mapping to ensure navigation works even if desktop hrefs are odd or missing.
+        const MAP = {
+          '김사율': '/2025/Project/김사율/Project-mobile_김사율.html',
+          '김나연': __BASE_DIR__ + 'Project/김나연/Project-mobile_김나연.html',
+          '김유빈': __BASE_DIR__ + 'Project/김유빈/Project-mobile_김유빈.html',
+          '김민진': __BASE_DIR__ + 'Project/김민진/Project-mobile_김민진.html'
+        };
+
         try{
-          // Decode once for matching, but keep original for rebuild
+          // 0) If href is empty or missing, return empty string (caller will apply a name-based fallback)
+          if (!href) return '';
+
+          // Keep original for suffix reuse
           const raw = href;
-          let clean = '';
-          try { clean = decodeURIComponent(raw); } catch(_){ clean = raw; }
 
-          // Strip query/hash for pattern test
-          const qIdx = clean.indexOf('?');
-          const hIdx = clean.indexOf('#');
-          const cut  = (idx) => (idx >= 0 ? idx : Infinity);
-          const stop = Math.min(cut(qIdx), cut(hIdx));
-          const base = stop === Infinity ? clean : clean.slice(0, stop);
+          // Try to parse safely
+          let abs;
+          try { abs = new URL(raw, location.href); }
+          catch(_){ return raw; }
 
-          // Normalise slashes
-          const baseNorm = base.replace(/\\/g, '/');
+          // Extract basename to detect "Project_이름.html"
+          const base = abs.pathname.split('/').pop() || '';
 
-          // 1) 김사율 데스크톱 → 김사율 모바일 (어떤 상대/절대 경로든 매칭)
-          if (/\/?2025\/Project\/.*김사율\/Project_김사율\.html$/i.test(baseNorm) ||
-              /김사율\/Project_김사율\.html$/i.test(baseNorm)) {
-            return '/2025/Project/김사율/Project-mobile_김사율.html' + raw.slice(base.length);
+          // If it matches Project_이름.html → Project-mobile_이름.html
+          const m = base.match(/^Project_([^\/?#]+)\.html$/i);
+          if (m){
+            const name = m[1];
+            // If the name is one of our explicit mappings, return the mapped mobile path
+            if (MAP[name]) return MAP[name] + (abs.search || '') + (abs.hash || '');
+            // Generic rule
+            return abs.pathname.replace(/Project_([^\/?#]+)\.html$/i, 'Project-mobile_$1.html') + (abs.search || '') + (abs.hash || '');
           }
 
-          // 2) 일반 규칙: Project_이름.html → Project-mobile_이름.html
-          //    (상대/절대 경로 모두 처리)
-          return raw.replace(/(\/)?Project_([^\/?#]+)\.html(\?[^#]*)?(#.*)?$/i, function(_, slash, name, qs='', hs=''){
-            const prefix = (slash || '');
-            return prefix + 'Project-mobile_' + name + '.html' + (qs || '') + (hs || '');
-          });
+          // If the original href path already points into a person's folder, swap only the filename
+          if (/\/Project\/[^\/]+\/Project_[^\/]+\.html$/i.test(abs.pathname)){
+            return abs.pathname.replace(/Project_([^\/?#]+)\.html$/i, 'Project-mobile_$1.html') + (abs.search || '') + (abs.hash || '');
+          }
+
+          // As a last attempt, if the full path includes any of the mapped names, use the explicit mapping
+          for (const key in MAP){
+            if (decodeURIComponent(abs.pathname).includes(key)) {
+              return MAP[key] + (abs.search || '') + (abs.hash || '');
+            }
+          }
+
+          // Otherwise, return the original (caller will still attempt a name-based fallback)
+          return raw;
         }catch(e){
           return href;
         }
@@ -394,6 +385,16 @@ contain:content;
             card.setAttribute('data-category', it.category);
             // Convert href to mobile target
             let hrefMobile = toMobileHref(it.href);
+            // 🔒 Fallback: if href is missing or unchanged/empty, construct from the Korean name
+            if (!hrefMobile || hrefMobile === it.href) {
+              const KNOWN = ['김사율','김나연','김유빈','김민진'];
+              if (KNOWN.includes(it.name)) {
+                // Use absolute-safe path based on current directory (e.g., /2025/)
+                hrefMobile = (it.name === '김사율')
+                  ? '/2025/Project/김사율/Project-mobile_김사율.html'
+                  : __BASE_DIR__ + 'Project/' + it.name + '/Project-mobile_' + it.name + '.html';
+              }
+            }
 
             // Hard fallback: if the card title contains "큐패스", force-link to the exact mobile page
             // (covers cases where source markup uses an unexpected path or missing link)
@@ -454,6 +455,17 @@ contain:content;
               }
             };
           });
+          // === 이름순(한글) 정렬: 링크/표시 모두 이름 기준으로 오름차순 ===
+          (function sortByKoreanName(){
+            try{
+              const coll = new Intl.Collator('ko', { usage:'sort', sensitivity:'base', numeric:true });
+              items.sort((a,b) => {
+                const an = (a.name || '').trim();
+                const bn = (b.name || '').trim();
+                return coll.compare(an, bn);
+              });
+            }catch(_){}
+          })();
           render();
         });
 
@@ -494,5 +506,7 @@ contain:content;
   window.addEventListener('resize', go, {passive:true});
 })();
 </script>
+
+
 </body>
 </html>

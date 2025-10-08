@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TUVD Mobile Header</title>
+  <style>
+    :root {
+      --nav-h: 64px;
+    }
+    @media (max-width: 375px) {
+      :root { --nav-h: 56px; }
+    }
+
+    body {
+      margin: 0;
+      padding-top: var(--nav-h);
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #000;
+      color: #fff;
+    }
+
+    /* ===== 모바일 헤더 ===== */
+    .m-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: var(--nav-h);
+      min-height: var(--nav-h);
+      max-height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      transition: transform 0.35s ease;
+    }
+
+    .m-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+      height: 32px;
+    }
+
+    .m-header .logo img {
+      max-height: 32px;
+      display: block;
+    }
+
+    .m-header .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .m-header .logo-text .main {
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 2px 0;
+      letter-spacing: 0.2px;
+    }
+
+    .m-header .logo-text .sub {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ff4d4d;
+      letter-spacing: 0.2px;
+    }
+
+    .m-menu-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    .m-menu-btn img {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+
+    .m-menu-btn:hover {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .m-menu-btn:active {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+    }
+
+    /* 메뉴 패널 */
+    .m-menu {
+      position: fixed;
+      top: var(--nav-h);
+      right: 0;
+      bottom: 0;
+      width: 260px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      border-left: 1px solid rgba(255, 255, 255, 0.18);
+      transform: translateX(100%);
+      transition: transform 0.35s ease;
+      display: flex;
+      flex-direction: column;
+      z-index: 9999;
+    }
+
+    body.nav-open .m-menu {
+      transform: translateX(0);
+    }
+
+    .m-menu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .m-menu li a {
+      display: flex;
+      align-items: center;
+      height: 64px;
+      padding: 0 20px;
+      color: #fff;
+      text-decoration: none;
+      font: 800 22px/1 Pretendard, sans-serif;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      background: transparent;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .m-menu li:first-child a {
+      border-top: none;
+    }
+
+    .m-menu li a:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .menu-overlay {
+      content: "";
+      position: fixed;
+      left: 0;
+      top: var(--nav-h);
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 900;
+      display: none;
+    }
+
+    body.nav-open .menu-overlay {
+      display: block;
+    }
+
+    @media (max-width: 375px) {
+      .m-menu li a {
+        height: 56px;
+        font-size: 20px;
+        padding: 0 18px;
+      }
+      .m-menu-btn {
+        width: 36px;
+        height: 36px;
+      }
+      .m-menu-btn img {
+        width: 22px;
+        height: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="m-header">
+    <a class="logo" href="/3.PageExhibition/1.MainPage/Main.html">
+      <img src="/1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="BLOOM 로고" />
+      <span class="logo-text">
+        <strong class="main">TUVD</strong>
+        <span class="sub">27th Graduate Exhibition</span>
+      </span>
+    </a>
+    <button id="menuBtn" class="m-menu-btn" aria-label="메뉴 열기">
+      <img src="/1.Picture/Another/Menu.png" alt="메뉴" />
+    </button>
+  </header>
+
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <nav class="m-menu" id="mMenu">
+    <ul>
+        <li><a href="/3.PageExhibition/1.MainPage/Main.html">HOME</a></li>
+        <li><a href="/3.PageExhibition/2.AboutPage/About.html">ABOUT</a></li>
+        <li><a href="/3.PageExhibition/3.ProjectPage/Project.html">PROJECT</a></li>
+        <li><a href="/3.PageExhibition/4.DesignerPage/Designer.html">DESIGNER</a></li>
+        <li><a href="/3.PageExhibition/5.GuestBookPage/Guest.html">GUEST BOOK</a></li>
+    </ul>
+  </nav>
+
+  <script>
+    const btn = document.getElementById("menuBtn");
+    const menu = document.getElementById("mMenu");
+    const overlay = document.getElementById("menuOverlay");
+
+    btn.addEventListener("click", () => {
+      document.body.classList.toggle("nav-open");
+    });
+
+    overlay.addEventListener("click", () => {
+      document.body.classList.remove("nav-open");
+    });
+
+    menu.addEventListener("click", (e) => {
+      if (e.target.closest("a")) {
+        document.body.classList.remove("nav-open");
+      }
+    });
+  </script>
+</body>
+</html>

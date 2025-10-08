@@ -139,8 +139,8 @@
     }
 
     /* 초성 네비: 완전 둥근 pill, 활성 표시 */
-    .m-alpha-nav{ position:sticky; top:64px; z-index:5; display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:8px 12px 10px; margin:0 auto 8px; background:rgba(0,0,0,.65); backdrop-filter:blur(4px); border-bottom:1px solid rgba(255,255,255,.08); }
-    .m-alpha-nav a{ width:30px; height:30px; border-radius:9999px; display:inline-flex; align-items:center; justify-content:center; font-family: var(--font-body); font-weight:800; font-size:13px; color:#cfcfcf; text-decoration:none; border:1px solid rgba(255,255,255,.22); transition: background .2s ease, color .2s ease, border-color .2s ease; }
+    .m-alpha-nav{ position:sticky; top:64px; z-index:5; display:flex; flex-wrap:wrap; justify-content:center; gap:6px; padding:6px 10px 8px; margin:0 auto 8px; background:rgba(0,0,0,.65); backdrop-filter:blur(4px); border-bottom:1px solid rgba(255,255,255,.08); }
+    .m-alpha-nav a{ width:26px; height:26px; border-radius:9999px; display:inline-flex; align-items:center; justify-content:center; font-family: var(--font-body); font-weight:800; font-size:12px; color:#cfcfcf; text-decoration:none; border:1px solid rgba(255,255,255,.22); transition: background .2s ease, color .2s ease, border-color .2s ease; }
     .m-alpha-nav a:hover{ color:#fff; border-color:#888; }
     .m-alpha-nav a.is-active{ background:#ff3b3b; color:#000; border-color:transparent; }
 
@@ -592,24 +592,25 @@ TEAM_ORDER.forEach((t, i)=>{
 </script>
 
 <script>
-// [라우팅] 화면 너비 기준 페이지 전환 // (>=640: Main.html, <=639: Main-mobile.html)
+// [라우팅] 화면 너비 기준 페이지 전환
+// 모바일(≤639px): Design-mobile.html 유지
+// 데스크톱(≥640px): Designer.html 로 이동
 (function responsiveRoute(){
-  const DESKTOP_BASE = 'Main';
-  const MOBILE_BASE  = 'Main-mobile';
+  const DESKTOP_FILE = 'Designer.html';
+  const MOBILE_FILE  = 'Design-mobile.html';
 
-  function isOnBase(base){
+  function isOnFile(file){
     const p = location.pathname.toLowerCase().replace(/\/+$/, '');
-    const b = base.toLowerCase().replace(/\.html?$/, '');
+    const f = file.toLowerCase().replace(/\.html?$/, '');
     return (
-      p.endsWith('/'+b) ||
-      p.endsWith('/'+b+'.html') ||
-      p.endsWith('/'+b+'/') ||
-      p.endsWith('/'+b+'/index.html')
+      p.endsWith('/'+f) ||
+      p.endsWith('/'+f+'.html') ||
+      p.endsWith('/'+f+'/') ||
+      p.endsWith('/'+f+'/index.html')
     );
   }
-  function goToBase(base){
+  function goTo(file){
     const baseDir = location.pathname.replace(/[^/]*$/, '');
-    const file = base + '.html';
     location.replace(baseDir + file);
   }
 
@@ -619,7 +620,8 @@ TEAM_ORDER.forEach((t, i)=>{
     if (ticking) return; ticking = true;
     requestAnimationFrame(() => {
       const isMobile = mq.matches;
-      if (!isMobile && isOnBase(MOBILE_BASE)) goToBase(DESKTOP_BASE);
+      // 이 페이지는 모바일용이므로, 데스크톱 해상도에서만 데스크톱 파일로 전환한다.
+      if (!isMobile && isOnFile(MOBILE_FILE)) goTo(DESKTOP_FILE);
       ticking = false;
     });
   }

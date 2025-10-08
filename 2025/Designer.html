@@ -1085,5 +1085,48 @@ window.addEventListener('load', function initScrollTopBtn(){
   });
 });
 </script>
+<script>
+// 화면 크기에 따라 페이지 라우팅
+// - 작아지면: /2025/Design-mobile.html 로 이동
+// - 넓어지면: /2025/Designer.html 로 복귀
+(function responsiveRoute(){
+  var MOBILE_MAX = 639; // px
+
+  function buildTarget(parts, file){
+    var idx = parts.indexOf('2025');
+    var target;
+    if (idx !== -1){
+      target = '/' + parts.slice(0, idx+1).join('/') + '/' + file;
+    } else {
+      target = '/2025/' + file;
+    }
+    return target.replace(/\/{2,}/g, '/');
+  }
+
+  function route(){
+    try{
+      var path = location.pathname;
+      var parts = path.split('/').filter(Boolean);
+      var isMobilePage = /\/2025\/Design-mobile\.html$/i.test(path);
+      var isDesktopPage = /\/2025\/Designer\.html$/i.test(path);
+
+      if (window.innerWidth <= MOBILE_MAX){
+        if (!isMobilePage){
+          var mobileTarget = buildTarget(parts, 'Design-mobile.html');
+          location.replace(mobileTarget);
+        }
+      } else { // >= 640px
+        if (isMobilePage){
+          var desktopTarget = buildTarget(parts, 'Designer.html');
+          location.replace(desktopTarget);
+        }
+      }
+    }catch(e){ /* no-op */ }
+  }
+
+  window.addEventListener('load', route);
+  var t; window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(route, 120); });
+})();
+</script>
 </body>
 </html>

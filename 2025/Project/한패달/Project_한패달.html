@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>한패달 | TUVD 27th Graduate Exhibition</title>
+  <!-- ✅ 공용 스타일 연결: 상단 네비 / 푸터 / 커서 (모든 페이지 동일 규격) -->
+  <!-- TIP: 이 페이지는 2025/Project/한패달/ 경로에 있으므로, 공용 요소는 ../../../ 로 올라갑니다. -->
+  <link rel="stylesheet" href="../../../2.PageElement/Tob_nav/Tob_nav.css" />
+  <link rel="stylesheet" href="../../../2.PageElement/Footer/Footer.css" />
+  <link rel="stylesheet" href="../../../2.PageElement/Cursor/cursor.css" />
+  
+  <style>
+    /* =============================================================
+       전역 스타일 가이드
+       - 다크 테마(검정 배경), 기본 폰트/컬러 변수 정의
+       - 공용 네비/푸터와 톤을 맞추는 기준 스타일입니다.
+       ============================================================= */
+    /* 장미 커서 기본 스타일( .cursor-dot / .rose-cursor 공통 ) */
+     .cursor-dot, .rose-cursor, [data-rose-cursor]{
+      position: fixed;
+      left: -100px; top: -100px;         /* offscreen until first move */
+      transform: translate3d(-9999px, -9999px, 0); /* moved offscreen until we know size */
+      transform-origin: 50% 50%; /* center by default; JS will set exact px hotspot */
+      pointer-events: none;               /* never block clicks */
+      z-index: 99999;                     /* above everything */
+      will-change: transform;             /* GPU hint for smoothness */
+    }
+    
+    :root {
+      --bg: #000;
+      --text: #fff;
+      --muted: #aaa;
+      --muted-2: #ccc;
+      --panel: #111;
+      --line: #222;
+      --red: #ff2b2b;
+    }
+    /* === Cursor fallback/override (keep system cursor visible) === */
+    html, body { cursor: auto !important; }
+    /* Do not hide the system cursor; custom cursor will render on top when available */
+
+    .won {
+      color: white;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Layout containers */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .profile-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--bg);
+      color: var(--text);
+      flex-wrap: wrap;
+      padding: 64px 1.5rem 40px;
+      min-height: auto;
+      box-sizing: border-box;
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .profile-right {
+      flex: 1 1 520px;
+      max-width: 560px;
+      padding: 0 2rem;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: auto;
+      order: 1; /* 텍스트(프로필 정보) 왼쪽 */
+      margin-right: auto;
+    }
+
+    .profile-left {
+      flex: 1 1 420px;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Profile card */
+    .profile-card {
+      order: 2;
+      flex: 0 0 auto;
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-left: auto;
+      box-shadow: none !important;
+      max-width: 420px; /* ↑ enlarge container width */
+    }
+    .profile-card:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 2.8rem;
+      color: var(--red);
+      margin: 0;
+      line-height: 1.1;
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+    h1::after {
+      content: "";
+      display: block;
+      height: 1px;                          /* 얇은 선 */
+      background-color: rgba(255,255,255,0.22); /* 효과 없이 라인만 */
+      margin-top: 6px;
+      /* 제목보다 훨씬 오른쪽으로 길게 (뷰포트 기준 확장) */
+      width: clamp(100%, calc(100% + 80vw), 620px);
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      color: var(--muted);
+      margin: 6px 0 14px;
+      font-weight: 500;
+    }
+
+    .contact-info {
+      font-size: 0.92rem;
+      color: var(--muted-2);
+      margin: 0.25rem 0 0.25rem;
+    }
+
+    .email {
+      font-size: 1rem;
+      margin: 6px 0 10px;
+      color: var(--text);
+    }
+
+    .hashtags {
+      display: inline-block;
+      padding: 6px 14px;
+      margin-top: 8px;
+      background: rgba(255, 59, 59, 0.12);
+      border: 1px solid rgba(255, 59, 59, 0.45);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      border-radius: 999px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(255, 59, 59, 0.15);
+      transition: all 0.25s ease;
+    }
+    .hashtags:hover {
+      background: rgba(255, 59, 59, 0.22);
+      box-shadow: 0 0 14px rgba(255, 59, 59, 0.3);
+    }
+
+    .message {
+      font-size: 1.05rem;
+      color: #eaeaea;
+      line-height: 1.8;
+      white-space: pre-line;
+      margin-top: 0;
+    }
+
+    .profile-role {
+      color: var(--text);
+      font-size: 0.95rem;
+      margin: 12px 0 0;
+      background-color: var(--panel);
+      padding: 6px 12px;
+      border-radius: 999px;
+      display: inline-block;
+      border: 1px solid var(--red);
+      letter-spacing: 0.6px;
+    }
+
+    /* Images */
+    .profile-img {
+      width: 100%;
+      max-width: 420px;     /* ↑ bigger */
+      height: 560px;        /* ↑ taller */
+      object-fit: cover;    
+      border-radius: 14px;
+      border: none;         /* remove surrounding line */
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    }
+
+    .image-gallery {
+      width: 100%;
+      padding: 48px 0 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .image-gallery img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      height: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .scroll-visible { 
+      margin-top: 80px; 
+      margin-bottom: 100px;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      color: var(--red);
+      cursor: pointer;
+    }
+
+
+    @media (max-width: 900px) {
+      .profile-container { padding: 56px 1rem 32px; }
+      .profile-right { padding: 0; order: 1; max-width: none; margin-right: 0; }
+      .profile-card { order: 2; margin-left: 0; }
+      h1 { font-size: 2.1rem; }
+      h2 { font-size: 0.98rem; }
+      .profile-img { max-width: 300px; height: 360px; }
+      .scroll-visible { 
+        margin-top: 40px; 
+        margin-bottom: 60px;
+      }
+    }
+
+    /* 상단 네비 컨테이너: sticky + 부드러운 이동 애니메이션 */
+    #nav-placeholder{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: transform 0.6s ease-in-out; /* 시간 늘리고 부드러운 곡선 적용 */
+      will-change: transform;
+    }
+
+    /* 상단바 비주얼: 반투명 블랙 + blur 6px + 하단 1px 보더(고정 규격) */
+    #nav-placeholder header{
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      box-sizing: border-box;
+      width: 100%;
+      height: 90px;
+      padding-left: 59px;
+      padding-right: 60px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+      transition: transform .38s cubic-bezier(.22,.61,.36,1), box-shadow .24s ease;
+    }
+
+    /* 로고 크기 조정 */
+    #nav-placeholder header .logo img{
+      max-height: 38px;
+      transform: translateY(2px);
+    }
+
+    #nav-placeholder .logo .logo-main{ font-size: 15px !important; }
+    #nav-placeholder .logo .logo-sub { font-size: 15px !important; }
+
+
+    /* 네비 링크 타이포그래피: Pretendard 14/700/letter-spacing .2px */
+    #nav-placeholder header a{
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      text-decoration: none;
+      color: #fff;
+      padding: 8px 0;
+    }
+    
+    #nav-placeholder header a:hover{ color:#ff3b3b; }
+    #nav-placeholder header a.is-active{ color:#ff4d4d; font-weight:700; }
+
+    #nav-placeholder nav ul{
+      display: flex;
+      align-items: center;       /* 세로 가운데 정렬 */
+      gap: 47px;                 /* Project 페이지 간격과 동일하게 */
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 스크롤 시 네비게이션 숨김 */
+    body.nav-hidden #nav-placeholder,
+    body.nav-hidden #nav-placeholder > header {
+      transform: translateY(-100%) !important;
+    }
+    /* 헤더 높이만큼 공간 확보(콘텐츠 가림 방지) */
+    .nav-spacer { height:72px; }
+    .hero { display:block; height:auto; }
+    /* ===================== Layout Polish (Overrides) ===================== */
+    /* 전체 최대폭과 여백 톤 정리 */
+    :root { --container: 1200px; }
+
+    /* 프로필 영역: 비주얼 정리 + 간격 조정 */
+    .profile-container{
+      max-width: var(--container);
+      padding: 96px 2rem 72px;     /* 하단 여백 살짝 증가 */
+      gap: 32px;                   /* 요소 간 간격 확대 */
+    }
+    .profile-right{
+      max-width: 620px;            /* 본문 가독 폭 */
+      padding: 0 1rem;             /* 좌우 패딩 살짝만 */
+    }
+
+    /* 타이포 볼드/행간/색감 보정 */
+    h1{ letter-spacing: .6px; }
+    h2{ color: #cfcfcf; margin-top: 8px; }
+    .message{ color:#e6e6e6; line-height:1.9; }
+    .contact-info{ color:#bdbdbd; }
+
+    /* 제목 아래에 해시태그가 바로 오도록 세로 스택 */
+.text-content{
+  display: flex;
+  flex-direction: column;    /* 가로 → 세로 */
+  align-items: flex-start;   /* 왼쪽 정렬 */
+  gap: 4px;                 /* 요소 간 간격 */
+}
+
+/* h1의 밑줄(::after) 다음에 적당한 여백 */
+.text-content h1 + .hashtags{
+  margin-top: 0; /* h1 오른쪽에 붙게 위 여백 제거 */
+}
+
+.text-content .hashtags{ margin: 0; }
+
+/* 제목과 해시태그를 한 줄에 (오른쪽 배치) */
+.name-row{
+  display: inline-flex;
+  align-items: baseline;   /* 글줄 기준선 맞춤 */
+  gap: 10px;               /* 제목-해시태그 간격 */
+  flex-wrap: wrap;         /* 공간 부족 시 줄바꿈 허용 */
+}
+.name-row .hashtags{
+  display: inline-flex;
+  margin: 0;
+  padding: 4px 14px;       /* 살짝 컴팩트 */
+  font-size: 0.9rem;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+/* ===== 제목 오른쪽 장미 마크 ===== */
+.name-wrap{ position: relative; }
+
+.rose-mark{
+  position: absolute;
+  right: -343px;         /* 화면 오른쪽 여백 */
+  top: 50%;            /* 제목 줄과 수직 정렬 */
+  transform: translateY(-60%);
+  width: 68px;         /* 크기 (필요시 60~72px 조절) */
+  height: auto;
+  opacity: .96;
+  pointer-events: none; /* 클릭 방해 X */
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,.25));
+}
+
+/* 모바일에서 살짝 축소 */
+@media (max-width: 900px){
+  .rose-mark{ right: 1rem; width: 54px; transform: translateY(-55%); }
+}
+
+    /* 수상/경력 블록 톤 다운 + 간격 */
+    .won{ opacity:.9; line-height:1.7; }
+
+    /* 프로필 카드: no frame, enlarged width */
+    .profile-card{
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      transition: none;
+      box-shadow: none !important;
+      max-width: 420px; /* keep in sync with above */
+    }
+    .profile-card:hover{
+      transform: none;
+      box-shadow: none;
+      border-color: transparent;
+    }
+
+    /* 프로필 이미지: 모서리 더 둥글게 */
+    .profile-img{ border-radius:16px; }
+
+    /* 히어로 이미지: 중앙 정렬 + 라운드 + 그림자 */
+    .hero{
+      width: min(var(--container), 92%);
+      margin: 16px auto 0;         /* 상단 간격 조정 */
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 36px rgba(0,0,0,.45);
+      display:block;
+    }
+  /* 맨 위로 버튼: 항상 최상단 표시 */
+      
+    /* 어두운 테마에 맞게 카드형 요소 색상 보정(혹시 사용 시) */
+    .project-card{
+      background: #0e0e0e;
+      border: 1px solid #222;
+      box-shadow: 0 10px 28px rgba(0,0,0,.28);
+    }
+    .project-card h3{ color:#e9e9e9; }
+    .project-card p{ color:#b8b8b8; }
+
+    /* 반응형: 모바일에서 간격과 비율 재조정 */
+    @media (max-width: 900px){
+      .profile-container{ padding: 72px 1.25rem 52px; gap:24px; }
+      .profile-right{ max-width:none; }
+      .hero{ width: 94%; margin-top: 10px; }
+    }
+    /* ================================================================== */
+    @media (max-width: 900px) { .nav-spacer { height: 56px; } }
+
+    .main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .project-card {
+      background: #f5f5f5;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 10px;
+    }
+    .project-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .project-card h3 {
+      margin: 10px 0 5px;
+      font-size: 1.1rem;
+      color: #333;
+    }
+    .project-card p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* ===== Horizontal marquee (auto-scroll left, reappear from right) ===== */
+    .marquee {
+      width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      padding: 10px 0;
+      /* nav-spacer will handle offset */
+      margin-top: 0;
+      opacity: 0;
+      filter: blur(6px);
+      transform: translateY(10px);
+      transition: opacity .4s ease, filter .4s ease, transform .4s ease;
+      pointer-events: none;
+    }
+
+    .marquee.is-visible {
+      opacity: 1;
+      filter: none;
+      transform: none;
+      pointer-events: auto;
+    }
+    .marquee-track {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      width: max-content;
+      animation: marquee-left 22s linear infinite;
+    }
+    .marquee-item {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+    }
+    .marquee-item img {
+      width: 140px;
+      height: auto;
+      border-radius: 6px;
+      display: block;
+    }
+    .marquee:hover .marquee-track { animation-play-state: paused; }
+
+    @keyframes marquee-left {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-track { animation: none; }
+    }
+
+    /* spacing helpers */
+    #footer-placeholder { margin-top: 40px; }
+
+    @media (max-width: 900px) {
+    }
+
+     /* 맨 위로 버튼: 항상 최상단 표시 */
+     .scroll-btn{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:99999; /* 맨 위 */
+      display:none;
+      align-items:center;
+      justify-content:center;
+      width:44px; height:44px;
+      border-radius:30px;
+      background:#000;
+      color:#fff; font-weight:900; letter-spacing:.3px;
+      box-shadow:0 6px 18px rgba(0,0,0,.35);
+      cursor:pointer;
+    }
+    .scroll-btn:hover{ color:#ff3b3b; box-shadow:0 6px 22px rgba(255,59,59,.25); }
+
+  /* === Flip card (front/back) === */
+  .flip-container{
+    perspective: 1100px;
+    display: inline-block;
+  }
+  .flipper{
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform .9s cubic-bezier(.22,.61,.36,1);
+  }
+  .flip-container:hover .flipper{ transform: rotateY(180deg); }
+  .flip-container.is-flipped .flipper{ transform: rotateY(180deg); }
+
+  .front, .back{
+    position: relative;
+  }
+  .front img, .back img{
+    display:block;
+    width:100%;
+    height:auto;
+    border-radius:16px;
+  }
+  .front{ backface-visibility: hidden; transform: rotateY(0deg); }
+  .back{ backface-visibility: hidden; transform: rotateY(180deg); position:absolute; inset:0; }
+
+  /* --- Back image vertical trim (keep width, reduce perceived height) --- */
+  /* Keep the card height controlled by the front image; mask the back image */
+  .back{ overflow: hidden; }
+
+  /* Front keeps the original height (acts as container height) */
+  .front .profile-img{ height: 560px; object-fit: cover; }
+
+  /* Back image: shorter height, centered vertically within the same frame */
+  .back .profile-img{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    height: 520px;       /* enlarged but a bit shorter than front */
+    width: 100%;
+    object-fit: cover;
+  }
+
+  /* Mobile tuning: match the larger front/back heights */
+  @media (max-width: 900px){
+    .front .profile-img{ height: 480px; }
+    .back  .profile-img{ height: 440px; }
+  }
+
+  /* one-time spin on first view */
+  @keyframes spin360{
+    from{ transform: rotateY(0deg); }
+    to  { transform: rotateY(360deg); }
+  }
+  .flipper.spin-once{
+    animation: spin360 1.6s ease-out .2s 1 forwards;
+  }
+
+  /* touch helpers */
+  @media (hover:none){
+    .flip-container:hover .flipper{ transform:none; } /* ignore hover on touch */
+  }
+
+  /* respect reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .flipper{ transition:none; }
+    .flipper.spin-once{ animation:none; }
+  }
+  </style>
+</head>
+
+
+<body>
+  <!-- 상단 네비게이션 주입 자리 (fetch로 Tob_nav.html 삽입) -->
+  <div id="nav-placeholder"></div>
+  <!-- 헤더 높이만큼 빈 공간 확보 (콘텐츠 가림 방지) -->
+  <div class="nav-spacer"></div>
+  <div id="cursor-placeholder"></div>
+
+  <!-- 프로필(텍스트/태그/수상내역) + 프로필 이미지 카드 -->
+  <div class="profile-container">
+    <div class="profile-right">
+      <div class="text-content">
+        <div class="name-wrap">
+          <div class="name-row">
+            <h1>吃不胖</h1>
+            <div class="hashtags"># 브랜딩</div>
+            <div class="hashtags"># 캐릭터</div>
+          </div>
+          <!-- 오른쪽 장미 마크 -->
+          <img
+            class="rose-mark"
+            src="../../../1.Picture/1.%2027th%20Graduation/BLOOM_ROSE/BLOOM_ROSE_RIGHT.png"
+            alt="장미 마크"
+            onerror="this.onerror=null; this.src='../../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png';"
+          />
+        </div>
+        <p class="message">
+          건강을 전하는 푸드 브랜드, 吃不胖
+
+          캐릭터 디자인 콘셉트
+          "배부르지만 살이 찌지 않는" 캐릭터의 주요 디자인 요소로 브로콜리와 당근을 선택했다.
+          브로콜리와 당근은 모두 저칼로리 식품이면서 식이섬유가 풍부해 포만감을 오래 유지시키고 장 운동을 원활하게 돕는다. 이런특성은 '살이 찌지 않는' 캐릭터의 핵심 콘셉트와 잘 맞아떨어진다.
+          주황색과 초록색은 고전적인 보색 관계로 강렬한 시각적 대비를 만들어낸다.덕분에 여러 브랜드 속에서도 눈에 잘 띄고 쉽게 기억된다. 또한 생동감 넘치는 색 조합은 '마음껏 먹는 즐거움'을 
+          효과적으로 전달한다.
+        </p>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <a class="flip-link" href="../../../2025/Designer/한패달/Designer_한패달.html" aria-label="디자이너 페이지로 이동">
+        <div class="flip-container" id="PEIDAFlip">
+          <div class="flipper">
+            <div class="front">
+              <img class="profile-img" src="../../../1.Picture/2.%20Graduate/Graduate_Logo/HAN PEIDA.jpg" alt="한패달 프로필 사진" />
+            </div>
+            <div class="back">
+              <img class="profile-img" src="/1.Picture/1. 27th Graduation/Profile/HAN PEIDA.jpeg" alt="한패달 프로필 뒷면" />
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>   
+  </div>
+   
+
+ <!-- 메인 히어로 이미지: 동일 폴더 참조('./'), '->'는 '%3E'로 인코딩 -->
+ <img class="hero" src="./1-100.jpg" alt="메인1">
+ <img class="hero" src="./2-100.jpg" alt="메인2">
+ <img class="hero" src="./3-100.jpg" alt="메인3">
+ <img class="hero" src="./4-100.jpg" alt="메인4">
+
+
+  
+   <!-- Scroll to Top Button -->
+   <button onclick="scrollToTop()" id="scrollTopBtn" class="scroll-btn">▲</button>
+   
+   <!-- End of profile-container -->
+   <div id="footer-placeholder"></div>
+  <script>
+  // [헤더/공용 컴포넌트 로더]
+  // - 스크롤 방향에 따라 헤더를 숨김/표시
+  // - 상단 네비/푸터/커서 HTML을 fetch로 주입하고, 경로를 현재 페이지 깊이에 맞춰 정규화합니다.
+  function initHeaderHideOnScroll() {
+    const root = document.getElementById('nav-placeholder');
+    if (!root) return;
+    const header = root.querySelector('.tob-nav') || root.querySelector('header');
+    if (!header) return;
+
+    let lastY = window.pageYOffset || document.documentElement.scrollTop;
+    const threshold = 100; // start after 100px
+    let ticking = false;
+
+    const onScroll = () => {
+      const y = window.pageYOffset || document.documentElement.scrollTop;
+      if (y > lastY && y > threshold) {
+        header.classList.add('is-hidden');
+      } else {
+        header.classList.remove('is-hidden');
+      }
+      lastY = y <= 0 ? 0 : y;
+      ticking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(onScroll);
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+  // 공용 네비 HTML 주입 (현재 파일 기준 3단계 상위 경로)
+  fetch('../../../2.PageElement/Tob_nav/Tob_nav.html')
+    .then(res => res.text())
+    .then(html => {
+      const root = document.getElementById('nav-placeholder');
+      if (!root) return;
+      root.innerHTML = html;
+
+      const injectedHeader = root.querySelector('header');
+      if (injectedHeader && !injectedHeader.classList.contains('tob-nav')) {
+        injectedHeader.classList.add('tob-nav');
+      }
+
+      // 로고 경로(상대경로) — 폴백 포함
+      const logoImg = root.querySelector('#tuvd-logo, .tob-nav__logo img, .logo img');
+      if (logoImg) {
+        logoImg.src = '../../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png';
+        logoImg.alt = '장미로고';
+        logoImg.onerror = function(){ this.onerror=null; this.src = '../../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png'; };
+      }
+
+      // Normalize any paths inside injected fragment
+      root.querySelectorAll('img[src]').forEach(img => {
+        const s = img.getAttribute('src') || '';
+        const normalized = s
+          .replace(/^(\.\.\/){1,3}1\.Picture\//, '/1.Picture/')
+          .replace(/^(\.\.\/){1,3}2\.PageElement\//, '/2.PageElement/')
+          .replace(/^\/Before_Work3\//, '/');
+        if (normalized !== s) img.setAttribute('src', normalized);
+      });
+
+      // Normalize nav links to this depth
+      const map = {
+        about: '../../../2025/About.html',
+        project: '../../../2025/Project.html',
+        designer: '../../../2025/Designer.html',
+        guest: '../../../2025/Guest.html',
+        gallery: '../../../2025/Gallery.html',
+        home: '../../../2025/Main.html'
+      };
+      root.querySelectorAll('a[href]').forEach(a => {
+        const t = (a.textContent || '').toLowerCase();
+        const h = a.getAttribute('href') || '';
+        if (/about/i.test(t) || /about/i.test(h)) a.href = map.about;
+        else if (/project/i.test(t) || /project/i.test(h)) a.href = map.project;
+        else if (/designer/i.test(t) || /designer/i.test(h)) a.href = map.designer;
+        else if (/guest.?book/i.test(t) || /guest.?book/i.test(h) || /guest/i.test(t)) a.href = map.guest;
+        else if (/gallery/i.test(t) || /gallery/i.test(h)) a.href = map.gallery;
+        else if (/home|main|index/i.test(t) || /mainPage|home|index/i.test(h)) a.href = map.home;
+      });
+
+      initHeaderHideOnScroll();
+
+      // Dynamically size spacer to exact header height
+      const spacer = document.querySelector('.nav-spacer');
+      const header = root.querySelector('.tob-nav') || root.querySelector('header');
+      if (spacer && header) {
+        const setSpacerHeight = () => { spacer.style.height = (header.offsetHeight - 8) + 'px'; };
+        setSpacerHeight();
+        window.addEventListener('resize', setSpacerHeight);
+        setTimeout(setSpacerHeight, 100);
+      }
+    });
+
+  // 공용 푸터 HTML 주입
+  fetch('../../../2.PageElement/Footer/Footer.html')
+    .then(res => res.text())
+    .then(html => {
+      const foot = document.getElementById('footer-placeholder');
+      if (!foot) return;
+      foot.innerHTML = html;
+      foot.querySelectorAll('img[src]').forEach(img => {
+        const s = img.getAttribute('src') || '';
+        const normalized = s
+          .replace(/^(\.\.\/){1,3}1\.Picture\//, '/1.Picture/')
+          .replace(/^(\.\.\/){1,3}2\.PageElement\//, '/2.PageElement/')
+          .replace(/^\/Before_Work3\//, '/');
+        if (normalized !== s) img.setAttribute('src', normalized);
+      });
+    });
+
+  // [커서] 장미 커서 로드 및 즉시 추종(바운스 없음) 적용
+  (function loadCursor(){
+    const root = document.getElementById('cursor-placeholder');
+    if (!root) return;
+
+    function initRoseCursor(){
+      const el = document.querySelector('#cursor-placeholder .cursor-dot, #cursor-placeholder .rose-cursor, #cursor-placeholder [data-rose-cursor]');
+      if (!el) return false;
+      if (el.dataset.bound === '1') return true;
+
+      // 기본 스타일
+      el.style.pointerEvents = 'none';
+      el.style.position = 'fixed';
+      el.style.zIndex = '99999';
+      el.style.willChange = 'transform, opacity';
+      el.style.left = '0px';
+      el.style.top  = '0px';
+
+      // 앵커/핫스팟(이미지 중앙 등)
+      const hotspotX = parseFloat(el.getAttribute('data-hotspot-x'));
+      const hotspotY = parseFloat(el.getAttribute('data-hotspot-y'));
+      let anchorX = parseFloat(el.getAttribute('data-anchor-x'));
+      let anchorY = parseFloat(el.getAttribute('data-anchor-y'));
+      if (!isFinite(anchorX)) anchorX = 0.5;
+      if (!isFinite(anchorY)) anchorY = 0.5;
+
+      const calXAttr = parseFloat(el.getAttribute('data-cal-x'));
+      const calYAttr = parseFloat(el.getAttribute('data-cal-y'));
+      const CALX = Number.isFinite(calXAttr) ? calXAttr : 0;
+      const CALY = Number.isFinite(calYAttr) ? calYAttr : 0;
+
+      let offX = 0, offY = 0;
+      const updateOffset = () => {
+        const r = el.getBoundingClientRect();
+        const w = r.width  || el.offsetWidth  || 0;
+        const h = r.height || el.offsetHeight || 0;
+        offX = isFinite(hotspotX) ? hotspotX : w * anchorX;
+        offY = isFinite(hotspotY) ? hotspotY : h * anchorY;
+        el.style.transformOrigin = `${offX}px ${offY}px`;
+      };
+      updateOffset();
+      try { new ResizeObserver(updateOffset).observe(el); } catch(_) {}
+
+      // 즉시 추종(바운스/흔들림 없음)
+      function moveTo(e){
+        const x = e.clientX; const y = e.clientY;
+        el.style.opacity = '1';
+        el.style.transform = `translate3d(${(x - offX + CALX)}px, ${(y - offY + CALY)}px, 0)`;
+      }
+      document.addEventListener('mousemove', moveTo, { passive:true });
+
+      // 시스템 설정에 따른 모션 축소도 동일한 즉시 추종 사용
+      try{
+        const prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReduce){ /* already immediate; nothing else to change */ }
+      }catch(_){ }
+
+      el.dataset.bound = '1';
+      return true;
+    }
+
+    // 프로젝트 페이지 경로 규칙 (3단계 상위)
+    fetch('../../../2.PageElement/Cursor/cursor.html', { cache: 'no-store' })
+      .then(res => res.text())
+      .then(html => {
+        root.innerHTML = html;
+        if (!initRoseCursor()){
+          const mo = new MutationObserver(() => { if (initRoseCursor()) mo.disconnect(); });
+          mo.observe(root, { childList: true, subtree: true });
+        }
+      })
+      .catch(err => console.error('Cursor load failed:', err));
+  })();
+ // 맨 위로 버튼 동작
+ document.addEventListener("DOMContentLoaded", function () {
+      const scrollBtn = document.getElementById("scrollTopBtn");
+      window.addEventListener("scroll", function () {
+        if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1) {
+          scrollBtn.style.display = "flex";
+        } else {
+          scrollBtn.style.display = "none";
+        }
+      });
+      // 스무스 스크롤로 최상단 이동 함수 노출
+      window.scrollToTop = function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });  
+      };
+    });
+
+    // [네비게이션] 스크롤 방향 감지 → 숨김/표시
+      (function bindHideNavOnScroll(){
+        const THRESH = 6;   // 조금 더 내려가야 반응 (불필요한 깜빡임 방지)
+        const TOPSAFE = 48;  // 상단에서는 좀 더 오래 보이게
+
+        let lastY = window.pageYOffset || 0;
+        let ticking = false;
+
+        function applyState(y, dy){
+          if (y <= TOPSAFE){
+            document.body.classList.remove('nav-hidden');
+            return;
+          }
+          if (Math.abs(dy) < THRESH) return;
+          if (dy > 0){
+            document.body.classList.add('nav-hidden');   // 아래로 → 숨김
+          }else{
+            document.body.classList.remove('nav-hidden'); // 위로 → 표시
+          }
+        }
+
+        function onScroll(){
+          const y = window.pageYOffset || 0;
+          const dy = y - lastY;
+          lastY = y;
+          if (!ticking){
+            ticking = true;
+            requestAnimationFrame(() => { applyState(y, dy); ticking = false; });
+          }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive:true });
+        ['wheel','touchmove','touchstart','keydown'].forEach(evt => {
+          window.addEventListener(evt, onScroll, { passive:true });
+        });
+
+        // 초기 상태
+        requestAnimationFrame(() => applyState(window.pageYOffset || 0, 0));
+      })();
+
+  // [마키 노출 제어]
+  (function(){
+    const triangle = document.getElementById('scroll-triangle');
+    const marquee = document.querySelector('.marquee');
+    if (!marquee) return;
+
+    // Fallback: if no triangle, show immediately
+    if (!('IntersectionObserver' in window) || !triangle) {
+      marquee.classList.add('is-visible');
+      return;
+    }
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          // Triangle is visible -> keep marquee hidden
+          marquee.classList.remove('is-visible');
+        } else {
+          // Triangle scrolled past -> show marquee
+          marquee.classList.add('is-visible');
+        }
+      });
+    }, { threshold: 0.01 });
+
+    obs.observe(triangle);
+  })();
+  // === Flip-card controller: spin once, support tap on touch & keyboard ===
+  (function(){
+    const card = document.getElementById('PEIDAFlip');
+    if (!card) return;
+
+    // one-time spin
+    const flipper = card.querySelector('.flipper');
+    if (flipper){
+      flipper.classList.add('spin-once');
+      flipper.addEventListener('animationend', ()=> flipper.classList.remove('spin-once'), { once:true });
+    }
+
+    // touch toggle (no hover on mobile)
+    let isTouch = matchMedia('(hover:none)').matches;
+    if (isTouch){
+      card.addEventListener('click', function(e){
+        // prevent immediate nav when user just wants to see the back; second tap will follow the link
+        const link = this.closest('a.flip-link');
+        if (!this.classList.contains('is-flipped')){
+          e.preventDefault();
+          this.classList.toggle('is-flipped');
+        }else{
+          // allow navigation
+        }
+      });
+    }
+
+    // keyboard accessibility: Space/Enter toggles flip (without leaving page)
+    const link = card.closest('a.flip-link');
+    if (link){
+      link.addEventListener('keydown', (e)=>{
+        if (e.code === 'Space'){
+          e.preventDefault();
+          card.classList.toggle('is-flipped');
+        }
+      });
+    }
+  })();
+  </script>
+  
+  <script>
+  window.addEventListener('resize', () => {
+    const width = window.innerWidth;
+    const current = window.location.pathname;
+    if (width <= 800 && !current.includes('Project-mobile_한패달.html')) {
+      window.location.href = '../../../2025/Project/한패달/Project-mobile_한패달.html';
+    } else if (width > 800 && current.includes('Project-mobile_한패달.html')) {
+      window.location.href = '../../../2025/Project/한패달/Project_한패달.html';
+    }
+  });
+
+  // 초기 로드 시 한 번만 체크
+  window.addEventListener('load', () => {
+    const width = window.innerWidth;
+    const current = window.location.pathname;
+    if (width <= 800 && !current.includes('Project-mobile_한패달.html')) {
+      window.location.href = '../../../2025/Project/한패달/Project-mobile_한패달.html';
+    }
+  });
+  </script>
+</body>
+</html>
+

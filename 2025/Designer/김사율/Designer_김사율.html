@@ -175,7 +175,7 @@
     .profile-right .message {
       text-align: left;
       position: relative;
-      top: -90px;           /* 메시지만 위로 올림 (권장 범위: -16 ~ -40px) */
+      top: -107px;           /* 메시지만 위로 올림 (권장 범위: -16 ~ -40px) */
       margin: 0 0 28px;
     }
 
@@ -193,15 +193,16 @@
     }
 
     .message {
-      font-size: 1.05rem;
-      color: #eaeaea;
-      line-height: 1.8;
-      white-space: pre-line;
-
-      font-weight: 600; 
-      font-size:40px; 
-      color: #e6e6e6; 
-      line-height:1.9; 
+      font-size: 40px;
+      line-height: 1.85;
+      font-weight: 700;
+      color: #e8e8e8;
+      letter-spacing: .1px;
+      word-break: keep-all;        /* 한글 단어 중간 줄바꿈 방지 */
+      overflow-wrap: break-word;   /* 긴 영문/이메일도 줄바꿈 */
+      white-space: pre-line;       /* 작성한 줄바꿈 유지 */
+      text-align: left;
+      text-rendering: optimizeLegibility;
     }
     
 
@@ -363,7 +364,7 @@
       gap: 10px;
       margin: 0 0 6px;      /* 위/아래 기본 간격만 */
       position: relative;    /* 국소 이동 */
-      top: -75px;            /* 이름 줄만 위로 올림 (필요시 -16 ~ -32px 조절) */
+      top: -80.9px;            /* 이름 줄만 위로 올림 (필요시 -16 ~ -32px 조절) */
       padding-bottom: 8px;   /* 밑줄과 이름 사이 여백 */
       position: relative;    /* ::after 기준 */
       padding-right: 80px; /* 우측 장식 이미지 자리 확보 */
@@ -828,7 +829,7 @@
           <img class="name-mark" src="/1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="장미 마크" />
         </div>
         <p class="message">
-          “디자인으로 전하고 싶은 마음, <br> 드디어 형태가 되다.”
+          "디자인으로 전하고 싶은 마음, <br> 드디어 형태가 되다."
         </p>
         <div class="role-line">
           <div class="hashtags"># 섬세</div>

@@ -31,53 +31,46 @@
 
 
     .name{
-      display:flex; 
-      align-items:flex-end; 
-      justify-content:center;         /* ⬅ 가운데 정렬 */
-      gap:8px; 
-      padding-bottom:6px;
+      display:flex;
+      flex-direction: column;        /* ⬅ 세로로 쌓기 */
+      align-items: center;           /* ⬅ 가운데 정렬 */
+      justify-content: center;
+      gap:6px;
+      padding-bottom:8px;
       border-bottom:1px solid rgba(255,255,255,.18);
       margin-top: 20px;
-      padding-left: 0;                 /* ⬅ 왼쪽 여백 제거 */
-      text-align:center;               /* ⬅ 텍스트 가운데 */
+      padding-left: 0;               /* 좌측 여백 제거 */
+      text-align:center;             /* 텍스트 가운데 */
       width:100%;
     }
+    .name > *{ align-self: center; }
     .name h1{
       margin:0;
       font-size:24px;
       line-height:1.12;
-      color:#c0392b;                 /* 더 선명한 레드 */
+      color:#e63d2b;                 /* 더 선명한 레드 */
       font-weight:800;               /* 제목 강조 */
       letter-spacing:.3px;
-      margin-left: 0;                /* 이미지 왼쪽 라인에 정확히 맞춤 */
-      text-align:left;
+      margin-left: 0;                /* 왼쪽 여백 없음 */
+      text-align:center;             /* ⬅ 중앙 정렬 */
       text-rendering:optimizeLegibility;
       -webkit-font-smoothing:antialiased;
+      align-self:center;
     }
     .name h2{
-      margin:0 0 2px 0;
+      margin:6px 0 0 0;
       font-size:11px;
       color:#9b9b9b;
       font-weight:700;
-      letter-spacing:.2px}
-
-
-    /* Email pill next to name */
-    .name{
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;          /* ⬅ 가운데 정렬 */
-      gap:8px;
-      padding-bottom:6px;
-      border-bottom:1px solid rgba(255,255,255,.18);
-      margin-top: 20px;
-      padding-left: 0;                  /* ⬅ 왼쪽 여백 제거 */
-      text-align:center;                /* ⬅ 텍스트 가운데 */
-      width:100%;
+      letter-spacing:.2px;
+      text-align:center;
     }
 
+    /* Email pill next to name */
+
     .name .email-pill{
-      margin-left: 8px;
+      margin-left: 0;            /* ⬅ 세로 레이아웃: 좌측 여백 제거 */
+      margin-top: 6px;           /* ⬅ 이름 아래 살짝 간격 */
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.22);
@@ -88,6 +81,7 @@
       font-weight: 700;
       letter-spacing: .2px;
       white-space: nowrap;
+      align-self: center;
     }
     @media (min-width: 480px){
       .name .email-pill{ font-size: 12px; }
@@ -97,6 +91,7 @@
       white-space: normal;              /* ⬅ 줄바꿈 허용 */
       overflow-x: visible;              /* ⬅ 가로 스크롤 제거 */
     }
+    
     .tagline{
       margin:6px 0 8px 0; 
       align-items: center;
@@ -364,7 +359,7 @@
 
     footer{
       position:static;                 /* 페이지 하단 정렬 (콘텐츠를 덮지 않음) */
-      margin-top:auto;                 /* 콘텐츠가 짧으면 아래로 밀기 */
+      margin-top:100px;                 /* 콘텐츠가 짧으면 아래로 밀기 */
       width:100%;
       background:#000;
       color:#f3f3f3;
@@ -422,7 +417,7 @@
               base = base
                 .replace(/^index$|^home$/, 'main')
                 .replace(/^projects?$/, 'project')
-                .replace(/^designs?$/, 'design')
+                .replace(/^design(?:er)?s?$/, 'design')  // accept design, designs, designer, designers
                 .replace(/^guests?$/, 'guest');
 
               function toMobile(name){
@@ -432,7 +427,6 @@
                   case 'design':  return '/2025/Design-mobile.html';
                   case 'about':   return '/2025/About-mobile.html';
                   case 'guest':   return '/2025/Guest-mobile.html';
-                  case 'gallery': return '/2025/Gallery-mobile.html';
                   default:        return null;
                 }
               }
@@ -489,7 +483,7 @@
             </a>
             <figcaption class="message">
               <div class="message-scroll">
-                이걸 준비하면서 많이 힘들고 어려운 부분도 있었지만 <Br>
+                이걸 준비하면서 많이 힘들고 어려운 부분도 있었지만 
                 이 과정을 통해서 더욱 성장할 수 있어 기쁨니다.
               </div>
             </figcaption>

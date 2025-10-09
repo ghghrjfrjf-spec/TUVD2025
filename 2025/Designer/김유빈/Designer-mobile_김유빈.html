@@ -29,53 +29,45 @@
 
 
     .name{
-      display:flex; 
-      align-items:flex-end; 
-      justify-content:center;         /* ⬅ 가운데 정렬 */
-      gap:8px; 
-      padding-bottom:6px;
+      display:flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap:6px;
+      padding-bottom:8px;
       border-bottom:1px solid rgba(255,255,255,.18);
       margin-top: 20px;
-      padding-left: 0;                 /* ⬅ 왼쪽 여백 제거 */
-      text-align:center;               /* ⬅ 텍스트 가운데 */
+      padding-left: 0;
+      text-align:center;
       width:100%;
     }
     .name h1{
       margin:0;
       font-size:24px;
       line-height:1.12;
-      color:#c0392b;                 /* 더 선명한 레드 */
-      font-weight:800;               /* 제목 강조 */
+      color:#e63d2b;
+      font-weight:800;
       letter-spacing:.3px;
-      margin-left: 0;                /* 이미지 왼쪽 라인에 정확히 맞춤 */
-      text-align:left;
+      text-align:center;
+      align-self:center;
       text-rendering:optimizeLegibility;
       -webkit-font-smoothing:antialiased;
     }
     .name h2{
-      margin:0 0 2px 0;
+      margin:6px 0 0 0;
       font-size:11px;
       color:#9b9b9b;
       font-weight:700;
-      letter-spacing:.2px}
+      letter-spacing:.2px;
+      text-align:center;
+    }
 
 
     /* Email pill next to name */
-    .name{
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;          /* ⬅ 가운데 정렬 */
-      gap:8px;
-      padding-bottom:6px;
-      border-bottom:1px solid rgba(255,255,255,.18);
-      margin-top: 20px;
-      padding-left: 0;                  /* ⬅ 왼쪽 여백 제거 */
-      text-align:center;                /* ⬅ 텍스트 가운데 */
-      width:100%;
-    }
 
     .name .email-pill{
-      margin-left: 8px;
+      margin-top: 6px;
+      align-self: center;
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.22);
@@ -371,7 +363,7 @@
 
     footer{
       position:static;                 /* 페이지 하단 정렬 (콘텐츠를 덮지 않음) */
-      margin-top:auto;                 /* 콘텐츠가 짧으면 아래로 밀기 */
+      margin-top:100px;                 /* 콘텐츠가 짧으면 아래로 밀기 */
       width:100%;
       background:#000;
       color:#f3f3f3;
@@ -429,6 +421,7 @@
               base = base
                 .replace(/^index$|^home$/, 'main')
                 .replace(/^projects?$/, 'project')
+                .replace(/^designer$/, 'design')
                 .replace(/^designs?$/, 'design')
                 .replace(/^guests?$/, 'guest');
 
@@ -437,6 +430,7 @@
                   case 'main':    return '/2025/Main-mobile.html';
                   case 'project': return '/2025/Project-mobile.html';
                   case 'design':  return '/2025/Design-mobile.html';
+                  case 'designer': return '/2025/Design-mobile.html';
                   case 'about':   return '/2025/About-mobile.html';
                   case 'guest':   return '/2025/Guest-mobile.html';
                   case 'gallery': return '/2025/Gallery-mobile.html';
@@ -483,7 +477,7 @@
           <header class="name">
             <h1>김유빈</h1>
             <h2>KIM YUBIN</h2>
-            <span class="email-pill" aria-label="이메일">E-mail • tych9343@naver.com</span>
+            <span class="email-pill" aria-label="이메일">E-mail • kkyb0415@naver.com</span>
           </header>
 
       
@@ -524,15 +518,15 @@
             <h3>Q&A</h3>
             <article class="qa">
               <div class="q">Q. 졸업하는 지금, ‘입학할 당시의 나’에게 한 마디 한다면?</div>
-              <div class="a">지금의 선택들이 완벽하지 않아도, 결국 너만의 길로 이어질 거야</div>
+              <div class="a">하나하나 즐기면서 배워가길</div>
             </article>
             <article class="qa">
               <div class="q">Q. 학과/전공 덕분에 바뀐 나의 모습은?</div>
-              <div class="a">전공을 배우며 아이디어를 단순히 떠올리는 데 그치지 않고,<br> 그것을 실제로 표현하고 구현할 수 있는 자신감을 얻게 되었다.</div>
+              <div class="a">디자인을 통해 소통하고 설득하는 법을 알게 되었다.</div>
             </article>
             <article class="qa">
               <div class="q">Q. 시험 기간 내가 주로 했던 현실도피는?</div>
-              <div class="a">드라마나 유튜브 보기</div>
+              <div class="a">여행 계획 세우기</div>
             </article>
           </section>
         </section>

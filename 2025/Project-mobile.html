@@ -13,9 +13,7 @@
       --side-pad: 16px;      /* safe side padding on all widths */
       --nav-h: 64px; /* canonical TUVD mobile header height */
       --font-title: 'Playfair Display', serif;                     /* 제목 전용 */
-      --font-body: 'Noto Sans KR', system-ui, -apple-system, 
-                  'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* 본문 전용 */
-    }
+     }
     
     /* Prevent any content from exceeding the viewport */
     main, .stage, .search-bar, .filter-scroll, .toolbar-count, .grid {
@@ -317,56 +315,61 @@ contain:content;
 
       // 현재 페이지(2025 디렉터리)의 절대 디렉터리 경로 (끝에 슬래시 포함)
       const __BASE_DIR__ = location.pathname.replace(/[^/]*$/, '');
-      // Helper: convert desktop personal-project href to mobile counterpart
-      function toMobileHref(href){
-        // Build a robust mapping to ensure navigation works even if desktop hrefs are odd or missing.
-        const MAP = {
-          '김사율': '/2025/Project/김사율/Project-mobile_김사율.html',
-          '김나연': __BASE_DIR__ + 'Project/김나연/Project-mobile_김나연.html',
-          '김유빈': __BASE_DIR__ + 'Project/김유빈/Project-mobile_김유빈.html',
-          '김민진': __BASE_DIR__ + 'Project/김민진/Project-mobile_김민진.html'
-        };
-
+      // Helper: convert desktop personal-project href to mobile counterpart (generic mapping)
+      function toMobileHref(href, fallbackName){
         try{
-          // 0) If href is empty or missing, return empty string (caller will apply a name-based fallback)
-          if (!href) return '';
-
-          // Keep original for suffix reuse
-          const raw = href;
-
-          // Try to parse safely
-          let abs;
-          try { abs = new URL(raw, location.href); }
-          catch(_){ return raw; }
-
-          // Extract basename to detect "Project_이름.html"
-          const base = abs.pathname.split('/').pop() || '';
-
-          // If it matches Project_이름.html → Project-mobile_이름.html
-          const m = base.match(/^Project_([^\/?#]+)\.html$/i);
-          if (m){
-            const name = m[1];
-            // If the name is one of our explicit mappings, return the mapped mobile path
-            if (MAP[name]) return MAP[name] + (abs.search || '') + (abs.hash || '');
-            // Generic rule
-            return abs.pathname.replace(/Project_([^\/?#]+)\.html$/i, 'Project-mobile_$1.html') + (abs.search || '') + (abs.hash || '');
-          }
-
-          // If the original href path already points into a person's folder, swap only the filename
-          if (/\/Project\/[^\/]+\/Project_[^\/]+\.html$/i.test(abs.pathname)){
-            return abs.pathname.replace(/Project_([^\/?#]+)\.html$/i, 'Project-mobile_$1.html') + (abs.search || '') + (abs.hash || '');
-          }
-
-          // As a last attempt, if the full path includes any of the mapped names, use the explicit mapping
-          for (const key in MAP){
-            if (decodeURIComponent(abs.pathname).includes(key)) {
-              return MAP[key] + (abs.search || '') + (abs.hash || '');
+          // If there is no href, build from the fallbackName (Korean name on the card)
+          if (!href) {
+            if (fallbackName) {
+              const baseDir = location.pathname.replace(/[^/]*$/, ''); // e.g., /2025/
+              const encoded = encodeURIComponent(fallbackName);
+              return `${baseDir}Project/${encoded}/Project-mobile_${encoded}.html`;
             }
+            return '';
           }
 
-          // Otherwise, return the original (caller will still attempt a name-based fallback)
-          return raw;
+          // Try to resolve into an absolute URL for robust parsing
+          let abs;
+          try { abs = new URL(href, location.href); }
+          catch(_) {
+            // If parsing fails, attempt a name-based fallback
+            if (fallbackName) {
+              const baseDir = location.pathname.replace(/[^/]*$/, '');
+              const encoded = encodeURIComponent(fallbackName);
+              return `${baseDir}Project/${encoded}/Project-mobile_${encoded}.html`;
+            }
+            return href;
+          }
+
+          // If filename matches Project_이름.html → swap to Project-mobile_이름.html
+          const base = abs.pathname.split('/').pop() || '';
+          const m = base.match(/^Project_([^\/?#]+)\.html$/i);
+          if (m) {
+            const namePart = m[1];
+            const pathMobile = abs.pathname.replace(/Project_([^\/?#]+)\.html$/i, 'Project-mobile_$1.html');
+            return pathMobile + (abs.search || '') + (abs.hash || '');
+          }
+
+          // If already in a personal Project folder, just replace the filename
+          if (/\/Project\/[^\/]+\/Project_[^\/]+\.html$/i.test(abs.pathname)) {
+            return abs.pathname.replace(/Project_([^\/?#]+)\.html$/i, 'Project-mobile_$1.html') + (abs.search || '') + (abs.hash || '');
+          }
+
+          // Final fallback: build from the card's Korean name
+          if (fallbackName) {
+            const baseDir = location.pathname.replace(/[^/]*$/, '');
+            const encoded = encodeURIComponent(fallbackName);
+            return `${baseDir}Project/${encoded}/Project-mobile_${encoded}.html`;
+          }
+
+          return href;
         }catch(e){
+          // On any unexpected error, fall back to the name-based rule if possible
+          if (fallbackName) {
+            const baseDir = location.pathname.replace(/[^/]*$/, '');
+            const encoded = encodeURIComponent(fallbackName);
+            return `${baseDir}Project/${encoded}/Project-mobile_${encoded}.html`;
+          }
           return href;
         }
       }
@@ -383,18 +386,8 @@ contain:content;
             const card = document.createElement('article');
             card.className = 'card';
             card.setAttribute('data-category', it.category);
-            // Convert href to mobile target
-            let hrefMobile = toMobileHref(it.href);
-            // 🔒 Fallback: if href is missing or unchanged/empty, construct from the Korean name
-            if (!hrefMobile || hrefMobile === it.href) {
-              const KNOWN = ['김사율','김나연','김유빈','김민진'];
-              if (KNOWN.includes(it.name)) {
-                // Use absolute-safe path based on current directory (e.g., /2025/)
-                hrefMobile = (it.name === '김사율')
-                  ? '/2025/Project/김사율/Project-mobile_김사율.html'
-                  : __BASE_DIR__ + 'Project/' + it.name + '/Project-mobile_' + it.name + '.html';
-              }
-            }
+            // Convert href to mobile target (generic mapping)
+            let hrefMobile = toMobileHref(it.href, it.name);
 
             // Hard fallback: if the card title contains "큐패스", force-link to the exact mobile page
             // (covers cases where source markup uses an unexpected path or missing link)
@@ -488,24 +481,6 @@ contain:content;
       }
     })();
   </script>
-</script>
-<script>
-// Route to DESKTOP page when viewport is wide (>=800px)
-(function(){
-  var DESKTOP_URL = './Project_김사율.html';
-  var mq = window.matchMedia('(min-width: 800px)');
-  function go(){
-    if (mq.matches) {
-      location.replace(DESKTOP_URL + location.search + location.hash);
-    }
-  }
-  go();
-  if (mq.addEventListener) mq.addEventListener('change', function(e){ if(e.matches) go(); }, {passive:true});
-  else if (mq.addListener) mq.addListener(function(e){ if(e.matches) go(); });
-  window.addEventListener('orientationchange', go, {passive:true});
-  window.addEventListener('resize', go, {passive:true});
-})();
-</script>
 
 
 </body>

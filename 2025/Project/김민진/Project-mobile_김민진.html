@@ -38,23 +38,6 @@
     /* 푸터(고정)와 겹치지 않도록 여백 확보 */
     .stage{ background:#000; line-height:0; padding-bottom:120px; }
 
-    footer{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      width:100%;
-      background:#000;
-      color: #f3f3f3;
-      border-top:1px solid var(--line);
-      padding:6px 10px;
-      box-sizing:border-box;
-      font-size:12px;
-      margin: auto;
-      text-align:center;
-    }
-
-
     .poster-wrapper{
       position:relative;
       display:inline-block;
@@ -233,7 +216,7 @@
 
     footer{
       position:static;             /* 페이지 하단 고정(콘텐츠 뒤덮지 않음) */
-      margin-top:auto;             /* 콘텐츠가 짧으면 하단으로 밀기 */
+      margin-top:70px;             /* 콘텐츠가 짧으면 하단으로 밀기 */
       width:100%;
       background:#000;
       color:#f3f3f3;
@@ -302,6 +285,7 @@
               about:   'About-mobile.html',
               project: 'Project-mobile.html',
               design:  'Design-mobile.html',
+              designer:'Design-mobile.html',  // ← extra safety
               guest:   'Guest-mobile.html',
               gallery: 'Gallery-mobile.html'
             };
@@ -319,6 +303,13 @@
                 const abs = new URL(raw, location.href);
                 let base = abs.pathname.split('/').pop() || '';
                 base = base.toLowerCase().replace(/\.html?$/,'').replace(/-mobile$/,'');
+                // normalize common variants to canonical keys
+                base = base
+                  .replace(/^index$|^home$/, 'main')
+                  .replace(/^projects?$/, 'project')
+                  .replace(/^design(er)?s?$/, 'design')  // ← handle Designer/Designs
+                  .replace(/^guests?$/, 'guest')
+                  .replace(/^gallery$/, 'gallery');
 
                 // 키가 매핑되면 /YYYY/ + 대상 모바일 파일로 강제 연결
                 if (MOBILE_MAP[base]) {
@@ -374,7 +365,7 @@
     </div>
 
     <div class="profile-card">
-      <a class="flip-link" href="../../../2025/Designer/김민진/Designer_김민진.html" aria-label="디자이너 페이지로 이동">
+      <a class="flip-link" href="../../Designer/김민진/Designer-mobile_김민진.html" aria-label="디자이너 페이지로 이동">
         <div class="flip-container" id="sayulFlip_m">
           <div class="flipper">
             <div class="front">
@@ -504,15 +495,6 @@
     if (flipper){
       flipper.classList.add('spin-once');
       flipper.addEventListener('animationend', ()=> flipper.classList.remove('spin-once'), { once:true });
-    }
-    // tap to flip (first tap flips, second tap follows link)
-    const link = card.closest('a.flip-link');
-    if (matchMedia('(hover:none)').matches && link){
-      card.addEventListener('click', function(e){
-        if (!this.classList.contains('is-flipped')){ e.preventDefault(); this.classList.add('is-flipped'); }
-      });
-      // Space key toggles flip when focused
-      link.addEventListener('keydown', (e)=>{ if (e.code==='Space'){ e.preventDefault(); card.classList.toggle('is-flipped'); }});
     }
   })();
 

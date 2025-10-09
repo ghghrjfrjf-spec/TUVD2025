@@ -31,53 +31,43 @@
 
 
     .name{
-      display:flex; 
-      align-items:flex-end; 
-      justify-content:center;         /* ⬅ 가운데 정렬 */
-      gap:8px; 
-      padding-bottom:6px;
+      display:flex;
+      flex-direction: column;        /* 세로로 쌓기 */
+      align-items: center;           /* 가운데 정렬 */
+      justify-content: center;
+      gap:6px;
+      padding-bottom:8px;
       border-bottom:1px solid rgba(255,255,255,.18);
       margin-top: 20px;
-      padding-left: 0;                 /* ⬅ 왼쪽 여백 제거 */
-      text-align:center;               /* ⬅ 텍스트 가운데 */
+      padding-left: 0;               /* 좌측 여백 제거 */
+      text-align:center;             /* 텍스트 가운데 */
       width:100%;
     }
     .name h1{
       margin:0;
       font-size:24px;
       line-height:1.12;
-      color:#c0392b;                 /* 더 선명한 레드 */
+      color:#e63d2b;                 /* 일관된 레드 */
       font-weight:800;               /* 제목 강조 */
       letter-spacing:.3px;
-      margin-left: 0;                /* 이미지 왼쪽 라인에 정확히 맞춤 */
-      text-align:left;
+      text-align:center;             /* 가운데 정렬 */
       text-rendering:optimizeLegibility;
       -webkit-font-smoothing:antialiased;
     }
     .name h2{
-      margin:0 0 2px 0;
+      margin:6px 0 0 0;      /* 제목 아래 6px 간격 */
       font-size:11px;
       color:#9b9b9b;
       font-weight:700;
-      letter-spacing:.2px}
-
-
-    /* Email pill next to name */
-    .name{
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;          /* ⬅ 가운데 정렬 */
-      gap:8px;
-      padding-bottom:6px;
-      border-bottom:1px solid rgba(255,255,255,.18);
-      margin-top: 20px;
-      padding-left: 0;                  /* ⬅ 왼쪽 여백 제거 */
-      text-align:center;                /* ⬅ 텍스트 가운데 */
-      width:100%;
+      letter-spacing:.2px;
+      text-align:center;
     }
 
+
     .name .email-pill{
-      margin-left: 8px;
+      align-self: center;            /* 가운데 정렬 */
+      margin-left: 0;                /* 좌측 여백 제거 */
+      margin-top: 6px;               /* 이름 아래 간격 */
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.22);
@@ -364,7 +354,7 @@
 
     footer{
       position:static;                 /* 페이지 하단 정렬 (콘텐츠를 덮지 않음) */
-      margin-top:auto;                 /* 콘텐츠가 짧으면 아래로 밀기 */
+      margin-top:auto;                 /* 콘텐츠가 짧으면 아래로 밀기 (자연스럽게) */
       width:100%;
       background:#000;
       color:#f3f3f3;
@@ -393,7 +383,7 @@
       if(!host) return;
       var src = host.getAttribute('data-src');
       if(!src){ console.warn('mobile-header: data-src not set'); return; }
-
+  
       fetch(src, { cache: 'no-store' })
         .then(function(res){
           if(!res.ok) throw new Error('HTTP ' + res.status);
@@ -401,52 +391,70 @@
         })
         .then(function(html){
           host.innerHTML = html;
-
-          // === Normalize header links to /2025/*-mobile.html (absolute) ===
+  
+          // === Normalize header links to /2025/*-mobile.html ===
           (function fixHeaderLinks(){
+            // /2025/ 루트 안전 추출 (어디서 열든 작동)
+            function build2025Path(file){
+              var p = location.pathname;
+              var i = p.indexOf('/2025/');
+              if (i !== -1) return p.slice(0, i + 6) + file; // "/2025/" 포함
+              return '/2025/' + file; // 폴백
+            }
+  
             var scope = host;
             var anchors = scope.querySelectorAll('a[href]');
             anchors.forEach(function(a){
-              var raw = a.getAttribute('href');
+              var raw = a.getAttribute('href') || '';
               if (!raw) return;
-              // keep external URLs, hashes, mail/tel untouched
+  
+              // 외부/앵커/메일/전화는 제외
               if (/^(https?:)?\/\//i.test(raw)) return;
               if (raw.startsWith('#')) return;
               if (raw.startsWith('mailto:') || raw.startsWith('tel:')) return;
-
+  
+              // 1) 텍스트/주소에 'designer' 또는 'design'이 보이면 무조건 Design-mobile로
+              var txt = (a.textContent || '').toLowerCase();
+              var hrefL = raw.toLowerCase();
+  
+              if (/\bdesigner(s)?\b/.test(txt) || /\bdesigner(s)?\b/.test(hrefL) || /\bdesign\b/.test(txt) || /\bdesign\b/.test(hrefL)) {
+                a.setAttribute('href', build2025Path('Design-mobile.html'));
+                return;
+              }
+  
+              // 2) 파일명 기반 일반 매핑
               var cleaned = raw.replace(/[#?].*$/, '');
               var segs = cleaned.split('/').filter(Boolean);
               var last = segs.length ? segs[segs.length - 1] : cleaned;
               var base = last.replace(/\.html?$/i, '').toLowerCase();
-
+  
               base = base
                 .replace(/^index$|^home$/, 'main')
                 .replace(/^projects?$/, 'project')
                 .replace(/^designs?$/, 'design')
+                .replace(/^designers?$/, 'design')
                 .replace(/^guests?$/, 'guest');
-
+  
               function toMobile(name){
                 switch(name){
-                  case 'main':    return '/2025/Main-mobile.html';
-                  case 'project': return '/2025/Project-mobile.html';
-                  case 'design':  return '/2025/Design-mobile.html';
-                  case 'about':   return '/2025/About-mobile.html';
-                  case 'guest':   return '/2025/Guest-mobile.html';
-                  case 'gallery': return '/2025/Gallery-mobile.html';
+                  case 'main':    return build2025Path('Main-mobile.html');
+                  case 'project': return build2025Path('Project-mobile.html');
+                  case 'design':  return build2025Path('Design-mobile.html'); // ★ 여기 확정
+                  case 'about':   return build2025Path('About-mobile.html');
+                  case 'guest':   return build2025Path('Guest-mobile.html');
                   default:        return null;
                 }
               }
-
+  
               var target = toMobile(base);
               if (target) a.setAttribute('href', target);
             });
           })();
-
-          // === Hamburger wiring (same as main) ===
+  
+          // (햄버거 토글 등 기존 코드 그대로 유지)
           var btn     = host.querySelector('#menuBtn');
           var menu    = host.querySelector('#mMenu');
           var overlay = host.querySelector('#menuOverlay');
-
           function setState(open){
             document.body.classList.toggle('nav-open', open);
             if(btn){
@@ -455,7 +463,6 @@
             }
           }
           function toggle(){ setState(!document.body.classList.contains('nav-open')); }
-
           if(btn){ btn.addEventListener('click', toggle); }
           if(overlay){ overlay.addEventListener('click', function(){ setState(false); }); }
           if(menu){

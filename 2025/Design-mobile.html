@@ -99,15 +99,23 @@
     }
     
     /* === 모바일 디자이너 그리드 전용 스타일 (헤더/푸터 건드리지 않음) === */
-    /* 상단 필터바 (All | Staff) — pill 스타일 */
-    .m-filter{ display:flex; justify-content:center; align-items:center; gap:10px; margin:0 0 10px; }
+    /* 상단 필터바 (All | Staff) — plain minimal bar, left-aligned, flush with card grid */
+    .m-filter{
+      display:flex;
+      justify-content:flex-start;
+      align-items:center;
+      gap:8px;
+      margin:0 0 8px;
+      position:relative;
+      padding:0 30px 6px 28px;  /* 좌: 28px로 2px 왼쪽 이동 */
+    }
     .m-filter .pill{
       appearance:none; -webkit-appearance:none; -moz-appearance:none;
       background:transparent;
-      color:#cfcfcf;
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:9999px;
-      padding:8px 16px;
+      color:#ffffff;
+      border:none;
+      border-radius:0;
+      padding:0;               /* remove inner spacing so it hugs the left line */
       font-family: var(--font-body);
       font-weight:800;
       font-size:15px;
@@ -116,33 +124,69 @@
       line-height:1;
       user-select:none;
     }
-    .m-filter .pill:hover{ border-color:#888; color:#fff; }
-    .m-filter .pill.is-active{
-      color:#FF4D4D;
-      background:#FF4D4D2E; /* 18% alpha */
-      border-color:#FF4D4D;
+    .m-filter .pill:hover{ color:#ffffff; }
+    .m-filter .pill.is-active{ color:#ffffff; }
+    .m-filter .pill:focus-visible{ outline:none; }
+    .m-filter .sep{ opacity:.8; font-weight:800; margin:0 10px; }
+    /* underline under All | Staff (thinner & aligned with new padding) */
+    .m-filter::after{
+      content:"";
+      position:absolute;
+      left:28px;              /* 2px 왼쪽으로 이동 */
+      right:12px;
+      bottom:0;
+      height:0.5px;           /* 더 얇은 선 */
+      background: rgba(255,255,255,.10);
+      border-radius:1px;
     }
-    .m-filter .pill:focus-visible{
-      outline:2px solid #FF4D4D; outline-offset:2px;
-    }
-    .m-filter .sep{ opacity:.6; font-weight:700; }
     .m-design{ padding:20px 0 80px; }
     .m-design .title{
       font-family: var(--font-title);
       font-weight: 800;          /* visually closer to the sample */
-      font-size: 34px;           /* match inspector screenshot */
+      font-size: 34px;
       line-height: 1.15;
       letter-spacing: 0;
       text-align: center;
-      margin: 18px 0;            /* top/bottom 18px */
+      margin: 18px 0 36px; /* 제목 아래 여백 더 증가 */
       text-transform: uppercase;
     }
 
-    /* 초성 네비: 완전 둥근 pill, 활성 표시 */
-    .m-alpha-nav{ position:sticky; top:64px; z-index:5; display:flex; flex-wrap:wrap; justify-content:center; gap:6px; padding:6px 10px 8px; margin:0 auto 8px; background:rgba(0,0,0,.65); backdrop-filter:blur(4px); border-bottom:1px solid rgba(255,255,255,.08); }
-    .m-alpha-nav a{ width:26px; height:26px; border-radius:9999px; display:inline-flex; align-items:center; justify-content:center; font-family: var(--font-body); font-weight:800; font-size:12px; color:#cfcfcf; text-decoration:none; border:1px solid rgba(255,255,255,.22); transition: background .2s ease, color .2s ease, border-color .2s ease; }
+    /* 초성 네비: 완전 둥근 pill, 활성 표시 + 스크롤 */
+    .m-alpha-nav{
+      position:sticky;
+      top:64px;
+      z-index:5;
+      display:flex;
+      flex-wrap:wrap;               /* 기본: 두 줄 허용 */
+      justify-content:center;
+      gap:10px;
+      padding:10px 12px 12px;
+      margin:0 auto 10px;
+      background:rgba(0,0,0,.65);
+      backdrop-filter:blur(4px);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      overflow-x:auto;              /* 좌우 스크롤 가능 */
+      -webkit-overflow-scrolling: touch; /* iOS 모멘텀 스크롤 */
+      scrollbar-width: none;        /* Firefox 스크롤바 숨김 */
+    }
+    .m-alpha-nav::-webkit-scrollbar{ display:none; } /* Chrome/Safari 스크롤바 숨김 */
+    .m-alpha-nav a{
+      flex: 0 0 auto;               /* 가로 스크롤 모드에서 줄바꿈 방지 */
+      width:38px;
+      height:38px;
+      border-radius:9999px;
+      display:inline-flex; align-items:center; justify-content:center;
+      font-family: var(--font-body);
+      font-weight:800;
+      font-size:15px;
+      color:#cfcfcf;
+      text-decoration:none;
+      border:1px solid rgba(255,255,255,.22);
+      transition: background .2s ease, color .2s ease, border-color .2s ease;
+    }
     .m-alpha-nav a:hover{ color:#fff; border-color:#888; }
     .m-alpha-nav a.is-active{ background:#ff3b3b; color:#000; border-color:transparent; }
+    .m-alpha-nav .break{ flex-basis:100%; height:0; }
 
     /* 카드 그리드: 2열 고정 */
     .m-grid{ width:100%; padding:0 12px; box-sizing:border-box; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
@@ -155,7 +199,14 @@
 
     /* 섹션 제목(초성) */
     .m-section{ margin:18px 0 10px; padding:0 12px; }
-    .m-section .alpha-title{ font-size:14px; font-weight:900; color:#ff3b3b; }
+    .m-section .alpha-title{
+      font-size:18px;
+      font-weight:900;
+      color:#ff3b3b;
+      padding-left:16px;     /* align with image left edge */
+      text-align:left;       /* keep flush left */
+      margin: 0 0 10px 0;    /* ~10px gap above the grid */
+    }
 
     @media (min-width:641px){ /* 태블릿~데스크톱에서도 보기 좋게 */
       .m-design{ max-width:720px; margin:0 auto; }
@@ -163,29 +214,67 @@
       .m-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); }
     }
 
+    @media (max-width: 480px){
+      .m-alpha-nav{
+        flex-wrap: nowrap;          /* 한 줄 유지 */
+        justify-content: flex-start;
+      }
+      .m-alpha-nav .break{ display:none; }
+    }
+
     /* 팀 보조 네비: Staff 탭 전용 (All에서는 숨김) */
     .m-team-nav{
       position:sticky; top:64px; z-index:5;
       display:none;           /* Staff에서만 보여줌 */
       flex-wrap:wrap; justify-content:center;
-      gap:8px; padding:8px 12px 10px; margin:0 auto 8px;
+      gap:8px;
+      padding:8px 12px 10px;
+      margin:0 auto 8px;
       background:rgba(0,0,0,.65);
       backdrop-filter:blur(4px);
       border-bottom:1px solid rgba(255,255,255,.08);
+      overflow-x:auto;              /* 좌우 스크롤 */
+      -webkit-overflow-scrolling: touch; /* iOS 모멘텀 스크롤 */
+      scrollbar-width: none;        /* Firefox 스크롤바 숨김 */
     }
+    .m-team-nav::-webkit-scrollbar{ display:none; }
     .m-team-nav a{
       height:30px; padding:0 12px; border-radius:9999px;
       display:inline-flex; align-items:center; justify-content:center;
       font-family: var(--font-body); font-weight:800; font-size:13px; color:#cfcfcf; text-decoration:none;
       border:1px solid rgba(255,255,255,.22);
       transition: background .2s ease, color .2s ease, border-color .2s ease;
+      flex: 0 0 auto;               /* 가로 스크롤 모드에서 줄바꿈 방지 */
+    }
+    .m-team-nav a.role{
+      /* 역할 탭도 기본은 일반 탭과 동일(회색) */
+      color:#cfcfcf;
+      background:transparent;
+      border-color:rgba(255,255,255,.22);
     }
     .m-team-nav a:hover{ color:#fff; border-color:#888; }
-    .m-team-nav a.is-active{ background:#ff3b3b; color:#000; border-color:transparent; }
+    .m-team-nav a.is-active{
+      background:transparent;      /* 채우지 않음 */
+      color:#ff3b3b;               /* 빨간 텍스트 */
+      border-color:rgba(255,59,59,.8);  /* 붉은 외곽선 */
+    }
+    .m-team-nav a.role.is-active{
+      background:transparent;
+      color:#ff3b3b;
+      border-color:rgba(255,59,59,.8);
+    }
     .m-team-nav .break{ flex-basis:100%; height:0; }
 
     @media (min-width:641px){
       .m-team-nav{ top:84px; max-width:720px; border-radius:10px; justify-content:center; }
+    }
+
+    @media (max-width: 480px){
+      .m-team-nav{
+        flex-wrap: nowrap;          /* 한 줄 유지 */
+        justify-content: flex-start;
+      }
+      .m-team-nav .break{ display:none; }
     }
 
     /* 버튼: 맨 위로 */
@@ -308,7 +397,7 @@ document.addEventListener("DOMContentLoaded", function () {
     {ko:'김준성', en:'KIM JUNSEONG', img:'/1.Picture/1. 27th Graduation/Profile/KIM JUNESONG.jpeg', team:'편집팀', badge:'팀장'},
     {ko:'김혜림', en:'KIM HYERIM', img:'/1.Picture/1. 27th Graduation/Profile/KIM HYERIM.jpeg', team:'홍보팀'},
     {ko:'김혜연', en:'KIM HYEYEON', img:'/1.Picture/1. 27th Graduation/Profile/KIM HYEYEON.jpg', team:'편집팀'},
-    {ko:'남예주', en:'NAM YEJU', img:'/1.Picture/1. 27th Graduation/Profile/NAM YEJU.jpg'},
+    {ko:'남예주', en:'NAM YEJU', img:'/1.Picture/1. 27th Graduation/Profile/NAM YEJU.jpeg'},
     {ko:'박은제', en:'PARK EUNJE', img:'/1.Picture/1. 27th Graduation/Profile/PARK EUNJE.jpeg', team:'홍보팀', badge:'부위원장'},
     {ko:'배유진', en:'BAE YUJIN', img:'/1.Picture/1. 27th Graduation/Profile/BAE YUJIN.jpeg', team:'홍보팀'},
     {ko:'안예진', en:'AN YEJIN', img:'/1.Picture/1. 27th Graduation/Profile/AN YEJIN.jpeg', team:'총무&감사', badge:'총무'},
@@ -401,19 +490,9 @@ TEAM_ORDER.forEach((t, i)=>{
   const a = document.createElement('a');
   a.href = `#team-${encodeURIComponent(t)}`;
   a.textContent = t;
-  a.addEventListener('click', (e)=>{
-    e.preventDefault();
-    // active 표시
-    $teamNav.querySelectorAll('a').forEach(x=>x.classList.remove('is-active'));
-    a.classList.add('is-active');
-    // 섹션 스크롤
-    const target = document.getElementById(`team-${encodeURIComponent(t)}`);
-    if (!target) return;
-    const y = target.getBoundingClientRect().top + window.pageYOffset;
-    const header = document.querySelector('#m-header-placeholder header');
-    const hH = header ? header.offsetHeight : 0;
-    window.scrollTo({ top: Math.max(0, y - hH - 12), behavior: 'smooth' });
-  });
+  a.setAttribute('role','button');
+  a.setAttribute('aria-pressed','false');
+  if (i < 2) a.classList.add('role'); // 위원장/부위원장: 텍스트 빨강 + 아웃라인만
   $teamNav.appendChild(a);
   // --- 두 줄로 고정: 3번째 뒤에 줄바꿈 스팬 삽입 ---
   if (i === 2) {
@@ -423,24 +502,90 @@ TEAM_ORDER.forEach((t, i)=>{
   }
 });
 
+// 클릭 처리: 이벤트 위임으로 안정성 강화
+$teamNav.addEventListener('click', (e)=>{
+  const a = e.target.closest('a');
+  if (!a) return;
+  e.preventDefault();
+
+  const already = a.classList.contains('is-active');
+  // 전부 비활성
+  $teamNav.querySelectorAll('a').forEach(x=>{
+    x.classList.remove('is-active');
+    x.setAttribute('aria-pressed','false');
+  });
+
+  if (already){
+    // 동일 항목을 다시 누르면 꺼짐(완전 해제, 스크롤 없음)
+    return;
+  }
+
+  // 새 활성
+  a.classList.add('is-active');
+  a.setAttribute('aria-pressed','true');
+
+  // 해당 섹션으로 스크롤
+  const txt = a.textContent.trim();
+  const target = document.getElementById(`team-${encodeURIComponent(txt)}`);
+  if (!target) return;
+  const y = target.getBoundingClientRect().top + window.pageYOffset;
+  const header = document.querySelector('#m-header-placeholder header');
+  const hH = header ? header.offsetHeight : 0;
+  window.scrollTo({ top: Math.max(0, y - hH - 12), behavior: 'smooth' });
+
+  // 가로 스크롤 컨테이너 중앙정렬 시도
+  try{ a.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }catch(_){}
+});
+
   // 4) 초성 내비 생성 (한 번만)
   $nav.innerHTML = '';
-  ALPH.forEach(a=>{
-    const link = document.createElement('a');
-    link.href = `#sec-${encodeURIComponent(a)}`;
-    link.textContent = a;
-    link.addEventListener('click', (e)=>{
-      e.preventDefault();
-      document.querySelectorAll('.m-alpha-nav a').forEach(x=>x.classList.remove('is-active'));
-      link.classList.add('is-active');
-      const target = document.getElementById(`sec-${encodeURIComponent(a)}`);
-      if (!target) return; // 현재 필터에서 섹션이 없을 수 있음
-      const y = target.getBoundingClientRect().top + window.pageYOffset;
-      const header = document.querySelector('#m-header-placeholder header');
-      const hH = header ? header.offsetHeight : 0;
-      window.scrollTo({ top: Math.max(0, y - hH - 12), behavior: 'smooth' });
+  ALPH.forEach(ch=>{
+    const a = document.createElement('a');
+    a.href = `#sec-${encodeURIComponent(ch)}`;
+    a.textContent = ch;
+    a.setAttribute('role','button');
+    a.setAttribute('aria-pressed','false');
+    $nav.appendChild(a);
+    if (ch === 'ㅅ') {
+      const br = document.createElement('span');
+      br.className = 'break';
+      $nav.appendChild(br);
+    }
+  });
+
+  // 클릭 처리: 이벤트 위임
+  $nav.addEventListener('click', (e)=>{
+    const a = e.target.closest('a');
+    if (!a) return;
+    e.preventDefault();
+
+    const already = a.classList.contains('is-active');
+    // 전부 비활성
+    $nav.querySelectorAll('a').forEach(x=>{
+      x.classList.remove('is-active');
+      x.setAttribute('aria-pressed','false');
     });
-    $nav.appendChild(link);
+
+    if (already){
+      // 동일 항목을 다시 누르면 꺼짐(완전 해제, 스크롤 없음)
+      return;
+    }
+
+    // 새 활성
+    a.classList.add('is-active');
+    a.setAttribute('aria-pressed','true');
+
+    // 해당 섹션으로 스크롤
+    const txt = a.textContent.trim();
+    const target = document.getElementById(`sec-${encodeURIComponent(txt)}`);
+    if (!target) return;
+    const y = target.getBoundingClientRect().top + window.pageYOffset;
+    const header = document.querySelector('#m-header-placeholder header');
+    const hH = header ? header.offsetHeight : 0;
+    window.scrollTo({ top: Math.max(0, y - hH - 12), behavior: 'smooth' });
+
+    // 가로 스크롤 컨테이너 중앙정렬 시도
+    try{ a.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); }catch(_){}
   });
 
   // 5) 렌더 함수: 필터모드(all|staff)에 따라 섹션/카드 구성
@@ -510,12 +655,6 @@ TEAM_ORDER.forEach((t, i)=>{
         $sections.appendChild(sec);
       });
 
-      // 기본 활성 표시: 첫 팀 링크
-      const firstTeamLink = $teamNav.querySelector('a');
-      if (firstTeamLink) {
-        $teamNav.querySelectorAll('a').forEach(x=>x.classList.remove('is-active'));
-        firstTeamLink.classList.add('is-active');
-      }
 
     } else {
       // ===== ALL 모드: 초성 네비만 표시 =====

@@ -6,6 +6,7 @@
   <title>Guest-Mobile</title>
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" />
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;display=swap');
     :root{
       --line: rgba(255,255,255,.12);
       --footer-safe: 36px;  /* footer height reserve (统一 36px) */
@@ -25,7 +26,10 @@
     }
     .hero-title{
       margin: 10px auto 12px;
-      font-size: 28px; font-weight: 900; letter-spacing:.2px;
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: .2px;
       text-align: center;
     }
 
@@ -225,13 +229,16 @@
                 .replace(/^home$/, 'main')
                 .replace(/^projects?$/, 'project')
                 .replace(/^designs?$/, 'design')
+                .replace(/^designer(s)?$/, 'design')
                 .replace(/^guests?$/, 'guest');
 
               function toMobile(name){
                 switch(name){
                   case 'main':    return '/2025/Main-mobile.html';
                   case 'project': return '/2025/Project-mobile.html';
-                  case 'design':  return '/2025/Design-mobile.html';
+                  case 'design':
+                  case 'designer':
+                    return '/2025/Design-mobile.html';
                   case 'about':   return '/2025/About-mobile.html';
                   case 'guest':   return '/2025/Guest-mobile.html';
                   case 'gallery': return '/2025/Gallery-mobile.html';

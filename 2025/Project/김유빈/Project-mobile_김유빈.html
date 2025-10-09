@@ -38,23 +38,6 @@
     /* 푸터(고정)와 겹치지 않도록 여백 확보 */
     .stage{ background:#000; line-height:0; padding-bottom:120px; }
 
-    footer{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      width:100%;
-      background:#000;
-      color: #f3f3f3;
-      border-top:1px solid var(--line);
-      padding:6px 10px;
-      box-sizing:border-box;
-      font-size:12px;
-      margin: auto;
-      text-align:center;
-    }
-
-
     .poster-wrapper{
       position:relative;
       display:inline-block;
@@ -233,7 +216,7 @@
 
     footer{
       position:static;             /* 페이지 하단 고정(콘텐츠 뒤덮지 않음) */
-      margin-top:auto;             /* 콘텐츠가 짧으면 하단으로 밀기 */
+      margin-top:70px;             /* 콘텐츠가 짧으면 하단으로 밀기 */
       width:100%;
       background:#000;
       color:#f3f3f3;
@@ -302,6 +285,7 @@
               about:   'About-mobile.html',
               project: 'Project-mobile.html',
               design:  'Design-mobile.html',
+              designer: 'Design-mobile.html',
               guest:   'Guest-mobile.html',
               gallery: 'Gallery-mobile.html'
             };
@@ -319,6 +303,12 @@
                 const abs = new URL(raw, location.href);
                 let base = abs.pathname.split('/').pop() || '';
                 base = base.toLowerCase().replace(/\.html?$/,'').replace(/-mobile$/,'');
+                base = base
+                  .replace(/^index$|^home$/, 'main')
+                  .replace(/^projects?$/, 'project')
+                  .replace(/^design(er)?s?$/, 'design')
+                  .replace(/^guests?$/, 'guest')
+                  .replace(/^gallery$/, 'gallery');
 
                 // 키가 매핑되면 /YYYY/ + 대상 모바일 파일로 강제 연결
                 if (MOBILE_MAP[base]) {
@@ -358,7 +348,7 @@
           <div class="name-row">
             <h1>베리슈푸</h1>
             <div class="hashtags"># 브랜딩</div>
-            <div class="hashtags"># 패키지</div>
+            <div class="hashtags"># 캐릭터</div>
           </div>
         </div>
         <p class="message">

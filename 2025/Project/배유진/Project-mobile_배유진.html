@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project-배유진</title>
+  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" />
+  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" />
+  <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" />
+  <style>
+    :root{ --line: rgba(255,255,255,.12); --nav-h: 64px; }
+    html,body{ margin:0; padding:0; background:#000; color:#fff; }
+    .nav-spacer{ height: 28px; }
+
+    /* 콘텐츠: 포스터와 푸터 */
+    .poster{ display:block; width:100%; height:auto; margin:0 auto; }
+    /* .rose-left{
+      display:block;
+      max-width:50%;  절반 정도 크기 
+      height:auto;
+      margin:40px 0 0 10px;  위에서 조금 내리고 왼쪽으로 붙임 
+    } */
+    /* .gun-poster{
+      display:block;
+      width:80%;
+      max-width:500px;
+      height:auto;
+      margin:30px auto 0 auto;  위쪽 여백 주고 중앙 정렬 
+    } */
+    .promo-video{
+      display:block; width:100%; height:auto;
+      /* 아래 여백으로 푸터 고정 높이 피함 */
+      margin:20px auto 80px;
+      border:1px solid rgba(255,255,255,.2); border-radius:8px;
+      /* 로딩 중 배경 */
+      background:#000;
+    }
+    /* 푸터(고정)와 겹치지 않도록 여백 확보 */
+    .stage{ background:#000; line-height:0; padding-bottom:120px; }
+
+    .poster-wrapper{
+      position:relative;
+      display:inline-block;
+      width:100%;
+      text-align:left;
+    }
+    .poster-wrapper .logo-bg{
+      position:absolute;
+      top:0; left:0;
+      width:100%; height:auto;    
+      z-index:0;
+    }
+    .poster-wrapper .rose-left{
+      position:relative;
+      z-index:1;
+      /* 훨씬 크게 확대 */
+      max-width:100%;
+      /* 왼쪽으로 이동하고 아래로 10% 내림 */
+      transform:translate(-23%, 6%);
+    }
+    .poster-wrapper .gun-below{
+      position:absolute;
+      /* BLOOM 텍스트 바로 밑에 */
+      top:22%;
+      /* 오른쪽에 맞춤 */
+      right:5%;
+      transform:translateY(-50%);
+      max-width:70%;
+      z-index:2;
+      /* 살짝 투명하게 */
+      opacity:0.6;
+    }
+    /* ====== Profile/Project section (base styles copied from desktop) ====== */
+    :root { --container: 1200px; }
+    .profile-container { position: relative; z-index:1; display:flex; align-items:center; justify-content:space-between; background:#000; color:#fff; flex-wrap:wrap; padding:12px 1.5rem 20px; gap:24px; max-width:1200px; margin:0 auto; box-sizing:border-box; }
+    .profile-right { flex:1 1 520px; max-width:560px; padding:0 2rem; text-align:left; display:flex; flex-direction:column; gap:16px; margin-right:auto; }
+    .profile-card { order:2; flex:0 0 auto; background:transparent !important; border:none !important; padding:0 !important; text-align:center; display:flex; align-items:center; justify-content:center; position:relative; margin-left:auto; box-shadow:none !important; max-width:420px; }
+
+    /* Lift the profile card slightly upward for better alignment */
+    .profile-card {
+      margin-top: -96px; /* move card further upward */
+    }
+    @media (max-width: 900px) {
+      .profile-container{ padding: 10px 1rem 16px; }
+      .profile-card {
+        margin-left:0;
+        margin-top: -64px;
+      }
+    }
+    h1 { font-size:2.8rem; color:#ff2b2b; margin:0; line-height:1.1; letter-spacing:.5px; position:relative; }
+    h1::after { content:""; display:block; height:1px; background:rgba(255,255,255,.22); margin-top:4px; width:clamp(100%, calc(100% + 80vw), 620px); }
+    .hashtags { display:inline-block; padding:6px 14px; margin-top:8px; background:rgba(255,59,59,.12); border:1px solid rgba(255,59,59,.45); color:#fff; font-size:.95rem; font-weight:600; letter-spacing:.4px; border-radius:999px; box-shadow:0 0 10px rgba(255,59,59,.15); }
+    .message { font-size:1.05rem; color:#eaeaea; line-height:1.8; white-space:pre-line; margin-top:0; }
+    .profile-img { width:100%; max-width:420px; height:560px; object-fit:cover; border-radius:14px; border:none; box-shadow:0 4px 16px rgba(0,0,0,.5); }
+    .name-row{ display:inline-flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+    .name-wrap{ position:relative; }
+    .hero{ width:min(var(--container), 92%); margin:16px auto 0; border-radius:16px; border:1px solid var(--line); box-shadow:0 14px 36px rgba(0,0,0,.45); display:block; }
+
+    /* Mobile tweaks for the section */
+    @media (max-width: 900px){
+      /* see above for .profile-container and .profile-card overrides */
+      .profile-right{ padding:0; order:1; max-width:none; margin-right:0; }
+      h1{ font-size:2.1rem; }
+      .profile-img{ max-width:300px; height:360px; }
+    }
+
+    /* === Flip-card core (mobile) === */
+    .flip-container{
+      perspective: 1100px;
+      display: inline-block;
+    }
+    .flipper{
+      position: relative;
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+      transition: transform .9s cubic-bezier(.22,.61,.36,1);
+      will-change: transform;
+    }
+    .flip-container .front,
+    .flip-container .back{
+      position: relative;
+    }
+    .flip-container .front img,
+    .flip-container .back img{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius:14px;
+    }
+    .flip-container .front{
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      transform: rotateY(0deg);
+    }
+    .flip-container .back{
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      transform: rotateY(180deg);
+      position:absolute;
+      inset:0;
+      overflow:hidden;
+    }
+    /* trigger rotation when container has .is-flipped */
+    .flip-container.is-flipped .flipper{
+      transform: rotateY(180deg);
+    }
+
+    /* one-time spin animation (optional) */
+    @keyframes spin360{
+      from{ transform: rotateY(0deg); }
+      to  { transform: rotateY(360deg); }
+    }
+    .flipper.spin-once{
+      animation: spin360 1.6s ease-out .2s 1 forwards;
+    }
+
+    /* touch devices: ignore hover flip */
+    @media (hover:none){
+      .flip-container:hover .flipper{ transform:none; }
+    }
+
+    /* mobile heights: keep back slightly shorter for depth cue */
+    @media (max-width: 900px){
+      .front .profile-img{ height: 420px; object-fit: cover; }
+      .back  .profile-img{
+        height: 380px; object-fit: cover;
+        position:absolute; top:50%; left:0; right:0; transform: translateY(-50%);
+      }
+    }
+    /* =========================
+       Mobile-only layout (<=800px)
+       Header/desktop nav not required here
+       ========================= */
+    @media (max-width: 800px){
+      /* layout & spacing */
+      .profile-container{ padding:12px 16px 16px; gap:20px; max-width: 100%; }
+      .profile-right{ order:2; max-width:none; padding:0; text-align:left; }
+      .profile-card{ order:1; margin:0 auto; max-width:340px; }
+
+      /* title & hashtag */
+      h1{ font-size: 25px; line-height:1.1; }
+      .name-row{ gap:8px; }
+      .name-row .hashtags{ padding:4px 10px; font-size:.85rem; }
+
+      /* underline: thin, clean line (no effect) */
+      h1::after{
+        width: 100%;           /* container width */
+        max-width: 280px;      /* visually shorter on mobile */
+        height: 1px;
+        background: rgba(255,255,255,.22);
+        margin-top: 4px;
+      }
+
+      /* message readability */
+      .message{ font-size: 12px; line-height:1.7; }
+
+      /* rose mark: hide on small screens (optional) */
+      .rose-mark{ display:none; }
+
+      /* flip card image heights (keep aspect, slightly shorter on back) */
+      .front .profile-img{ height: 420px; }
+      .back  .profile-img{ height: 380px; }
+
+      /* hero images */
+      .hero{ width: 94%; margin-top: 10px; border-radius: 12px; }
+
+      /* spacer is not needed for this mobile page */
+    }
+
+    /* 푸터(고정)와 겹치지 않도록 여백 확보 */
+    .stage{ 
+      background:#000; 
+      line-height:0; 
+      padding-bottom:72px; 
+    }
+
+    footer{
+      position:static;             /* 페이지 하단 고정(콘텐츠 뒤덮지 않음) */
+      margin-top:70px;             /* 콘텐츠가 짧으면 하단으로 밀기 */
+      width:100%;
+      background:#000;
+      color:#f3f3f3;
+      border-top:1px solid var(--line);
+      height:36px;                 /* 🔒 고정 높이 */
+      min-height:36px;             /* 안전장치 */
+      padding:0 12px;              /* 수직 0 → 고정 높이 유지 */
+      box-sizing:border-box;
+      display:flex;                /* 수직 가운데 정렬 */
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      line-height:1;               /* 브라우저 기본 line-height 차이 제거 */
+      text-align:center;
+      font-family:'Pretendard', system-ui, -apple-system, sans-serif; /* 폰트 차이로 인한 높이 오차 제거 */
+    }
+
+
+    /* 버튼: 맨 위로 — 내용 가림 방지(푸터/안전영역 반영) */
+    .scroll-btn{
+      position:fixed;
+      right:16px;
+      bottom:calc(16px + env(safe-area-inset-bottom, 0px)); /* iOS 홈바 피해서 */
+      z-index:100; /* 과도하게 높지 않게 */
+      display:none;
+      align-items:center;
+      justify-content:center;
+      width:44px; height:44px;
+      border-radius:30px;
+      background:#000;
+      color:#fff; font-weight:900; letter-spacing:.3px;
+      box-shadow:0 6px 18px rgba(0,0,0,.35);
+      cursor:pointer;
+    }
+    /* 푸터가 보일 때 자동으로 위로 들어 올림 */
+    .scroll-btn.is-lifted{ bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+    .scroll-btn:hover{ color:#ff3b3b; box-shadow:0 6px 22px rgba(255,59,59,.25); }
+    .scroll-btn:active{ transform:scale(.98); }
+  </style>
+</head>
+
+
+<body>
+  <div id="m-header-placeholder"></div>
+  <div class="nav-spacer" aria-hidden="true"></div>
+  <script>
+    (function(){
+      const mount = document.getElementById("m-header-placeholder");
+      fetch("../../../2.PageElement/Mobile-header/mobile-header.html")
+        .then(res => res.text())
+        .then(html => {
+          mount.innerHTML = html;
+          // === 헤더 내부 링크를 현재 디렉터리 기준으로 정규화 ===
+          (function fixLinks(){
+            const scope = mount; // 헤더가 주입된 영역
+            const anchors = scope.querySelectorAll('a[href]');
+
+            // 현재 경로에서 /2025/ 같은 연도 루트 추출 (없으면 /)
+            const yearMatch = location.pathname.match(/\/20\d{2}\//);
+            const yearBase  = yearMatch ? yearMatch[0] : '/';
+
+            // 원하는 최종 모바일 경로 매핑 (게스트/갤러리: 서브폴더 없이 루트 바로 아래)
+            const MOBILE_MAP = {
+              home:    'Main-mobile.html',
+              main:    'Main-mobile.html',
+              about:   'About-mobile.html',
+              project: 'Project-mobile.html',
+              design:  'Design-mobile.html',
+              designer: 'Design-mobile.html',
+              guest:   'Guest-mobile.html',
+              gallery: 'Gallery-mobile.html'
+            };
+
+            anchors.forEach(a => {
+              const raw = a.getAttribute('href');
+              // 해시/메일/전화/절대 URL은 스킵
+              if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:') ||
+                  /^[a-zA-Z][a-zA-Z0-9+.+-]*:/.test(raw)) {
+                return;
+              }
+
+              try{
+                // 어떤 형태든 절대경로로 해석 후 파일명만 뽑음
+                const abs = new URL(raw, location.href);
+                let base = abs.pathname.split('/').pop() || '';
+                base = base.toLowerCase().replace(/\.html?$/,'').replace(/-mobile$/,'');
+                base = base
+                  .replace(/^index$|^home$/, 'main')
+                  .replace(/^projects?$/, 'project')
+                  .replace(/^design(er)?s?$/, 'design')
+                  .replace(/^guests?$/, 'guest')
+                  .replace(/^gallery$/, 'gallery');
+
+                // 키가 매핑되면 /YYYY/ + 대상 모바일 파일로 강제 연결
+                if (MOBILE_MAP[base]) {
+                  a.setAttribute('href', (yearBase + MOBILE_MAP[base]).replace(/\/\/+/g,'/'));
+                }
+                // 매핑 안되면 그대로 둠 (헤더 외부 링크/특수 링크 대비)
+              }catch(e){ /* no-op */ }
+            });
+          })();
+          // === 햄버거 토글 바인딩 (include된 스크립트가 실행되지 않으므로 여기서 연결) ===
+          const btn = document.getElementById('menuBtn');
+          const menu = document.getElementById('mMenu');
+          const overlay = document.getElementById('menuOverlay');
+          if (!btn || !menu) return;
+          function setState(open){
+            document.body.classList.toggle('nav-open', open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+          }
+          function toggle(){ setState(!document.body.classList.contains('nav-open')); }
+          btn.addEventListener('click', toggle);
+          if (overlay) overlay.addEventListener('click', () => setState(false));
+          // 메뉴 링크 클릭 시 자동 닫힘
+          menu.addEventListener('click', (e)=>{ if(e.target.closest('a')) setState(false); });
+          // ESC로 닫기 (선택)
+          window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') setState(false); });
+        })
+        .catch(err => console.error("모바일 헤더 로드 오류:", err));
+    })();
+  </script>
+
+  <!-- ===== Project content (mobile) : profile + flip card + hero images ===== -->
+  <div class="profile-container">
+    <div class="profile-right">
+      <div class="text-content">
+        <div class="name-wrap">
+          <div class="name-row">
+            <h1>Shadow Tales</h1>
+            <div class="hashtags"># 브랜딩</div>
+            <div class="hashtags"># CI/BI</div>
+          </div>
+        </div>
+        <p class="message">
+          헨젤과 그레텔'을 모티브로 한 빈티지 감성 패션 브랜드, Shadow Tales
+
+          Shadow Tales는 우리의 어린 시절부터 친숙한 '동화'와 오랜 사랑을 받아온 
+          '빈티지'의 만남으로 이루어진 누구나 쉽게 이용하고 즐길 수 있는 패션 브랜드입니다.
+          
+          '헨젤과 그레텔'의 서사를 모티브로, 전형적인 컬러풀한 동화의 이미지에서 벗어나 
+          어두운 숲속에서 길을 잃은 듯한 미스터리하고 몽환적인 분위기를 담고 있으며, 
+          이야기가 담긴 브랜드를 기획하고자 합니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <a class="flip-link" href="../../../2025/Designer/배유진/Designer_배유진.html" aria-label="디자이너 페이지로 이동">
+        <div class="flip-container" id="YUSINFlip_m">
+          <div class="flipper">
+            <div class="front">
+              <img class="profile-img" src="../../../1.Picture/2.%20Graduate/Graduate_Logo/BAE YUJIN.jpg" alt="배유진 프로필 사진" />
+            </div>
+            <div class="back">
+              <img class="profile-img" src="/1.Picture/1. 27th Graduation/Profile/BAE YUJIN.jpeg" alt="배유진 프로필 뒷면" />
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 메인 히어로 이미지: 동일 폴더 참조('./'), '->'는 '%3E'로 인코딩 -->
+  <img class="hero" src="./1-100.jpg" alt="메인1">
+  <img class="hero" src="./2-100.jpg" alt="메인2">
+  <img class="hero" src="./3-100.jpg" alt="메인3">
+  <img class="hero" src="./4-100.jpg" alt="메인4">
+
+
+  <button onclick="scrollToTop()" id="scrollTopBtn" class="scroll-btn">▲</button>
+  <script>
+  // Scroll-to-top button: show on scroll, smooth to top on tap
+  document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('scrollTopBtn');
+    if (!btn) return;
+
+    // Show/hide on scroll
+    function updateBtn() {
+      var y = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      btn.style.display = y > 200 ? 'flex' : 'none';
+    }
+    window.addEventListener('scroll', updateBtn, { passive: true });
+    updateBtn(); // initial state
+
+    // Smooth scroll to top
+    window.scrollToTop = function () {
+      try {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (_) {
+        // Fallback for older browsers
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      }
+    };
+
+    // Also bind click handler (in case inline onclick is blocked by CSP or removed later)
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.scrollToTop();
+    });
+
+    // Avoid covering content: lift button when footer enters viewport
+    const footer = document.querySelector('footer');
+    if ('IntersectionObserver' in window && footer){
+      const io = new IntersectionObserver((entries)=>{
+        const on = entries.some(e => e.isIntersecting);
+        btn.classList.toggle('is-lifted', on);
+      }, { threshold: 0.01 });
+      io.observe(footer);
+    }
+  });
+  </script>
+
+  <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
+<script>
+// [라우팅] 화면 너비 기준 페이지 전환 (모바일 ↔ 데스크톱)
+// <=799px : Project-mobile_배유진.html
+// >=800px : Project_배유진.html
+(function responsiveRoute(){
+  const BREAKPOINT = 800; // px
+  const DESKTOP_FILE = 'Project_배유진.html';
+  const MOBILE_FILE  = 'Project-mobile_배유진.html';
+
+  function getCurrentFile(){
+    // decode last path segment safely
+    const parts = location.pathname.split('/').filter(Boolean);
+    try { return decodeURIComponent(parts[parts.length - 1] || ''); }
+    catch(_) { return parts[parts.length - 1] || ''; }
+  }
+  function goTo(file){
+    const baseDir = location.pathname.replace(/[^/]*$/, '');
+    location.replace(baseDir + encodeURIComponent(file));
+  }
+
+  const mq = window.matchMedia(`(max-width: ${BREAKPOINT - 1}px)`);
+  let ticking = false;
+  function check(){
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      const isMobile = mq.matches;
+      const cur = getCurrentFile();
+      const onDesktop = /Project_배유진\.html$/i.test(cur);
+      const onMobile  = /Project-mobile_배유진\.html$/i.test(cur);
+
+      if (!isMobile && onMobile){
+        // 화면이 넓어짐 → 데스크톱 페이지로 이동
+        goTo(DESKTOP_FILE);
+      } else if (isMobile && onDesktop){
+        // 직접 데스크톱 주소로 들어왔지만 화면이 작음 → 모바일로 이동
+        goTo(MOBILE_FILE);
+      }
+      ticking = false;
+    });
+  }
+
+  // listen & run
+  if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
+  else if (mq.addListener) mq.addListener(check);
+  window.addEventListener('resize', check, {passive:true});
+  window.addEventListener('orientationchange', check, {passive:true});
+  document.addEventListener('DOMContentLoaded', check);
+  setTimeout(check, 120);
+  let kicks = 0; const kickTimer = setInterval(()=>{ kicks++; check(); if (kicks > 10) clearInterval(kickTimer); }, 200);
+  window.addEventListener('pageshow', check, {passive:true});
+  document.addEventListener('visibilitychange', check, {passive:true});
+})();
+</script>
+<script>
+  // Mobile flip support (independent of desktop logic)
+  (function(){
+    const card = document.getElementById('YUSINFlip_m');
+    if (!card) return;
+    const flipper = card.querySelector('.flipper');
+    // one-time spin on load (optional)
+    if (flipper){
+      flipper.classList.add('spin-once');
+      flipper.addEventListener('animationend', ()=> flipper.classList.remove('spin-once'), { once:true });
+    }
+    // tap to flip (first tap flips, second tap follows link)
+    const link = card.closest('a.flip-link');
+    if (matchMedia('(hover:none)').matches && link){
+      card.addEventListener('click', function(e){
+        if (!this.classList.contains('is-flipped')){ e.preventDefault(); this.classList.add('is-flipped'); }
+      });
+      // Space key toggles flip when focused
+      link.addEventListener('keydown', (e)=>{ if (e.code==='Space'){ e.preventDefault(); card.classList.toggle('is-flipped'); }});
+    }
+  })();
+
+
+</script>
+</body>
+</html>

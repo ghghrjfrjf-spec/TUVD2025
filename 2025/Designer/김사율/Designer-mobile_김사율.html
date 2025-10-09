@@ -29,31 +29,33 @@
 
 
     .name{
-      display:flex; 
-      align-items:flex-end; 
-      justify-content:center;         /* ⬅ 가운데 정렬 */
-      gap:8px; 
-      padding-bottom:6px;
+      display:flex;
+      flex-direction: column;        /* ⬅ 세로로 쌓기 */
+      align-items: center;           /* ⬅ 가운데 정렬 */
+      justify-content: center;
+      gap:6px;
+      padding-bottom:8px;
       border-bottom:1px solid rgba(255,255,255,.18);
       margin-top: 20px;
-      padding-left: 0;                 /* ⬅ 왼쪽 여백 제거 */
-      text-align:center;               /* ⬅ 텍스트 가운데 */
+      padding-left: 0;               /* 좌측 여백 제거 */
+      text-align:center;             /* 텍스트 가운데 */
       width:100%;
     }
     .name h1{
       margin:0;
       font-size:24px;
       line-height:1.12;
-      color:#c0392b;                 /* 더 선명한 레드 */
+      color:#e63d2b;                 /* 더 선명한 레드 */
       font-weight:800;               /* 제목 강조 */
       letter-spacing:.3px;
       margin-left: 0;                /* 이미지 왼쪽 라인에 정확히 맞춤 */
-      text-align:left;
+      text-align:center;
+      align-self:center;
       text-rendering:optimizeLegibility;
       -webkit-font-smoothing:antialiased;
     }
     .name h2{
-      margin:0 0 2px 0;
+      margin:6px 0 0 0;
       font-size:11px;
       color:#9b9b9b;
       font-weight:700;
@@ -61,21 +63,9 @@
 
 
     /* Email pill next to name */
-    .name{
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;          /* ⬅ 가운데 정렬 */
-      gap:8px;
-      padding-bottom:6px;
-      border-bottom:1px solid rgba(255,255,255,.18);
-      margin-top: 20px;
-      padding-left: 0;                  /* ⬅ 왼쪽 여백 제거 */
-      text-align:center;                /* ⬅ 텍스트 가운데 */
-      width:100%;
-    }
 
     .name .email-pill{
-      margin-left: 8px;
+      margin-left: 0;
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.22);
@@ -86,6 +76,8 @@
       font-weight: 700;
       letter-spacing: .2px;
       white-space: nowrap;
+      align-self: center;
+      margin-top: 6px;
     }
     @media (min-width: 480px){
       .name .email-pill{ font-size: 12px; }
@@ -376,7 +368,7 @@
 
     footer{
       position:static;                 /* 페이지 하단 정렬 (콘텐츠를 덮지 않음) */
-      margin-top:auto;                 /* 콘텐츠가 짧으면 아래로 밀기 */
+      margin-top:100px;                  /* 콘텐츠가 짧으면 아래로 밀기 */
       width:100%;
       background:#000;
       color:#f3f3f3;
@@ -435,16 +427,28 @@
                 .replace(/^index$|^home$/, 'main')
                 .replace(/^projects?$/, 'project')
                 .replace(/^designs?$/, 'design')
+                .replace(/^designers?$/, 'design')
                 .replace(/^guests?$/, 'guest');
 
+              // Build a path that reliably targets the current site's /2025/ folder
+              function build2025Path(file){
+                try{
+                  var p = location.pathname;
+                  var i = p.toLowerCase().lastIndexOf('/2025/');
+                  if(i !== -1){
+                    return p.slice(0, i) + '/2025/' + file; // anchor to the same /2025/ root
+                  }
+                }catch(e){}
+                // Fallback: relative two-levels up to reach /2025/
+                return '../../2025/' + file;
+              }
               function toMobile(name){
                 switch(name){
                   case 'main':    return '/2025/Main-mobile.html';
                   case 'project': return '/2025/Project-mobile.html';
-                  case 'design':  return '/2025/Design-mobile.html';
+                  case 'design':  return build2025Path('Design-mobile.html');
                   case 'about':   return '/2025/About-mobile.html';
                   case 'guest':   return '/2025/Guest-mobile.html';
-                  case 'gallery': return '/2025/Gallery-mobile.html';
                   default:        return null;
                 }
               }
@@ -522,7 +526,7 @@
             </article>
             <article class="qa">
               <div class="q">Q. 시험 기간 내가 주로 했던 현실도피는?</div>
-              <div class="a">잠자기/div>
+              <div class="a">잠자기</div>
             </article>
           </section>
         </section>

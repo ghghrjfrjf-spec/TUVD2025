@@ -5,6 +5,86 @@
   <title>nav</title>
   <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css">
   <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css">
+
+  <style>
+    /* 기본: 데스크톱 */
+header .mo-menu{ display:none; }
+header .menu-view{ display:none; }
+
+/* 햄버거 메뉴 레이어 공통 */
+header .menu-view{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.92);
+  z-index:9999;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:20px 18px 28px;
+}
+header .menu-view__close{
+  position:absolute;
+  top:14px; right:14px;
+  width:40px; height:40px;
+  display:inline-flex; align-items:center; justify-content:center;
+  background:transparent; border:0; color:#fff; cursor:pointer;
+}
+
+/* 모바일 전환 */
+@media (max-width: 980px){
+  header .inner{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:0 16px; height:64px;
+  }
+  header h1{ margin:0; }
+  header h1 a{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+  header h1 img{ height:28px; width:auto; display:block; }
+
+  /* 데스크톱 네비/링크 숨김 */
+  header nav,
+  header .hd-link{ display:none !important; }
+
+  /* 햄버거 표시 */
+  header .mo-menu{
+    display:inline-flex;
+    width:40px; height:40px;
+    align-items:center; justify-content:center;
+    cursor:pointer;
+    /* 👉 여기 원하는 햄버거 이미지 연결 */
+    background-size:24px 24px;
+    background-repeat:no-repeat;
+    background-position:center;
+    /* 예시: background-image:url(/path/to/hamburger.svg); */
+  }
+  /* span 막대 쓰는 경우(이미지 없이) */
+  header .mo-menu span{
+    display:block; width:22px; height:2px; background:#fff; margin:3px 0;
+  }
+
+  /* 열렸을 때(바디에 .menu-open) */
+  body.menu-open{ overflow:hidden; }
+  body.menu-open header .menu-view{ display:block; }
+
+  /* 모바일 메뉴 리스트 */
+  header .menu-view__link{ list-style:none; padding:64px 6px 12px; margin:0; }
+  header .menu-view__link > li{ margin:8px 0 2px; }
+  header .menu-view__link > li > a{
+    display:block; padding:14px 6px; font-size:18px; font-weight:800; color:#fff; text-decoration:none;
+    border-bottom:1px solid rgba(255,255,255,.12);
+  }
+  header .menu-view__dep2{ list-style:none; padding:4px 0 8px 10px; margin:0; }
+  header .menu-view__dep2 a{
+    display:block; padding:8px 4px; font-size:15px; color:#e6e6e6; text-decoration:none;
+  }
+
+  /* 하단 링크(37th/38th/39th) */
+  header .menu-view__btm{ list-style:none; padding:8px 6px 12px; margin:12px 0 0; border-top:1px solid rgba(255,255,255,.12); }
+  header .menu-view__btm li a{ display:block; padding:10px 2px; color:#dcdcdc; text-decoration:none; }
+}
+/* 예시 */
+header .mo-menu{
+  background-image:url('/1.Picture/Another/Menu.png');
+}
+  </style>
 </head>
 <body>
   <header>
@@ -27,5 +107,68 @@
       </nav>
     </div>
   </header>
+  
+  <script>
+(function(){
+  // 요소 찾기
+  var header = document.querySelector('header');
+  if(!header) return;
+
+  var openBtn  = header.querySelector('.mo-menu');
+  var closeBtn = header.querySelector('.menu-view__close');
+
+  function openMenu(){
+    document.body.classList.add('menu-open');
+    // 접근성
+    if (openBtn) {
+      openBtn.setAttribute('aria-expanded', 'true');
+      openBtn.setAttribute('aria-label', '메뉴 닫기');
+    }
+  }
+  function closeMenu(){
+    document.body.classList.remove('menu-open');
+    if (openBtn) {
+      openBtn.setAttribute('aria-expanded', 'false');
+      openBtn.setAttribute('aria-label', '메뉴 열기');
+    }
+  }
+  function toggleMenu(){
+    if (document.body.classList.contains('menu-open')) closeMenu();
+    else openMenu();
+  }
+
+  if (openBtn){
+    openBtn.setAttribute('role','button');
+    openBtn.setAttribute('aria-expanded','false');
+    openBtn.setAttribute('aria-label','메뉴 열기');
+    openBtn.addEventListener('click', toggleMenu);
+    openBtn.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleMenu(); }
+    });
+  }
+  if (closeBtn){
+    closeBtn.addEventListener('click', closeMenu);
+  }
+
+  // 메뉴 영역에서 링크 클릭 시 자동 닫힘
+  var menuView = header.querySelector('.menu-view');
+  if (menuView){
+    menuView.addEventListener('click', function(e){
+      if (e.target.closest('a')) closeMenu();
+    });
+  }
+
+  // ESC로 닫기
+  window.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  // 너비 커지면(데스크톱 복귀) 상태 정리
+  var mq = window.matchMedia('(min-width: 981px)');
+  function onResize(){ if (mq.matches) closeMenu(); }
+  if (mq.addEventListener) mq.addEventListener('change', onResize);
+  else if (mq.addListener) mq.addListener(onResize);
+})();
+  </script>
 </body>
 </html>

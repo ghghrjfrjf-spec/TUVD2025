@@ -21,6 +21,60 @@
       --card-min: 300px;  /* desktop 기본 카드 최소폭 → 이미지 더 크게 */
     }
 
+    /* ===== Responsive variable tuning (desktop → tablet → mobile) ===== */
+    @media (max-width: 1440px){
+      :root{ --page-pad: 48px; --grid-gap-x: 40px; --grid-gap-y: 28px; --card-min: 280px; }
+    }
+    @media (max-width: 1200px){
+      :root{ --page-pad: 40px; --grid-gap-x: 32px; --grid-gap-y: 24px; --card-min: 260px; }
+    }
+    @media (max-width: 1024px){
+      :root{ --page-pad: 32px; --grid-gap-x: 28px; --grid-gap-y: 22px; --card-min: 240px; }
+    }
+    @media (max-width: 860px){
+      :root{ --page-pad: 24px; --grid-gap-x: 22px; --grid-gap-y: 18px; --card-min: 220px; }
+    }
+    @media (max-width: 720px){
+      :root{ --page-pad: 18px; --grid-gap-x: 18px; --grid-gap-y: 16px; --card-min: 200px; }
+    }
+
+    /* Toolbar layout helpers */
+    .toolbar-inner{ display:flex; justify-content:space-between; align-items:center; gap: 18px; flex-wrap: wrap; }
+    .filter-tabs{ display:flex; align-items:center; gap:36px; flex-wrap: wrap; }
+    .sort-buttons{ display:flex; gap:10px; flex-wrap: wrap; }
+
+    /* Scales for filter tab font-size on smaller screens (override inline via !important) */
+    @media (max-width: 1024px){ .filter-tabs [data-filter]{ font-size:16px !important; } }
+    @media (max-width: 860px){ .filter-tabs [data-filter]{ font-size:15px !important; } }
+    @media (max-width: 720px){ .filter-tabs [data-filter]{ font-size:14px !important; } }
+
+    /* Project title responsive sizing */
+    .project-title{ font-size: clamp(2.4rem, 6vw, 5rem); margin: 0 0 clamp(2rem, 6vw, 6rem); }
+
+    /* Toolbar block responsive paddings and width */
+    .project-toolbar{ box-sizing: border-box; width: 100%; padding: 24px var(--page-pad) 18px; }
+    @media (min-width: 1281px){ .project-toolbar{ padding: 40px var(--page-pad) 30px; } }
+
+    /* Summary bar responsive layout */
+    .project-summarybar{ flex-wrap: wrap; gap: 12px 16px; box-sizing: border-box; }
+    #project-count{ display:flex; align-items:center; gap:10px; font-weight:900; }
+    #project-count .count-num{ font-size: clamp(28px, 6vw, 72px); line-height: 1; color:#fff; }
+    #project-count .count-label{ font-size: clamp(12px, 2.4vw, 18px); color:#aaa; }
+    .summary-right{ min-width: 360px; display:flex; justify-content:flex-end; }
+    @media (max-width: 860px){
+      .summary-right{ min-width: 0; flex: 1 1 100%; justify-content: stretch; }
+    }
+
+    /* Search width scaling */
+    .search-wrap .search-input{ width: clamp(160px, 28vw, 260px); }
+    @media (max-width: 860px){ .search-wrap{ width:100%; } .search-wrap .search-input{ width:100%; } }
+
+    /* Search icon nudge for tight screens */
+    @media (max-width: 860px){ .search-wrap .search-icon{ right: 8px; width: 28px; height: 28px; } }
+
+    /* Card media tweaks on smaller screens */
+    @media (max-width: 860px){ .project-gridcard img{ aspect-ratio: 1/1; } }
+
     /* ——— Typography hardening (Safari friendly) ——— */
     html{ -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
     body{ font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif; }
@@ -37,18 +91,20 @@
       backdrop-filter: blur(6px);
       border-bottom: 1px solid rgba(255,255,255,.12);
       max-width: var(--page-max);
+      width: 100%;
       margin: 0 auto;
       padding: 40px var(--page-pad) 30px;
-      width: calc(var(--page-max) - 2 * var(--page-pad));
+      box-sizing: border-box;
     }
     
 
     /* 갤러리: 반응형 그리드 (240px 이상 카드가 자동으로 채워짐) */
     .project-gallery{
       max-width: var(--page-max);
+      width: 100%;
       margin: 0 auto;
       padding: 32px var(--page-pad) 0;
-      width: calc(var(--page-max) - 2 * var(--page-pad));
+      box-sizing: border-box;
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
       column-gap: var(--grid-gap-x);
@@ -97,14 +153,16 @@
 
     /* 프로젝트 수/검색 바 영역도 블랙 테마 톤으로 통일 */
     .project-summarybar{
-      display:flex; justify-content:space-between; align-items:center;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      max-width: var(--page-max);
+      width: 100%;
       margin: 0 auto;
       padding: 10px var(--page-pad) 10px;
-      width: calc(var(--page-max) - 2 * var(--page-pad));
+      box-sizing: border-box;
       border-bottom:1px solid rgba(255,255,255,0.12);
       position: relative;
-      justify-content: space-between;
-      align-items: center;
       overflow: visible;
     }
 
@@ -168,9 +226,9 @@
     .search-wrap .search-icon{
       position: absolute;
       top: 50%;
-      right: -14px;               /* 오른쪽 바깥 살짝 */
-      width: 40px;
-      height: 40px;
+      right: 8px;                /* 아이콘을 입력 필드 안쪽으로 이동 → 가로 오버플로우 방지 */
+      width: 32px;
+      height: 32px;
       transform: translateY(-50%);
       pointer-events: none;
       opacity: 1;
@@ -196,6 +254,7 @@
 
     /* =====전체 블랙 테마 전용 스타일 덮어쓰기 ===== */
     html, body { background: #000; }
+    html, body { overflow-x: hidden; }
     .project-title{ color:#fff; }
 
     /* 카드 배경을 진한 블랙으로 설정 */
@@ -208,15 +267,7 @@
     /* ===== Designer 페이지와 동일한 여백 설정 ===== */
     .main{ padding-top: 80px; } /* Designer.html과 동일한 상단 여백 맞춤 */
 
-    .project-title{
-      font-family: 'Playfair Display', serif;
-      font-weight: 800; /* 더 균형 잡힌 느낌을 위한 ExtraBold 폰트 사용 */
-      font-size: 5rem;
-      line-height: 1.1;
-      text-align: center;
-      color: #fff;
-      margin: 0 0 6rem;
-    }
+    .project-title{ font-family: 'Playfair Display', serif; font-weight: 800; font-size: clamp(2.4rem, 6vw, 5rem); line-height: 1.1; text-align: center; color: #fff; margin: 0 0 clamp(2rem, 6vw, 6rem); }
 
     /* =====카드 근접 시 오버레이 표시 ===== */
     .project-gridcard .overlay{
@@ -388,10 +439,10 @@
     
     <!-- 🔍 블랙&레드 필터/검색/정렬 영역 -->
     <div class="project-toolbar">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="toolbar-inner">
         
         <!-- 필터 탭 -->
-        <div style="display: flex; gap: 36px; align-items: center;">
+        <div class="filter-tabs">
 
           <span data-filter="all" 
             style="font-size: 18px; font-weight: 800; color: red; cursor: pointer;">
@@ -432,15 +483,15 @@
         </div>
 
         <!-- 정렬 -->
-        <div style="display: flex; gap: 10px;">
+        <div class="sort-buttons">
           <button id="sort-asc"  style="padding: 10px 18px; border: 1px solid #424242; background-color: #000; font-size: 14px; font-weight: 600; color: rgb(159, 159, 159); border-radius: 6px; cursor: pointer;" aria-pressed="false">오름차순</button>
           <button id="sort-desc" style="padding: 10px 18px; border: 1px solid #424242; background-color: #000; font-size: 14px; font-weight: 600; color: rgb(159, 159, 159); border-radius: 6px; cursor: pointer;" aria-pressed="false">내림차순</button>
         </div>
       </div>
     </div>
     <div class="project-summarybar">
-      <div id="project-count" style="font-size: 48px; font-weight: 900; display: flex; justify-content: center; align-items: center; gap: 10px;">0 Project</div>
-      <div style="min-width: 360px; display: flex; justify-content: flex-end;">
+      <div id="project-count"><span class="count-num">0</span> <span class="count-label">Project</span></div>
+      <div class="summary-right">
         <div class="search-wrap">
           <input
             id="project-search"
@@ -1147,7 +1198,7 @@
          }
        });
 
-       document.getElementById('project-count').innerHTML = `<span style="font-size: 72px; color: white;">${count}</span> <span style="font-size: 18px; color: #aaa;">Project</span>`;
+       document.getElementById('project-count').innerHTML = `<span class="count-num">${count}</span> <span class="count-label">Project</span>`;
      }
 
     // 초성 기반 연속(순서 유지) 매칭을 위한 정규화 유틸
@@ -1310,49 +1361,6 @@
   document.querySelectorAll('[data-filter]').forEach(btn => btn.addEventListener('click', () => setTimeout(reapplyIfNeeded, 100)));
 })();
 
-// [라우팅] 화면 너비 기준 페이지 전환 (<=639px: Project-mobile.html, >=640px: Project.html)
-(function responsiveRoute(){
-  const DESKTOP_BASE = 'Project';
-  const MOBILE_BASE  = 'Project-mobile';
-
-  function isOnBase(base){
-    const p = location.pathname.toLowerCase().replace(/\/+$/, '');
-    const b = base.toLowerCase().replace(/\.html?$/, '');
-    return (
-      p.endsWith('/'+b) ||
-      p.endsWith('/'+b+'.html') ||
-      p.endsWith('/'+b+'/') ||
-      p.endsWith('/'+b+'/index.html')
-    );
-  }
-  function goToBase(base){
-    const baseDir = location.pathname.replace(/[^/]*$/, '');
-    const file = base + '.html';
-    location.replace((baseDir + file).replace(/\/\/{2,}/g,'/'));
-  }
-
-  const mq = window.matchMedia('(max-width: 639px)');
-  let ticking = false;
-  function check(){
-    if (ticking) return; ticking = true;
-    requestAnimationFrame(() => {
-      const isMobile = mq.matches;
-      if (isMobile && isOnBase(DESKTOP_BASE)) goToBase(MOBILE_BASE);
-      ticking = false;
-    });
-  }
-
-  if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
-  else if (mq.addListener) mq.addListener(check);
-  window.addEventListener('resize', check, {passive:true});
-  window.addEventListener('orientationchange', check, {passive:true});
-  document.addEventListener('DOMContentLoaded', check);
-  setTimeout(check, 120);
-  // iOS/Safari 지연 대응
-  let kicks = 0; const kickTimer = setInterval(()=>{ kicks++; check(); if (kicks>10) clearInterval(kickTimer); }, 200);
-  window.addEventListener('pageshow', check, {passive:true});
-  document.addEventListener('visibilitychange', check, {passive:true});
-})();
 // === 프로젝트 갤러리 이미지 로딩: 전체 빠른 로드(eager + high) ===
 (function optimizeProjectImages(){
   const gallery = document.querySelector('.project-gallery');

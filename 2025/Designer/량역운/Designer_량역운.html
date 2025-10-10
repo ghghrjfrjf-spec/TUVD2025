@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>량역운 | TUVD 27th Graduate Exhibition</title>
+  <!-- ✅ 공용 스타일 연결: 상단 네비 / 푸터 / 커서 (모든 페이지 동일 규격) -->
+  <!-- TIP: 이 페이지는 2025/Project/안정연/ 경로에 있으므로, 공용 요소는 ../../../ 로 올라갑니다. -->
+  <link rel="stylesheet" href="../../../2.PageElement/Tob_nav/Tob_nav.css" />
+  <link rel="stylesheet" href="../../../2.PageElement/Footer/Footer.css" />
+  <link rel="stylesheet" href="../../../2.PageElement/Cursor/cursor.css" />
+  
+  <style>
+    /* =============================================================
+       전역 스타일 가이드
+       - 다크 테마(검정 배경), 기본 폰트/컬러 변수 정의
+       - 공용 네비/푸터와 톤을 맞추는 기준 스타일입니다.
+       ============================================================= */
+   /* 장미 커서 기본 스타일( .cursor-dot / .rose-cursor 공통 ) */
+   .cursor-dot, .rose-cursor, [data-rose-cursor]{
+     position: fixed;
+     left: 0; top: 0;                     /* origin at viewport 0,0 */
+     transform: translate3d(-9999px, -9999px, 0); /* parked offscreen until first move */
+     transform-origin: 0 0;               /* top-left origin so JS can subtract hotspot px */
+     pointer-events: none;                /* never block clicks */
+     z-index: 99999;                      /* above everything */
+     will-change: transform;              /* GPU hint for smoothness */
+   }
+
+    /* Hide native cursor only when custom cursor is ready */
+    body.cursor-ready { cursor: none; }
+    
+    :root {
+      --bg: #000;
+      --text: #fff;
+      --muted: #aaa;
+      --muted-2: #ccc;
+      --panel: #111;
+      --line: #222;
+      --red: #ff2b2b;
+      --panel-2: #0c0c0c;  /* 더 어두운 패널 */
+      --panel-3: #0f0f0f;  /* 약간 밝은 패널 */
+    }
+
+    .won {
+      color: white;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Layout containers */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .profile-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;   /* 좌/우 컬럼 하단을 동일 선에 맞춤 */
+      justify-content: space-between;   /* 좌우 컬럼 균등 배치 */
+      background-color: var(--bg);
+      color: var(--text);
+      flex-wrap: wrap;
+      padding: 12px 2rem 25x;
+      min-height: 90vh;
+      box-sizing: border-box;
+      gap: 120px; /* 이미지와 글자 간격을 더 넓힘 */
+      max-width: 1300px;
+      margin: 0 auto;
+      margin-bottom: 150px;   /* 프로필과 Q&A 사이 간격 크게 */
+      margin-top: 16px;
+    }
+
+    @media (max-width: 900px){
+      .profile-container { left: 6px; }
+    }
+
+    .profile-right {
+      flex: 1 1 520px;
+      max-width: 560px;
+      padding: 0 2rem;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: auto;
+      order: 1; /* 텍스트(프로필 정보) 왼쪽 */
+      margin-right: 0;           /* 중앙 정렬 방해 요소 제거 */
+    }
+
+    .profile-left {
+      flex: 1 1 420px;
+      text-align: center;
+      position: relative;
+      transform: translateX(40px); /* 오른쪽 이동 확대 */
+    }
+
+    /* Profile card */
+    .profile-card {
+      order: 2;
+      flex: 0 0 auto;
+      background: transparent;   /* 박스 배경 제거 */
+      border: none;              /* 테두리 제거 */
+      border-radius: 0;          /* 둥근 모서리 제거 */
+      padding: 0;                /* 패딩 제거 */
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-left: 0;            /* 중앙 정렬 방해 요소 제거 */
+      box-shadow: none;          /* 그림자 제거 */
+    }
+    .profile-card:hover {
+      transform: none;           /* 호버 효과 제거 */
+      box-shadow: none;          /* 호버 그림자 제거 */
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 2.8rem;
+      color: var(--red);
+      margin: 0;
+      line-height: 1.1;
+      letter-spacing: 0.5px;
+      position: relative;
+      letter-spacing: .6px; 
+      color: rgb(143, 32, 4);
+    }
+
+
+    
+    h2 {
+      font-size: 1.2rem;
+      color: var(--muted);
+      margin: 6px 0 14px;
+      font-weight: 500;
+    }
+
+    .contact-info {
+      font-size: 0.92rem;
+      color: var(--muted-2);
+      margin: 0.25rem 0 0.25rem;
+    }
+
+    .email {
+      font-size: 1rem;
+      margin: 6px 0 10px;
+      color: var(--text);
+    }
+
+    .hashtags {
+      display: inline-block;
+      background-color: var(--panel);
+      padding: 5px 20px;
+      border-radius: 50px;
+      font-size: 15px;
+      margin: 0 10px 10px 0;
+      border: 1px solid rgb(51, 51, 51);
+      color: rgb(183, 183, 183);
+      font-weight: 600;
+    }
+    
+
+    .profile-right .message {
+      text-align: left;
+      position: relative;
+      top: -38px;           /* 메시지만 위로 올림 (권장 범위: -16 ~ -40px) */
+      margin: 0 0 28px;
+    }
+
+
+    @media (max-width: 900px){
+      .profile-right .message{ max-width: 100%; margin: 6px 0 20px; }
+    }
+
+    .profile-right .text-content {
+      margin-top: -100px;
+      position: relative;
+      top: 0;                /* 텍스트 전체는 이동하지 않음 */
+    }
+    @media (max-width: 900px){
+      .profile-right .text-content { top: 0; }
+    }
+
+    /* .message 스타일: tidy unified paragraph style */
+    .message {
+      font-size: clamp(15px, 1.9vw, 18px);
+      line-height: 1.85;
+      font-weight: 700;
+      color: #e8e8e8;
+      letter-spacing: .1px;
+      word-break: keep-all;        /* 한글 단어 중간 줄바꿈 방지 */
+      overflow-wrap: break-word;   /* 긴 영문/이메일도 줄바꿈 */
+      white-space: pre-line;       /* 작성한 줄바꿈 유지 */
+      text-align: left;
+      text-rendering: optimizeLegibility;
+    }
+
+
+
+    .profile-role {
+      color: var(--text);
+      font-size: 0.95rem;
+      margin: 12px 0 0;
+      background-color: var(--panel);
+      padding: 6px 12px;
+      border-radius: 999px;
+      display: inline-block;
+      border: 1px solid var(--red);
+      letter-spacing: 0.6px;
+    }
+
+    /* Images */
+    .profile-img {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      border-radius: 14px;
+      border: none;             /* 이미지 테두리 제거 */
+      box-shadow: none;         /* 이미지 그림자 제거 */
+    }
+
+    .image-gallery {
+      width: 100%;
+      padding: 48px 0 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .image-gallery img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      height: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+
+    /* 상단 네비 컨테이너: sticky + 부드러운 이동 애니메이션 */
+    #nav-placeholder{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      /* no transition by default to avoid first-paint flicker */
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+    body.nav-init-done #nav-placeholder{
+      transition: transform 0.6s ease-in-out;
+    }
+
+    /* 상단바 비주얼: 반투명 블랙 + blur 6px + 하단 1px 보더(고정 규격) */
+    #nav-placeholder header{
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      box-sizing: border-box;
+      width: 100%;
+      height: 90px;
+      padding-left: 59px;
+      padding-right: 60px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+      /* no transition until init is done */
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+    body.nav-init-done #nav-placeholder header{
+      transition: transform .38s cubic-bezier(.22,.61,.36,1), box-shadow .24s ease;
+    }
+
+    /* 로고 크기 조정 */
+    #nav-placeholder header .logo img{
+      max-height: 38px;
+      transform: translateY(2px);
+    }
+
+    #nav-placeholder .logo .logo-main{ font-size: 15px !important; }
+    #nav-placeholder .logo .logo-sub { font-size: 15px !important; }
+
+
+    /* 네비 링크 타이포그래피: Pretendard 14/700/letter-spacing .2px */
+    #nav-placeholder header a{
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      text-decoration: none;
+      color: #fff;
+      padding: 8px 0;
+    }
+    
+    #nav-placeholder header a:hover{ color:#ff3b3b; }
+    #nav-placeholder header a.is-active{ color:#ff4d4d; font-weight:700; }
+
+    #nav-placeholder nav ul{
+      display: flex;
+      align-items: center;       /* 세로 가운데 정렬 */
+      gap: 47px;                 /* Project 페이지 간격과 동일하게 */
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 스크롤 시 네비게이션 숨김 */
+    body.nav-hidden #nav-placeholder,
+    body.nav-hidden #nav-placeholder > header {
+      transform: translateY(-100%) !important;
+    }
+    /* 헤더 높이만큼 공간 확보(콘텐츠 가림 방지) */
+    .nav-spacer { height:4px; }
+    .hero { display:block; height:auto; }
+    /* ===================== Layout Polish (Overrides) ===================== */
+    /* 전체 최대폭과 여백 톤 정리 */
+    :root { --container: 1200px; }
+
+    /* 프로필 영역: 비주얼 정리 + 간격 조정 */
+    .profile-container{
+      max-width: 1300px;
+      margin-top: -40px;
+      padding: 12px 2rem 24px;
+      gap: 57px;   /* 텍스트-이미지 간격 크게 */
+      left: 0;     /* 좌측 치우침 제거 */
+      justify-content: space-between; /* 양쪽 컬럼 균등 배치 */
+    }
+
+    .profile-right{
+      max-width: 620px;            /* 본문 가독 폭 */
+      padding: 0 1rem;             /* 좌우 패딩 살짝만 */
+    }
+
+    h2{ 
+      color: #cfcfcf; 
+      margin-top: 8px; }
+
+    
+
+    .contact-info{ color:#bdbdbd; }
+
+    /* 해시태그: 줄바꿈 정갈하게, 간격 균일화 */
+    .text-content {
+    display: block; /* role이 이름 옆으로 붙지 않게 */
+    }
+
+    .text-content .hashtags{ margin:0; }
+
+    .name-line {
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      gap: 10px;
+      margin: 0 0 6px;      /* 위/아래 기본 간격만 */
+      position: relative;    /* 국소 이동 */
+      top: -358px;            /* 이름 줄만 위로 올림 (필요시 -16 ~ -32px 조절) */
+      padding-bottom: 8px;   /* 밑줄과 이름 사이 여백 */
+      position: relative;    /* ::after 기준 */
+      padding-right: 50px; /* 우측 장식 이미지 자리 확보 */
+    }
+    .name-line::after {
+      content: "";
+      position: absolute;
+      left: 0;                 /* 왼쪽은 유지 */
+      right: 80px;             /* 기존 60px → 80px, 총 20px 더 짧게 */
+      bottom: 0;
+      height: 1px;
+      background: rgba(255,255,255,.18);
+      width: 82.3%;
+    }
+    .name-mark {
+      position: absolute;
+      right: 38px;
+      bottom: -4px;         /* 밑줄 위로 살짝 겹치게 */
+      height: 48px;         /* 데스크톱 크기 */
+      width: auto;
+      opacity: 0.95;
+      pointer-events: none; /* 클릭 간섭 방지 */
+    }
+    @media (max-width: 900px){
+      .name-line { padding-right: 64px; }
+      .name-line::after { right: 68px; } /* 기존 56px → 68px, 살짝 더 짧게 */
+      .name-mark { height: 36px; bottom: -3px; }
+    }
+    @media (max-width: 900px){
+      .name-line { top: -12px; }
+    }
+
+    .name-line h1 { margin: 0; }
+    .name-line h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: var(--muted);
+    }
+
+    /* 수상/경력 블록 톤 다운 + 간격 */
+    .won{ opacity:.9; line-height:1.7; }
+
+    
+    .profile-card:hover{
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 22px 44px rgba(0,0,0,.5), 0 8px 24px rgba(255,43,43,.18);
+    }
+
+    /* 프로필 이미지: 모서리 더 둥글게 */
+    .profile-img{ border-radius:16px; }
+
+    /* 히어로 이미지: 중앙 정렬 + 라운드 + 그림자 */
+    .hero{
+      width: min(var(--container), 92%);
+      margin: 16px auto 0;         /* 상단 간격 조정 */
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 36px rgba(0,0,0,.45);
+      display:block;
+    }
+    /* 맨 위로 버튼: 항상 최상단 표시 */
+    .scroll-btn{
+          position:fixed;
+          right:16px;
+          bottom:16px;
+          z-index:99999; /* 맨 위 */
+          display:none;
+          align-items:center;
+          justify-content:center;
+          width:44px; height:44px;
+          border-radius:30px;
+          background:#000;
+          color:#fff; font-weight:900; letter-spacing:.3px;
+          box-shadow:0 6px 18px rgba(0,0,0,.35);
+          cursor:pointer;
+        }
+
+      .scroll-btn:hover{ color:#ff3b3b; box-shadow:0 6px 22px rgba(255,59,59,.25); }
+
+    /* 어두운 테마에 맞게 카드형 요소 색상 보정(혹시 사용 시) */
+    .project-card{
+      background: #0e0e0e;
+      border: 1px solid #222;
+      box-shadow: 0 10px 28px rgba(0,0,0,.28);
+    }
+    .project-card h3{ color:#e9e9e9; }
+    .project-card p{ color:#b8b8b8; }
+
+    /* 반응형: 모바일에서 간격과 비율 재조정 */
+    @media (max-width: 900px){
+      .profile-container{ padding: 0 1.25rem 12px; gap:28px; }
+      .profile-left{ transform: none; }
+      .profile-right{ max-width:none; }
+      .hero{ width: 94%; margin-top: 10px; }
+    }
+    /* ================================================================== */
+    @media (max-width: 900px) { .nav-spacer { height: 8px; } }
+
+    /* ===== Profile image flip (refined visual polish) ===== */
+    .profile-left .pflip {
+      position: relative;
+      width: min(380px, 90%);
+      margin: 0 auto;
+      perspective: 1200px;
+      transition: transform .4s ease;
+    }
+    .profile-left .pflip-inner {
+      position: relative;
+      width: 100%;
+      padding-top: 120%; /* keep square ratio */
+      transform-style: preserve-3d;
+      transition: transform .7s cubic-bezier(.22, .61, .36, 1);
+      will-change: transform;
+    }
+    .profile-left .pflip-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      box-shadow: none;         /* 내부 면 그림자 제거 */
+      border: none;             /* 내부 면 테두리 제거 */
+      background: transparent;  /* 면 배경 제거 */
+    }
+    .profile-left .pflip-front {
+      transform: rotateY(0deg);
+      background: #000;
+    }
+    .profile-left .pflip-back {
+      transform: rotateY(180deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;  /* 뒷면 배경 제거 */
+    }
+    .profile-left .pflip:hover .pflip-inner {
+      transform: rotateY(180deg);
+    }
+    .profile-left .pflip img.profile-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 18px;
+    }
+
+    /* ===== Proximity shake/parallax for profile image ===== */
+    @media (hover: hover) and (pointer: fine) {
+      .profile-left .pflip { --imgTx: 0px; --imgTy: 0px; --imgRot: 0deg; }
+      .profile-left .pflip img.profile-img {
+        will-change: transform;
+        transition: transform 80ms ease-out;
+      }
+      .profile-left .pflip[data-shake="active"] img.profile-img {
+        transform: translate3d(var(--imgTx), var(--imgTy), 0) rotate(var(--imgRot));
+      }
+    }
+    .profile-left .pflip .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 70%;
+      max-width: 300px;
+      aspect-ratio: 3 / 1;
+    }
+    .profile-left .pflip .logo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 24px rgba(255, 43, 43, 0.3));
+      opacity: 0.95;
+    }
+    @media (hover:none){ .profile-left .pflip:hover .pflip-inner { transform: none; } }
+    @media (prefers-reduced-motion: reduce){ .profile-left .pflip-inner { transition: none; } }
+
+
+    /* spacing helpers */
+    #footer-placeholder { margin-top: 200px; }
+
+    @media (max-width: 900px) {
+    }
+    /* ===== UI polish: badges, section titles, meta chips, Q&A, project rule ===== */
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: .88rem;
+      letter-spacing: .2px;
+      border: 1px solid rgba(255,43,43,.45);
+      background: linear-gradient(180deg, #121212, #0c0c0c);
+      color: #fff;
+      margin-right: 6px;
+    }
+    .badge.designer {
+      border-color: rgba(255,255,255,.25);
+    }
+    .badge.role {
+      border-color: rgba(255,43,43,.55);
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 18px 0 10px;
+      font-size: 1.12rem;
+      color: #fff;
+      letter-spacing: .3px;
+    }
+    .section-title::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(255,43,43,.14);
+    }
+    .divider {
+      height: 1px;
+      width: 100%;
+      border: 0;
+      background: linear-gradient(90deg, rgba(255,43,43,.5), rgba(255,43,43,.08) 40%, rgba(255,43,43,0));
+      margin: 14px 0;
+    }
+    .meta-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 6px 0 6px;
+      padding: 0;
+      list-style: none;
+    }
+    .meta-list li {
+      background: #0e0e0e;
+      border: 1px solid rgba(255,255,255,.14);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: .9rem;
+      color: #e9e9e9;
+    }
+    .meta-list li.accent {
+      border-color: rgba(255,43,43,.5);
+    }
+
+    .awards {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      color: #ddd;
+    }
+
+    .awards li {
+      margin: .25rem 0;
+    }
+    .project-block {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .project-block p {
+      color: #e6e6e6;
+      line-height: 1.85;
+      margin: .5rem 0;
+    }
+    .project-tagline {
+      font-size: 1.05rem;
+      color: #ffdddd;
+    }
+    .qna {
+      max-width: 900px;
+      margin: 28px auto 90px;
+      padding: 0 2rem;
+    }
+    .qna details {
+      background: #0e0e0e;
+      border: 1px solid #222;
+      border-radius: 12px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .qna summary {
+      cursor: pointer;
+      padding: 12px 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .qna .answer {
+      padding: 12px 14px;
+      border-top: 1px solid #1d1d1d;
+      color: #dcdcdc;
+      line-height: 1.7;
+    }
+
+    /* ===== Awards (수상 경력) — centered banner style ===== */
+.awards-section{
+      max-width: 1200px;
+      text-align: left;
+      margin-top: 42px; /* push the whole awards block downward */
+}
+
+    .awards-heading{
+      margin: 0px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      color: #dcdcdc;
+      margin-top: 10px;
+    }
+
+    .awards-list{
+      list-style: none;
+      margin: 6px 0 10px;
+    }
+
+    .awards-list li{
+      font-weight: 500;
+      font-size: 13px;
+      letter-spacing: .3px;
+      color: #959595;
+      line-height: 1.25;
+    }
+    
+    /* ===== Bottom Q&A (Interview) — consolidated & clean ===== */
+    .qna-bottom {
+      max-width: 980px;
+      margin: 120px auto 96px;   /* 위쪽을 크게 띄움, 아래도 여유 */
+      padding: 0 1.25rem;
+    }
+    @media (max-width: 900px){
+      .qna-bottom{ margin: 84px auto 72px; }
+    }
+    .qna-bottom .qna-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: .6px;
+      color: #fff;
+      margin: 0 0 14px;
+      text-align: left;
+    }
+    .qa-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
+    @media (min-width: 980px) {
+      .qa-grid { grid-template-columns: repeat(2, 1fr); gap: 22px; }
+      .qa-grid .qa-card:first-child { grid-column: 1 / -1; }
+    }
+    .qa-card {
+      border: 1px solid #1f1f1f;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0,0,0,.28);
+      background: #111;
+    }
+
+    /* Default alignment: center both axes */
+    .qa-q,
+    .qa-a {
+      display: flex;
+      align-items: center;      /* 세로 중앙 */
+      justify-content: center;  /* 가로 중앙 */
+      text-align: center;       /* 텍스트 중앙 */
+    }
+
+    /* First card centered (both question and answer) */
+    .qa-grid .qa-card:first-child .qa-q,
+    .qa-grid .qa-card:first-child .qa-a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* Question styles */
+    .qa-q {
+      color: #dcdcdc;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: .3px;
+      padding: 10px 15px;          /* 위/아래 동일 패딩 유지 */
+      min-height: 64px;            /* 높이 기준 */
+      display: flex;
+      align-items: center;         /* 세로 중앙 */
+      justify-content: center;     /* 가로 중앙 */
+      text-align: center;
+      background: rgb(29, 29, 29);  /* 질문 영역 배경(살짝 밝은 톤) */
+    }
+
+    .qa-subtitle {
+      color: rgb(223, 223, 223);
+      font-size: 20px;
+      line-height: 1.3;
+      font-weight: 500;
+      display: block;
+    }
+
+    /* Answer styles */
+    /* (qa-q rule moved and replaced above) */
+        
+    .qa-a .qa-text {
+      color: rgb(203, 203, 203);
+      font-size: 18px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.7;
+    }
+    @media (min-width:980px) { .qa-a { min-height: 7.2em; } }
+
+
+    /* Fallback for non-webkit clamp */
+    @supports not (-webkit-line-clamp: 1) {
+      .qa-q .qa-text { display: block; max-height: calc(1.3em * 2); overflow: hidden; }
+      .qa-grid .qa-card:first-child .qa-q .qa-text { max-height: 1.3em; }
+    }
+
+    /* Back face link fills the card */
+    /* Tap/click flip support */
+.profile-left .pflip.is-flipped .pflip-inner {
+  transform: rotateY(180deg);
+}
+
+/* Back face link fills the card */
+.profile-left .pflip .pflip-back { 
+  cursor: pointer; 
+}
+.profile-left .pflip .pflip-back .pflip-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative; /* hover hint 배치 기준 */
+}
+
+/* Hover hint over back face */
+.profile-left .pflip .hover-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 30px;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.26);
+  opacity: 0;                 /* 기본 숨김 */
+  visibility: hidden;         /* 기본 숨김 */
+  transform: translateY(10px);
+  transition: opacity .3s ease, transform .3s ease, visibility .3s; 
+}
+
+@media (hover:hover) {
+  /* 뒤집히지 않았을 때에만 호버 힌트 표시 */
+  .profile-left .pflip:not(.is-flipped):hover .hover-hint {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+/* 카드가 뒤집힌 상태에서는 힌트 강제 숨김 */
+.profile-left .pflip.is-flipped .hover-hint {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(10px) !important;
+}
+
+.text-content .role-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;  /* 이름과 간격 */
+  margin-top: 4px;
+}
+.text-content h1 {
+  margin-top: 2px;     /* role-line 바로 아래 여백 */
+}
+
+  .awards-rule{
+    /* shorter line */
+    width: 1000px;
+    max-width: 50%;
+    /* thin */
+    height: 1px;
+    border: 0;
+    /* new color (soft red gradient, left-aligned) */
+    background: rgb(129, 129, 129); /* spacing */
+    margin: 8px 0 12px 0; /* +8px more below the line */
+    display: block;
+  }
+@media (max-width: 900px){
+  .awards-rule{ width: 140px; }
+}
+</style>
+</head>
+
+
+<body>
+  <!-- 상단 네비게이션 주입 자리 (fetch로 Tob_nav.html 삽입) -->
+  <div id="nav-placeholder"></div>
+  <!-- 헤더 높이만큼 빈 공간 확보 (콘텐츠 가림 방지) -->
+  <div class="nav-spacer"></div>
+  <div id="cursor-placeholder"></div>
+
+  <!-- 프로필(텍스트/태그/수상내역) + 프로필 이미지 카드 -->
+  <div class="profile-container">
+    <div class="profile-right">
+      <div class="text-content">
+        <div class="name-line">
+          <h1>량역운</h1>
+          <h2>LIANG YIYUN</h2>
+          <img class="name-mark" src="../../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미 마크" />
+        </div>
+        
+ 
+      </div>
+    </div>
+  
+    <div class="profile-left">
+      <div class="profile-card">
+        <figure class="pflip" role="button" tabindex="0" aria-label="프로필 카드 뒤집기">
+          <div class="pflip-inner">
+            <div class="pflip-face pflip-front">
+              <img class="profile-img" src="../../../1.Picture/1.%2027th%20Graduation/Profile/LIANG YIYUN.jpeg" alt="량역운 프로필 사진">
+            </div>
+            <div class="pflip-face pflip-back">
+              <a class="pflip-link" href="../../Project/량역운/Project_량역운.html" aria-label="프로젝트 페이지로 이동">
+                <img class="profile-img back-img" src="../../../1.Picture/2.%20Graduate/Graduate_Logo/LIANG YIYUN.jpg" alt="량역운 프로필 사진 (후면)">
+                <div class="hover-hint" aria-hidden="true">프로젝트 페이지로 이동</div>
+              </a>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  
+
+ <!-- Scroll to Top Button -->
+ <button type="button" onclick="scrollToTop()" id="scrollTopBtn" class="scroll-btn" aria-label="맨 위로 이동">▲</button>
+
+  <div id="footer-placeholder"></div>
+  <script>
+  // [맨 위로 이동 함수]
+  function scrollToTop(){
+    try {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+      // Fallback for older browsers
+      var c = document.documentElement.scrollTop || document.body.scrollTop;
+      if (c > 0) {
+        var start = null;
+        function step(ts){
+          if(!start) start = ts;
+          var p = Math.min((ts - start) / 300, 1); // 300ms ease-out
+          var eased = 1 - Math.pow(1 - p, 3);
+          var next = c * (1 - eased);
+          document.documentElement.scrollTop = next;
+          document.body.scrollTop = next;
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+    }
+  }
+
+  // [헤더/공용 컴포넌트 로더]
+  // - 스크롤 방향에 따라 헤더를 숨김/표시
+  // - 상단 네비/푸터/커서 HTML을 fetch로 주입하고, 경로를 현재 페이지 깊이에 맞춰 정규화합니다.
+  // [네비게이션] 스크롤 방향 감지 → 숨김/표시 (깜빡임 방지 버전)
+  function bindHideNavOnScroll(){
+    const TOPSAFE = 64;   // 상단 근처에서는 항상 표시
+    const HIDE_AFTER = 56; // 보여진 뒤 이만큼 더 내려가면 숨김
+    const SHOW_AFTER = 36; // 숨겨진 뒤 이만큼 올리면 표시
+
+    let lastY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    let anchorY = lastY;   // 상태 전환 기준점
+    let state = 'shown';   // 'shown' | 'hidden'
+    let ticking = false;
+
+    function apply(y){
+      if (y <= TOPSAFE){
+        if (state !== 'shown'){
+          state = 'shown';
+          document.body.classList.remove('nav-hidden');
+          anchorY = y;
+        } else {
+          document.body.classList.remove('nav-hidden');
+        }
+        return;
+      }
+
+      if (state === 'shown'){
+        if (y - anchorY > HIDE_AFTER){
+          document.body.classList.add('nav-hidden');
+          state = 'hidden';
+          anchorY = y;
+        }
+      } else { // hidden
+        if (anchorY - y > SHOW_AFTER){
+          document.body.classList.remove('nav-hidden');
+          state = 'shown';
+          anchorY = y;
+        }
+      }
+    }
+
+    function onScroll(){
+      lastY = window.pageYOffset || document.documentElement.scrollTop || 0;
+      if (!ticking){
+        ticking = true;
+        requestAnimationFrame(() => { apply(lastY); ticking = false; });
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('wheel', onScroll, { passive:true });
+    window.addEventListener('touchmove', onScroll, { passive:true });
+
+    // 초기 상태 적용
+    requestAnimationFrame(() => apply(lastY));
+  }
+
+  // 공용 네비 HTML 주입 (현재 파일 기준 3단계 상위 경로)
+  fetch('../../../2.PageElement/Tob_nav/Tob_nav.html')
+    .then(res => res.text())
+    .then(html => {
+      const root = document.getElementById('nav-placeholder');
+      if (!root) return;
+      root.innerHTML = html;
+
+      const injectedHeader = root.querySelector('header');
+      if (injectedHeader && !injectedHeader.classList.contains('tob-nav')) {
+        injectedHeader.classList.add('tob-nav');
+      }
+
+      // 로고 경로(상대경로) — 폴백 포함
+      const logoImg = root.querySelector('#tuvd-logo, .tob-nav__logo img, .logo img');
+      if (logoImg) {
+        logoImg.src = '../../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png';
+        logoImg.alt = '장미로고';
+        logoImg.onerror = function(){ this.onerror=null; this.src = '../../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png'; };
+      }
+
+      // Normalize any paths inside injected fragment
+      root.querySelectorAll('img[src]').forEach(img => {
+        const s = img.getAttribute('src') || '';
+        const normalized = s
+          .replace(/^(\.\.\/){1,3}1\.Picture\//, '/1.Picture/')
+          .replace(/^(\.\.\/){1,3}2\.PageElement\//, '/2.PageElement/')
+          .replace(/^\/Before_Work3\//, '/');
+        if (normalized !== s) img.setAttribute('src', normalized);
+      });
+
+      // Normalize nav links to this depth
+      const map = {
+        about: '../../../2025/About.html',
+        project: '../../../2025/Project.html',
+        designer: '../../../2025/Designer.html',
+        guest: '../../../2025/Guest.html',
+        gallery: '../../../2025/Gallery.html',
+        home: '../../../2025/Main.html'
+      };
+      root.querySelectorAll('a[href]').forEach(a => {
+        const t = (a.textContent || '').toLowerCase();
+        const h = a.getAttribute('href') || '';
+        if (/about/i.test(t) || /about/i.test(h)) a.href = map.about;
+        else if (/project/i.test(t) || /project/i.test(h)) a.href = map.project;
+        else if (/designer/i.test(t) || /designer/i.test(h)) a.href = map.designer;
+        else if (/guest.?book/i.test(t) || /guest.?book/i.test(h) || /guest/i.test(t)) a.href = map.guest;
+        else if (/gallery/i.test(t) || /gallery/i.test(h)) a.href = map.gallery;
+        else if (/home|main|index/i.test(t) || /mainPage|home|index/i.test(h)) a.href = map.home;
+      });
+
+      bindHideNavOnScroll();
+
+      // Dynamically size spacer to exact header height
+      const spacer = document.querySelector('.nav-spacer');
+      const header = root.querySelector('.tob-nav') || root.querySelector('header');
+      if (spacer && header) {
+        const setSpacerHeight = () => { spacer.style.height = Math.max(0, header.offsetHeight - 86) + 'px'; };
+        setSpacerHeight();
+        window.addEventListener('resize', setSpacerHeight);
+        setTimeout(setSpacerHeight, 100);
+        setTimeout(() => document.body.classList.add('nav-init-done'), 80);
+      }
+    });
+
+  // 공용 푸터 HTML 주입
+  fetch('../../../2.PageElement/Footer/Footer.html')
+    .then(res => res.text())
+    .then(html => {
+      const foot = document.getElementById('footer-placeholder');
+      if (!foot) return;
+      foot.innerHTML = html;
+      foot.querySelectorAll('img[src]').forEach(img => {
+        const s = img.getAttribute('src') || '';
+        const normalized = s
+          .replace(/^(\.\.\/){1,3}1\.Picture\//, '/1.Picture/')
+          .replace(/^(\.\.\/){1,3}2\.PageElement\//, '/2.PageElement/')
+          .replace(/^\/Before_Work3\//, '/');
+        if (normalized !== s) img.setAttribute('src', normalized);
+      });
+    });
+
+
+  //!-- 커서 HTML 삽입 + 초기화 (부드러운 추적) -->
+  (function loadCursor(){
+    const mount = document.getElementById('cursor-placeholder');
+    if (!mount) return;
+
+    // Inject cursor HTML
+    fetch('../../../2.PageElement/Cursor/cursor.html', { cache: 'no-store' })
+      .then(r => r.text())
+      .then(html => {
+        mount.innerHTML = html;
+        initRoseCursor();
+      })
+      .catch(err => console.error('Cursor load failed:', err));
+
+    function initRoseCursor(){
+      // Support any of the three class/name options
+      const cursor = document.querySelector('.cursor-dot, .rose-cursor, [data-rose-cursor]');
+      if (!cursor) return false;
+      if (cursor.dataset.raf === 'on') return true; // prevent double loops
+
+      // Ensure transform origin is top-left so math is exact
+      cursor.style.transformOrigin = '0 0';
+      cursor.style.willChange = 'transform';
+
+      let x = 0, y = 0;    // target mouse coordinates
+      let tx = 0, ty = 0;  // tweened coordinates
+      let ox = 0, oy = 0;  // hotspot offsets (half width/height)
+      let started = false;
+      const ease = 0.62;   // follow speed (0..1)
+
+      function measureHotspot(){
+        // Read the actual rendered size (covers either SVG/IMG/Div)
+        const rect = cursor.getBoundingClientRect();
+        ox = rect.width * 0.5;
+        oy = rect.height * 0.5;
+      }
+
+      function raf(){
+        tx += (x - tx) * ease;
+        ty += (y - ty) * ease;
+        // Subtract hotspot so the visual center sits exactly on the native pointer
+        cursor.style.transform = `translate3d(${(tx - ox).toFixed(2)}px, ${(ty - oy).toFixed(2)}px, 0)`;
+        requestAnimationFrame(raf);
+      }
+
+      function onMove(e){
+        x = e.clientX; y = e.clientY;
+        if (!started){
+          started = true;
+          tx = x; ty = y;
+          // Once we know we have a mouse, hide native cursor
+          document.body.classList.add('cursor-ready');
+        }
+      }
+
+      // Recompute hotspot when layout might change
+      const ro = new ResizeObserver(measureHotspot);
+      ro.observe(cursor);
+      window.addEventListener('resize', measureHotspot, { passive: true });
+      // In case the cursor contains images, measure again after load
+      cursor.querySelectorAll('img').forEach(img => {
+        if (img.complete) return; 
+        img.addEventListener('load', measureHotspot, { once: true });
+      });
+
+      // Start loop
+      cursor.dataset.raf = 'on';
+      measureHotspot();
+      requestAnimationFrame(raf);
+      document.addEventListener('mousemove', onMove, { passive: true });
+      return true;
+    }
+  })();
+  const API_URL = "https://script.google.com/macros/s/AKfycbzv2q6tQP8CILNnkPYhKy-VF_ugJq4XaI4v79XTRbUsU0ZaBKOxJojnJGZyEgcBz1vBMA/exec";
+  const messagesPerPage = 6; // 3 columns x 2 rows per page
+  let messages = [];
+  let currentPage = 1;
+  
+  // [맨 위로 버튼 표시]
+  (function(){
+    const scrollBtn = document.getElementById('scrollTopBtn');
+    if (!scrollBtn) return;
+    const onScroll = () => {
+      if (document.body.scrollTop > 1 || document.documentElement.scrollTop > 1) {
+        scrollBtn.style.display = 'flex';
+      } else {
+        scrollBtn.style.display = 'none';
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+
+  // [맨 위로 버튼: 키보드 활성화]
+  (function(){
+    var btn = document.getElementById('scrollTopBtn');
+    if(!btn) return;
+    btn.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        scrollToTop();
+      }
+    });
+  })();
+
+  // [프로필 플립: 클릭/탭/키보드 토글]
+(function(){
+  try {
+    const cards = document.querySelectorAll('.pflip');
+    cards.forEach(card => {
+      const toggle = () => card.classList.toggle('is-flipped');
+      card.addEventListener('click', function(e){
+        // 뒷면 링크를 직접 클릭한 경우엔 토글 말고 그대로 이동
+        const isBackLink = e.target.closest && e.target.closest('.pflip-back a');
+        if (!isBackLink) toggle();
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    });
+  } catch(_) {}
+})();
+
+  // [프로필 이미지 근접 흔들림/틸트 효과]
+  (function(){
+    try {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isFine = window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+      if (reduce || !isFine) return; // 접근성/터치 환경에서는 비활성화
+
+      const card = document.querySelector('.profile-left .pflip');
+      if (!card) return;
+
+      let raf = null;
+      let target = { tx: 0, ty: 0, rot: 0 };
+      let current = { tx: 0, ty: 0, rot: 0 };
+
+      const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+
+      const animate = () => {
+        raf = null;
+        // lerp for smoothness
+        current.tx += (target.tx - current.tx) * 0.18;
+        current.ty += (target.ty - current.ty) * 0.18;
+        current.rot += (target.rot - current.rot) * 0.18;
+        card.style.setProperty('--imgTx', current.tx.toFixed(2) + 'px');
+        card.style.setProperty('--imgTy', current.ty.toFixed(2) + 'px');
+        card.style.setProperty('--imgRot', current.rot.toFixed(2) + 'deg');
+        if (Math.abs(target.tx - current.tx) > 0.1 || Math.abs(target.ty - current.ty) > 0.1 || Math.abs(target.rot - current.rot) > 0.05) {
+          raf = requestAnimationFrame(animate);
+        }
+      };
+
+      const onMove = (e) => {
+        const rect = card.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (e.clientX - cx) / (rect.width / 2);   // -1 ~ 1
+        const dy = (e.clientY - cy) / (rect.height / 2);  // -1 ~ 1
+        const dist = Math.hypot(dx, dy);
+
+        // 가까이 갈수록 강해지는 정도 (threshold ~0.9)
+        const threshold = 0.9;
+        if (dist <= threshold) {
+          const k = 1 - dist / threshold; // 0~1
+          const tx = clamp(dx * 10 * k, -8, 8);  // 최대 8px 이동
+          const ty = clamp(dy * 10 * k, -8, 8);
+          const rot = clamp(-dx * 3 * k, -3, 3); // 좌우 살짝 회전
+          target = { tx, ty, rot };
+          card.setAttribute('data-shake', 'active');
+        } else {
+          target = { tx: 0, ty: 0, rot: 0 };
+          card.removeAttribute('data-shake');
+        }
+        if (!raf) raf = requestAnimationFrame(animate);
+      };
+
+      const onLeave = () => {
+        target = { tx: 0, ty: 0, rot: 0 };
+        if (!raf) raf = requestAnimationFrame(animate);
+        card.removeAttribute('data-shake');
+      };
+
+      card.addEventListener('mousemove', onMove, { passive: true });
+      card.addEventListener('mouseleave', onLeave, { passive: true });
+    } catch (err) { /* no-op */ }
+  })();
+  // [프로필 카드: 최초 1회 자동 플립]//
+
+(function(){
+  try {
+    // 접근성: 모션 최소화 환경에선 자동 재생하지 않음
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    const card = document.querySelector('.profile-left .pflip');
+    if (!card || card.classList.contains('auto-flip-played')) return;
+
+    // 중복 재생 방지 플래그
+    card.classList.add('auto-flip-played');
+
+    // 이미지가 로드된 뒤에 부드럽게 재생 (decode 지원 시 사용)
+    const imgs = Array.from(card.querySelectorAll('img'));
+    const waitDecode = Promise.all(
+      imgs.map(img => img.decode ? img.decode().catch(()=>{}) : Promise.resolve())
+    );
+
+    waitDecode.then(() => {
+      // 살짝 딜레이 후 플립 → 1.6초 뒤 원상복귀
+      setTimeout(() => {
+        // 사용자 상호작용 중이면 건너뜀 (data-shake는 근접 효과 활성화 시 사용)
+        if (card.hasAttribute('data-shake')) return;
+        card.classList.add('is-flipped');
+        setTimeout(() => { card.classList.remove('is-flipped'); }, 500);
+      }, 400);
+    });
+  } catch (_) {}
+})();
+
+// [라우팅] 너비 기준 페이지 전환 (>=640px ↔ <=639px)
+// 파일명: Designer_량역운.html ↔ Designer-mobile_량역운.html
+(function responsiveRoute(){
+  const DESKTOP_BASE = 'Designer_량역운';
+  const MOBILE_BASE  = 'Designer-mobile_량역운';
+
+  // 유니코드 정규화(NFC) + 소문자: 맥/서버 한글 NFD 섞일 때 대비
+  const norm = s => (s && s.normalize ? s.normalize('NFC') : s).toLowerCase();
+
+  function getCurrentBase(){
+    // 퍼센트 인코딩 해제 + 정규화
+    const parts = location.pathname.split('/').filter(Boolean).map(seg=>{
+      try { return decodeURIComponent(seg); } catch(_) { return seg; }
+    });
+    let last = parts[parts.length - 1] || '';
+    if (/^index\.html?$/i.test(last)) {
+      // .../폴더/index.html → 폴더명을 베이스로 간주
+      last = parts[parts.length - 2] || last;
+    }
+    return norm(last.replace(/\.html?$/i, ''));
+  }
+
+  function goToBase(base){
+    const baseDir = location.pathname.replace(/[^/]*$/, '');
+    // 한글 안전: encodeURIComponent
+    const file = encodeURIComponent(base) + '.html';
+    location.replace(baseDir + file);
+  }
+
+  const mq = window.matchMedia('(max-width: 639px)');
+  let ticking = false;
+
+  function check(){
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(()=>{
+      const current = getCurrentBase();
+      const isMobile = mq.matches;
+      if (isMobile && current === norm(DESKTOP_BASE)) {
+        goToBase(MOBILE_BASE);
+      } else if (!isMobile && current === norm(MOBILE_BASE)) {
+        goToBase(DESKTOP_BASE);
+      }
+      ticking = false;
+    });
+  }
+
+  // 이벤트 훅
+  if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
+  else if (mq.addListener) mq.addListener(check);
+  window.addEventListener('resize', check, {passive:true});
+  window.addEventListener('orientationchange', check, {passive:true});
+  document.addEventListener('DOMContentLoaded', check);
+  // 사파리/모바일 초기 지연 보정
+  setTimeout(check, 120);
+  let kicks = 0; const kickTimer = setInterval(()=>{ kicks++; check(); if (kicks>10) clearInterval(kickTimer); }, 200);
+  window.addEventListener('pageshow', check, {passive:true});
+  document.addEventListener('visibilitychange', check, {passive:true});
+})();
+</script>
+
+</body>
+</html>

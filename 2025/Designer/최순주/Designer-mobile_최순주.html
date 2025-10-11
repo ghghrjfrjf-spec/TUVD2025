@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>장주아 | TUVD 27th Graduate Exhibition (Mobile)</title>
+  <title>최순주 | TUVD 27th Graduate Exhibition (Mobile)</title>
 
 
   <style>
@@ -30,24 +30,25 @@
 
     .name{
       display:flex;
-      flex-direction: column;
-      align-items: center;
+      flex-direction: column;        /* ⬅ 세로로 쌓기 */
+      align-items: center;           /* ⬅ 가운데 정렬 */
       justify-content: center;
       gap:6px;
       padding-bottom:8px;
       border-bottom:1px solid rgba(255,255,255,.18);
       margin-top: 20px;
-      padding-left: 0;
-      text-align:center;
+      padding-left: 0;               /* 좌측 여백 제거 */
+      text-align:center;             /* 텍스트 가운데 */
       width:100%;
     }
     .name h1{
       margin:0;
       font-size:24px;
       line-height:1.12;
-      color:#e63d2b;
-      font-weight:800;
+      color:#e63d2b;                 /* 더 선명한 레드 */
+      font-weight:800;               /* 제목 강조 */
       letter-spacing:.3px;
+      margin-left: 0;                /* 이미지 왼쪽 라인에 정확히 맞춤 */
       text-align:center;
       align-self:center;
       text-rendering:optimizeLegibility;
@@ -58,16 +59,13 @@
       font-size:11px;
       color:#9b9b9b;
       font-weight:700;
-      letter-spacing:.2px;
-      text-align:center;
-    }
+      letter-spacing:.2px}
 
 
     /* Email pill next to name */
 
     .name .email-pill{
-      margin-top: 6px;
-      align-self: center;
+      margin-left: 0;
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.22);
@@ -78,6 +76,8 @@
       font-weight: 700;
       letter-spacing: .2px;
       white-space: nowrap;
+      align-self: center;
+      margin-top: 6px;
     }
     @media (min-width: 480px){
       .name .email-pill{ font-size: 12px; }
@@ -98,37 +98,42 @@
 
     /* ===== Bio paragraph (message) ===== */
     .message{
-      margin:20px auto 10px;
-      padding:10px var(--msg-xpad) 20px;   /* ← 변수 적용 */
-      width:100%;
-      max-width:none;                      /* 가로 스크롤을 위해 폭 제한 해제 */
-      overflow-x:auto;                     /* ← 가로 스크롤 허용 */
-      overflow-y:hidden;
-      -webkit-overflow-scrolling:touch;    /* iOS 부드러운 스크롤 */
-      touch-action: pan-x;                 /* 모바일 제스처: 좌우 이동 */
-      overscroll-behavior-x: contain;      /* 좌우 스와이프 제스처 격리 */
-      scrollbar-gutter: stable both-edges; /* 스크롤바 생겨도 레이아웃 점프 방지 */
-      text-align:center;                   /* 문단 중앙 정렬 유지 */
-      font-size:clamp(15px, 1.8vw, 17px);
-      line-height:1.85;
-      color:#ececec;
-      letter-spacing:.1px;
-      direction:ltr;
+      margin: 6px auto;              /* 세로 여백 더 줄이기 */
+      padding: 6px 12px;             /* 안쪽 여백 축소 */
+      width: fit-content;             
+      max-width: 90%;
+      text-align: center;
+      font-size: 25px;
+      line-height: 1.5;              /* 줄간격 약간 축소 */
+      color: #ececec;
+      letter-spacing: 0.1px;
+      display: block;
     }
-    /* 실제로 가로폭을 만들어 주는 내부 래퍼 */
+
+    .card figcaption.message{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      width:100%;
+    } 
+
     .message .message-scroll{
-        display:inline-block;
-        white-space: nowrap;                 /* 줄바꿈 금지 → 가로 스크롤 트리거 */
-        min-width: max-content;              /* 내용 길이만큼 가로 확장 */
-        padding-right: var(--msg-scroll-extra); /* 오른쪽 여유 스크롤 길이 */
+      display:block;
+      white-space:normal;      /* 줄바꿈 허용 */
+      min-width:auto;
+      padding-right:0;
+      text-align:center;       /* 내부 텍스트도 중앙 */
+      margin:0 auto;           /* 블록 자체도 가운데 */
+      width:100%;
     }
     .card + .message{ margin-top: 12px; }
     @media (max-width:480px){
       .message{
         font-size:14.5px;
-        line-height:1.75;
-        padding-top:8px;
-        padding-bottom:14px;
+        line-height:1.6;     /* 줄간격 소폭 축소 */
+        padding-top:8px;     /* 위 여백 축소 */
+        padding-bottom:8px;  /* 아래 여백 크게 축소 */
       }
     }
 
@@ -175,16 +180,14 @@
     /* 개별 수상 카드 */
     .award{
       display:grid;
-      grid-template-columns:auto 1fr;
+      grid-template-columns: 1fr;
       gap:10px 12px;
       align-items:center;
       padding:10px 10px;
       background:#0b0b0b;
       border:1px solid rgba(255,255,255,.10);
       border-radius:10px;
-      text-align: center;
     }
-
     .award-badge{
       display:inline-flex;
       align-items:center;
@@ -200,26 +203,27 @@
       background:rgb(255, 255, 255);
       box-shadow:0 6px 16px rgba(255, 202, 202, 0.25);
       border:1px solid rgba(255,255,255,.18);
+      justify-self: center;
+      grid-column: 1 / -1;
     }
     .award-body{
       display:flex;
       flex-direction:column;
+      align-items:center;      /* ⬅ 수평 중앙 정렬 */
+      text-align:center;       /* ⬅ 내부 텍스트 중앙 정렬 */
       min-width:0;
+      width:100%;
+      grid-column: 1 / -1;
     }
-
     .award-name{
       font-size:14px;
       font-weight:700;
       color:#f2f2f2;
       line-height:1.35;
       word-break:keep-all;
-      text-align: center;
-    }
-    /* Center the award title when it's the only child in the card */
-    .award > .award-name:only-child{
-      grid-column: 1 / -1;   /* span across both grid columns */
-      justify-self: center;  /* center within the grid cell */
-      text-align: center;    /* ensure text itself is centered */
+      text-align:center;       /* ⬅ 텍스트 중앙 정렬 */
+      width:100%;              /* ⬅ 가로 전체 사용 */
+      margin:0 auto;           /* ⬅ 가운데 맞춤 안정화 */
     }
     .award-meta{
       margin-top:3px;
@@ -364,7 +368,7 @@
 
     footer{
       position:static;                 /* 페이지 하단 정렬 (콘텐츠를 덮지 않음) */
-      margin-top:100px;                 /* 콘텐츠가 짧으면 아래로 밀기 */
+      margin-top:100px;                  /* 콘텐츠가 짧으면 아래로 밀기 */
       width:100%;
       background:#000;
       color:#f3f3f3;
@@ -422,19 +426,29 @@
               base = base
                 .replace(/^index$|^home$/, 'main')
                 .replace(/^projects?$/, 'project')
-                .replace(/^designer$/, 'design')
                 .replace(/^designs?$/, 'design')
+                .replace(/^designers?$/, 'design')
                 .replace(/^guests?$/, 'guest');
 
+              // Build a path that reliably targets the current site's /2025/ folder
+              function build2025Path(file){
+                try{
+                  var p = location.pathname;
+                  var i = p.toLowerCase().lastIndexOf('/2025/');
+                  if(i !== -1){
+                    return p.slice(0, i) + '/2025/' + file; // anchor to the same /2025/ root
+                  }
+                }catch(e){}
+                // Fallback: relative two-levels up to reach /2025/
+                return '../../2025/' + file;
+              }
               function toMobile(name){
                 switch(name){
                   case 'main':    return '/2025/Main-mobile.html';
                   case 'project': return '/2025/Project-mobile.html';
-                  case 'design':  return '/2025/Design-mobile.html';
-                  case 'designer': return '/2025/Design-mobile.html';
+                  case 'design':  return build2025Path('Design-mobile.html');
                   case 'about':   return '/2025/About-mobile.html';
                   case 'guest':   return '/2025/Guest-mobile.html';
-                  case 'gallery': return '/2025/Gallery-mobile.html';
                   default:        return null;
                 }
               }
@@ -476,25 +490,22 @@
       <main class="wrap" role="main">
         <section class="profile">
           <header class="name">
-            <h1>장주아</h1>
-            <h2>JANG JUAH</h2>
-            <span class="email-pill" aria-label="이메일">E-mail • websci3357@gmail.com</span>
+            <h1>최순주</h1>
+            <h2>CHOI SOONJU</h2>
+            <span class="email-pill" aria-label="이메일">E-mail • csjb1121@gmail.com</span>
           </header>
 
       
           <figure class="card" aria-label="프로필 사진">
-            <a class="spin-target" href="../../../2025/Project/장주아/Project_장주아.html" aria-label="프로젝트 페이지로 이동">
+            <a class="spin-target" href="../../../2025/Project/최순주/Project_최순주.html" aria-label="프로젝트 페이지로 이동">
               <!-- 앞면 -->
-              <img class="face front" src="../../../1.Picture/1.%2027th%20Graduation/Profile/JANG JUAH.jpeg" alt="장주아 프로필 사진 (앞면)" loading="eager" decoding="async" />
+              <img class="face front" src="../../../1.Picture/1.%2027th%20Graduation/Profile/CHOI SOONJU.jpeg" alt="최순주 프로필 사진 (앞면)" loading="eager" decoding="async" />
               <!-- 뒷면: 필요 시 다른 이미지로 교체하세요 -->
-              <img class="face back" src="../../../1.Picture/2.%20Graduate/Graduate_Logo/JANG JUAH.jpg" alt="장주아 프로필 사진 (뒷면)" loading="eager" decoding="async" />
+              <img class="face back" src="../../../1.Picture/2.%20Graduate/Graduate_Logo/CHOI SOONJU.jpg" alt="최순주 프로필 사진 (뒷면)" loading="eager" decoding="async" />
             </a>
             <figcaption class="message">
               <div class="message-scroll">
-                "시각디자인학과 학생이어서,
-                <Br>동명인이어서 즐거웠습니다. 
-                <br>앞으로도 사회에 좋은 영향을 주는 
-                <br>디자이너로서 활약하고 싶습니다."
+                "4년이라는 시간이 결코 짧은 시간이 <Br> 아닌데 왜 이렇게 빠르게 졸업하는  <Br>기분일까요 기분이 싱숭생숭합니다.  <Br>다같이 졸업을 잘 마치면 좋겠네요."       
               </div>
             </figcaption>
           </figure>
@@ -502,44 +513,20 @@
             <span class="pill">Project 페이지로 이동하려면 사진을 탭하세요</span>
           </div>
           
-              <!-- Awards: Q&amp;A 위로 이동 -->
-              <div class="awards" aria-label="수상 경력">
-                <div class="awards-title">
-                  <span class="emoji">🏆</span>
-                  <span>수상경력</span>
-                  <span class="awards-rule" aria-hidden="true"></span>
-                </div>
-                <div class="awards-grid"><div class="award">
-                    <span class="award-badge">특별상</span>
-                    <div class="award-body">
-                      <div class="award-name">2025 전공 포트폴리오 공모전</div>
-                    </div>
-                  </div>
-                  <div class="awards-grid"><div class="award">
-                  <span class="award-badge">입선</span>
-                  <div class="award-body">
-                    <div class="award-name">제 39회 디자인&일러스트 국제공모전</div>
-                  </div>
-                </div>
-
-                </div>
-              </div>
-              </div>
-
 
           <section class="qna" aria-label="Q&amp;A">
             <h3>Q&A</h3>
             <article class="qa">
               <div class="q">Q. 졸업하는 지금, ‘입학할 당시의 나’에게 한 마디 한다면?</div>
-              <div class="a">기대했던 것들도 있고, 생각지도 못한 일들도 많이 일어나겠지만, 그만큼 더욱 성장할 수 있을거야.</div>
+              <div class="a">조금만 더 생각을 하며 살아보자.</div>
             </article>
             <article class="qa">
               <div class="q">Q. 학과/전공 덕분에 바뀐 나의 모습은?</div>
-              <div class="a">전공분야에 대해 더 깊이 배웠고 외적으로든 내적으로든 많이 성장했다.</div>
+              <div class="a">과제 제출이 늦어도 우울해하지 않고, <br>침착하게 운명을 받아들인다.</div>
             </article>
             <article class="qa">
               <div class="q">Q. 시험 기간 내가 주로 했던 현실도피는?</div>
-              <div class="a">현실도피는 거의 안했던 것 같고, 그저 후회 없도록 최선을 다하자고 스스로를 격려했었던 것 같다.</div>
+              <div class="a">아직 시간이 많다고 자기세뇌하며 논다.</div>
             </article>
           </section>
         </section>
@@ -573,10 +560,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <script>
   // [라우팅] 화면 너비 기준 페이지 전환
-  // (>=640px → Designer_장주아.html, <=639px → Designer-mobile_장주아.html)
+  // (>=640px → Designer_최순주.html, <=639px → Designer-mobile_최순주.html)
   (function responsiveRoute(){
-    const DESKTOP_BASE = 'Designer_장주아';          // 파일명(확장자 제외)
-    const MOBILE_BASE  = 'Designer-mobile_장주아';   // 파일명(확장자 제외)
+    const DESKTOP_BASE = 'Designer_최순주';          // 파일명(확장자 제외)
+    const MOBILE_BASE  = 'Designer-mobile_최순주';   // 파일명(확장자 제외)
 
     // 현재 URL에서 "실제" 베이스 파일명을 얻는다.
     // - 퍼센트 인코딩(한글 %EA...)을 디코드

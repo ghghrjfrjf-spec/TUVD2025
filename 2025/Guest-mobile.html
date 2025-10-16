@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Guest-Mobile</title>
-  <meta name="guest-api" content="https://script.google.com/macros/s/AKfycbzAebL5XKcHt4o5vQ_77ql6SmAuDeyRj_FtPhbuBgQ2rvVw1-H6OmHrvIJqQsd0DENA/exec">
+  <meta name="guest-api" content="https://script.google.com/macros/s/AKfycbxD9ITckC0vn286AJPbpw4fFhjrFynxswdE1HknlFBOmEu2V9aCtZP_rwX0uHSj6oyC/exec">
   <meta name="guest-api-format" content="form">
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" />
   <style>
@@ -407,7 +407,13 @@
       if (!data.get('form-name')) data.set('form-name','guestbook');
 
       const body = new URLSearchParams();
-      for (const [k,v] of data.entries()) body.append(k, v);
+      const owner = localStorage.getItem('guest-owner') || (localStorage.setItem('guest-owner', (crypto.randomUUID && crypto.randomUUID()) || String(Date.now())), localStorage.getItem('guest-owner'));
+      body.set('action', 'create');
+      body.set('name', String(data.get('name')||'').trim());
+      body.set('to',   String(data.get('name')||'').trim()); // fallback key for GAS (name/to 모두 지원)
+      body.set('message', String(data.get('message')||'').trim());
+      body.set('from',    String(data.get('from')||'').trim());
+      body.set('ownerId', owner);
 
       try{
         // Send to Google Apps Script (same sheet) using URL-encoded payload

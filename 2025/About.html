@@ -2114,110 +2114,81 @@ html, body { overflow-x:hidden; scroll-behavior:smooth; }
     
     <!-- Robust faculty image loader for deployed sites (handles spaces, Korean names, extension fallbacks) -->
     <script id="faculty-image-loader-20251018">
-    // Robust faculty image loader for deployed sites (handles spaces, Korean names, extension fallbacks)
-    (function(){
-      var BASES = [
-        "../../1.Picture/3.%20Graduate_Professor/",
-        "../../1.Picture/3.%20Graduate_Propasser/",
-        "../../1.Picture/3. Graduate_Professor/",
-        "../../1.Picture/3. Graduate_Propasser/"
-      ];
-      var EXTS = ["jpeg","jpg","png","webp"];
-
-      // Fallback handler attached per <img>
-      window.handleFacultyError = function(img){
-        var li = img.closest(".faculty-card");
-        if (!li) return;
-        var tries = img.dataset._tries ? JSON.parse(img.dataset._tries) : [];
-        if (!Array.isArray(tries) || !tries.length) return; // nothing left to try
-        var next = tries.shift();
-        img.dataset._tries = JSON.stringify(tries);
-        img.src = next;
-      };
-
-      // Build candidate URLs for a given li/img
-      function buildCandidates(li){
-        var list = [];
-        var name = (li.dataset.name || "").trim();
-
-        // 1) Explicit filename if provided
-        var fname = (li.dataset.filename || "").trim();
-        if (fname){
-          if (/\.(jpe?g|png|webp)$/i.test(fname)){
-            list.push(fname);
-          } else {
-            EXTS.forEach(function(ext){ list.push(fname + "." + ext); });
+      /* Robust faculty image loader for deployed sites:
+         - 다국어/스페이스 안전 인코딩
+         - 폴더명 오타(Graduate_Propasser)까지 자동 폴백
+         - 확장자(.jpeg/.jpg/.png/.webp) 순차 시도
+         - <li data-name="김정은" data-filename="김정은교수님"> 형태 지원  */
+      (function(){
+        var BASES = [
+          "../../1.Picture/3.%20Graduate_Professor/",
+          "../../1.Picture/3.%20Graduate_Propasser/",
+          "../../1.Picture/3. Graduate_Professor/",
+          "../../1.Picture/3. Graduate_Propasser/"
+        ];
+        var EXTS = [".jpeg", ".jpg", ".png", ".webp"];
+      
+        function enc(seg){
+          seg = (seg || "").replace(/\s+/g, " ").trim();
+          return encodeURI(seg);
+        }
+      
+        function makeNameCandidates(li){
+          var name = (li.getAttribute("data-name") || "").trim();
+          var file = (li.getAttribute("data-filename") || "").trim();
+          var cands = [];
+      
+          if (file){
+            if (/\.(jpe?g|png|webp)$/i.test(file)) cands.push(file);
+            else EXTS.forEach(function(ext){ cands.push(file + ext); });
           }
+          if (name){
+            [name + "교수님", name + " 교수님", name].forEach(function(base){
+              EXTS.forEach(function(ext){ cands.push(base + ext); });
+            });
+          }
+          var seen = Object.create(null);
+          return cands.filter(function(x){ var k=x.toLowerCase(); if(seen[k]) return false; seen[k]=1; return true; });
         }
-
-        // 2) Name-based guesses (Korean with/without '교수님', plus Latinized could be added later)
-        if (name){
-          EXTS.forEach(function(ext){
-            list.push(name + "교수님." + ext);
-            list.push(name + "." + ext);
+      
+        function tryLoad(img, urls){
+          var i = 0;
+          function next(){
+            if (i >= urls.length){ img.style.display = "none"; return; }
+            img.src = urls[i++];
+          }
+          img.addEventListener("error", next, { passive:true });
+          next();
+        }
+      
+        function buildUrls(li){
+          var files = makeNameCandidates(li);
+          if (!files.length) return [];
+          var out = [];
+          BASES.forEach(function(base){
+            files.forEach(function(f){ out.push(base + enc(f)); });
+          });
+          return out;
+        }
+      
+        function init(){
+          document.querySelectorAll(".faculty-gallery .faculty-card").forEach(function(card){
+            var img = card.querySelector("img");
+            if (!img) return;
+            if ((img.getAttribute("src") || "").trim()) return; // 이미 수동 지정돼 있으면 건너뜀
+            var urls = buildUrls(card);
+            if (!urls.length){ img.style.display = "none"; return; }
+            tryLoad(img, urls);
           });
         }
-
-        // De-duplicate while preserving order
-        var seen = Object.create(null);
-        list = list.filter(function(x){
-          var k = x.toLowerCase();
-          if (seen[k]) return false;
-          seen[k] = true; return true;
-        });
-
-        // Try multiple base directories and two encoding modes per file
-        var urls = [];
-        BASES.forEach(function(BASE){
-          list.forEach(function(file){
-            // 1) Encode filename only (safe default)
-            var path1 = BASE + file;
-            var parts1 = path1.split("/");
-            var enc1 = parts1.map(function(p, i){
-              return i === parts1.length - 1 ? encodeURIComponent(p) : p.replace(/ /g, "%20");
-            }).join("/");
-            urls.push(enc1);
-
-            // 2) Space-only encoding (in case server expects raw UTF-8 path)
-            var path2 = BASE + file;
-            var enc2 = path2.replace(/ /g, "%20");
-            urls.push(enc2);
-          });
-        });
-
-        // De-duplicate the expanded url list while preserving order
-        var seenUrl = Object.create(null);
-        urls = urls.filter(function(u){
-          if (seenUrl[u]) return false; seenUrl[u] = true; return true;
-        });
-
-        return urls;
-      }
-
-      // Initialize all faculty images
-      document.querySelectorAll(".faculty-card img").forEach(function(img){
-        var li = img.closest(".faculty-card");
-        if (!li) return;
-
-        var candidates = buildCandidates(li);
-        if (!candidates.length) return;
-
-        // Store remaining tries on the element; first src will load now
-        var first = candidates.shift();
-        img.dataset._tries = JSON.stringify(candidates);
-
-        // Ensure good loading hints
-        img.loading = "lazy";
-        img.decoding = "async";
-
-        // Hook the error handler to try subsequent candidates
-        img.onerror = function(){ window.handleFacultyError(img); };
-
-        // Kick off the first src
-        img.src = first;
-      });
-    })();
-    </script>
+      
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", init, { once:true });
+        } else {
+          init();
+        }
+      })();
+      </script>
 
   </main>
 

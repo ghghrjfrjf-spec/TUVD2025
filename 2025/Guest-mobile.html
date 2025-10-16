@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Guest-Mobile</title>
+  <meta name="guest-api" content="https://script.google.com/macros/s/AKfycbzAebL5XKcHt4o5vQ_77ql6SmAuDeyRj_FtPhbuBgQ2rvVw1-H6OmHrvIJqQsd0DENA/exec">
+  <meta name="guest-api-format" content="form">
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;display=swap');
@@ -190,6 +192,8 @@
   </form>
 
   <script>
+    const API_URL = (document.querySelector('meta[name="guest-api"]')?.content || '');
+
     // === Mount shared Mobile Header (fetch + inject) ===
     (function mountMobileHeader(){
       var host = document.getElementById('mobile-header-host');
@@ -406,7 +410,12 @@
       for (const [k,v] of data.entries()) body.append(k, v);
 
       try{
-        await fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: body.toString() });
+        // Send to Google Apps Script (same sheet) using URL-encoded payload
+        await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors', // avoid CORS preflight; response is opaque
+          body: body       // URLSearchParams (browser sets header)
+        });
         const name = data.get('name'); const message = data.get('message'); const from = data.get('from');
         messages.unshift({ name, message, from });
         try{
@@ -492,13 +501,27 @@
     // 초기 데이터 로드
     (async function loadInitial(){
       try{
-        const res = await fetch('/api/guestbook', { cache:'no-store' });
-        if (res.ok){
-          const rows = await res.json();
+        // 1) Try existing same-origin endpoint if present
+        const res1 = await fetch('/api/guestbook', { cache:'no-store' });
+        if (res1.ok) {
+          const rows = await res1.json();
           messages = Array.isArray(rows) ? rows.map(r => ({
-            name: r.name || '', message: r.message || '', from: r.from || (r.name || '')
+            name: r.name || r.to || '', message: r.message || '', from: r.from || (r.name || r.to || '')
           })) : [];
           currentPage = 1; renderMessages(); return;
+        }
+      }catch(_){}
+      try{
+        // 2) Try direct Google Apps Script GET (will only work if CORS allows)
+        if (API_URL) {
+          const res2 = await fetch(API_URL, { cache:'no-store' });
+          if (res2.ok) {
+            const rows = await res2.json();
+            messages = Array.isArray(rows) ? rows.map(r => ({
+              name: r.name || r.to || '', message: r.message || '', from: r.from || (r.name || r.to || '')
+            })) : [];
+            currentPage = 1; renderMessages(); return;
+          }
         }
       }catch(_){}
       try{

@@ -104,8 +104,22 @@ min-width:0;
 contain:content;
 }
     .cap{ padding:10px 10px 12px; }
-    .cap .t{ font-weight:800; font-size:14px; line-height:1.25; color:#fff; font-family: 'Pretendard', 'Playfair Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-    .cap .m{ margin-top:6px; font-size:12px; color:#d0d0d0; font-family: 'Pretendard', 'Playfair Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .cap .t{
+      font-weight:800;
+      font-size:14px;
+      line-height:1.35;
+      color:#fff;
+      font-family:'Pretendard','Playfair Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      margin-bottom:12px; /* 제목과 설명 사이 간격 확대 */
+    }
+
+    .cap .m{
+      margin-top:10px; /* 기존보다 넉넉히 띄움 */
+      font-size:12px;
+      color:#d0d0d0;
+      line-height:1.6; /* 읽기 편하게 줄 간격도 살짝 확장 */
+      font-family:'Pretendard','Playfair Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    }
 
     footer{
       position:static;             /* 콘텐츠 뒤덮지 않음 */

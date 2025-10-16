@@ -15,6 +15,7 @@
   <style id="explain-hard-divider-20251018">
     /* Solid, reliable divider right above Explain (matches container gutters) */
     .explain-divider{
+      display:none !important;
       width: 100%;
       padding-left: clamp(18px, 4vw, 36px);
       padding-right: clamp(18px, 4vw, 36px);
@@ -274,7 +275,7 @@
     /* Theme section */
     /* 공통 섹션 레이아웃(패딩/제목) */
     .section{padding:56px 0}
-    .section h2{font-size:28px; margin:0 0 16px; font-weight:900; color:#fff !important;}
+    .section h1{font-size:28px; margin:0 0 16px; font-weight:900; color:#fff !important;}
     .lead{color:#fff !important; font-size:20px; line-height:1.8}
     /* 본문 2단 분할 레이아웃 */
     .split{display:grid; grid-template-columns:1.2fr .8fr; gap:28px}
@@ -441,7 +442,7 @@ html, body { overflow-x:hidden; scroll-behavior:smooth; }
     .map-links a:hover{ background:rgba(255,255,255,.09); border-color:#666; }
 
     /* ——— Directions (오시는 길) polish ——— */
-    .venue .panel h2{ display:flex; align-items:center; gap:10px; }
+    .venue .panel h1{ display:flex; align-items:center; gap:10px; }
     .venue .address{ margin:8px 0 12px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.04); color:#fff; font-weight:800; letter-spacing:.2px; }
     .venue .address .small{ display:block; margin-top:4px; font-size:12px; opacity:.9; font-weight:600; }
     .venue .dir{ list-style:none; margin:10px 0 0; padding:0; display:grid; gap:10px; }
@@ -480,7 +481,7 @@ html, body { overflow-x:hidden; scroll-behavior:smooth; }
     /* ==================== 지도교수 사진 갤러리 ==================== */
     .faculty{ padding:56px 0; }
     .faculty .container{ max-width:var(--max); margin:0 auto; padding:0 24px; }
-    .faculty h2{ font-size:28px; margin:0 0 16px; font-weight:900; color:#fff !important; }
+    .faculty h1{ font-size:28px; margin:0 0 16px; font-weight:900; color:#fff !important; }
 
     .faculty-gallery {
       list-style: none;
@@ -526,7 +527,7 @@ html, body { overflow-x: hidden; }
 .container { max-width: var(--max); margin: 0 auto; padding: 0 20px; box-sizing: border-box; }
 
 /* 제목/본문 크기 조정 (조금 컴팩트) */
-.section h2 { font-size: 24px !important; }              /* 28 → 24 */
+.section h1 { font-size: 24px !important; }              /* 28 → 24 */
 .lead { font-size: 18px !important; line-height: 1.75; } /* 20 → 18 */
 .info-value { font-size: 18px !important; }              /* 20 → 18 */
 
@@ -557,7 +558,7 @@ html, body { overflow-x: hidden; }
 
 /* 아주 작은 화면에서 더 단단하게 */
 @media (max-width: 520px){
-  .section h2 { font-size: 22px !important; }
+  .section h1 { font-size: 22px !important; }
   .lead { font-size: 17px !important; }
 }
 </style>
@@ -609,7 +610,7 @@ html, body { overflow-x: hidden; }
     }
 
     /* Headings flourish */
-    .section h2{
+    .section h1{
       letter-spacing:.2px;
       text-shadow: 0 1px 0 rgba(0,0,0,.35);
     }
@@ -631,11 +632,11 @@ html, body { overflow-x: hidden; }
       letter-spacing:-.3px;
     }
     .hero-art img{
-      width: min(440px, 36vw);
+      width: min(500px, 56vw);
       filter: drop-shadow(0 10px 30px rgba(0,0,0,.35));
     }
     @media (max-width: 900px){
-      .hero-art img{ width: min(420px, 82vw); }
+      .hero-art img{ width: min(720px, 96vw); }
     }
 
     /* Card/panel micro interaction (very subtle) */
@@ -711,16 +712,9 @@ html, body { overflow-x: hidden; }
   </style>
   <style>
 /* === Polishing pack (section headings, posters, portraits, info cards, faculty cards) === */
-.section h2{
+.section h1{
   position: relative;
   padding-bottom: 10px;
-}
-.section h2::after{
-  content: "";
-  position: absolute; left: 0; bottom: 0;
-  width: 88px; height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #ff3b3b, rgba(255,59,59,.25));
 }
 
     /* Poster/hero-like image frame */
@@ -834,7 +828,7 @@ html, body { overflow-x: hidden; }
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(var(--rose-bottom, 60%) - 1px); /* follow JS-computed baseline */
+  top: calc(var(--rose-bottom, 60%) - 1px); /* nudge -1px to avoid subpixel gap */
   height: 2px;
   background: linear-gradient(
     90deg,
@@ -845,7 +839,8 @@ html, body { overflow-x: hidden; }
   );
   box-shadow: 0 0 12px rgba(255,255,255,.28);
   pointer-events: none;
-  z-index: 5; /* above hero text/art (z-index:2) and the fade (::after, z-index:1) */
+  z-index: 5;
+  display: block; /* ensure visible */
 }
 
 /* 안전장치: 효과 때문에 가로 스크롤 생기지 않게 */
@@ -1022,7 +1017,7 @@ html, body{ overflow-x:hidden; }
   <style id="thanks-layout-20251016">
     /* Make the Thanks to section visually match full-width faculty layout */
     .thanks-section{ background:transparent !important; border:0 !important; padding:0 !important; box-shadow:none !important; }
-    .thanks-section > h2{ margin-bottom:16px; }
+    .thanks-section > h1{ margin-bottom:16px; }
     .thanks-section .people{ gap:16px; }
     .thanks-section .people-group{ background:transparent !important; border:0 !important; padding:0 !important; }
     /* Keep consistent horizontal paddings with other sections */
@@ -1089,8 +1084,8 @@ html, body{ overflow-x:hidden; }
     /* Align Credits and Thanks To titles to Faculty/Committee baseline */
     .credits h3.people-title,
     .thanks-section h3.people-title,
-    .thanks-section h2,
-    .credits h2 {
+    .thanks-section h1,
+    .credits h1 {
       margin-left: 0 !important;
       padding-left: 0 !important;
       text-align: left !important;
@@ -1402,7 +1397,7 @@ html, body{ overflow-x:hidden; }
   </style>
 <style id="vertical-lift-20251018">
   /* Pull overall layout upward: tighter top paddings/margins */
-  .hero{ padding: 36px 0 32px !important; }
+  .hero{ padding: 36px 0 24px !important; }
   .section{ padding: 40px 0 40px !important; }
   .about-mark{ margin-top: clamp(12px, 3vh, 28px) !important; }
   .bloom-section{ margin: clamp(28px, 5vh, 64px) auto 44px !important; }
@@ -1479,10 +1474,10 @@ html, body{ overflow-x:hidden; }
   }
 </style>
   <style id="committee-title-spacing-20251018">
-    /* 위원회 / 디자이너 / 웹 등 크레딧 섹션 제목 위 간격 여유 */
+    /* 위원회 / 디자이너 / 웹 등 크레딧 섹션 제목 위·아래 간격 여유 (아래 간격 크게) */
     .credits-root .people-title {
-      margin-top: 52px !important;   /* 제목 위쪽 간격 확대 */
-      margin-bottom: 12px !important; /* 제목과 내용 사이 살짝 여유 */
+      margin-top: 52px !important;     /* 제목 위쪽 간격 */
+      margin-bottom: 36px !important;  /* 제목과 이름 리스트 사이 충분한 간격 (기존 12px → 36px) */
       line-height: 1.35;
     }
 
@@ -1491,12 +1486,27 @@ html, body{ overflow-x:hidden; }
       margin-top: 36px !important;
     }
 
-    /* 모바일 최적화 */
+    /* 모바일 최적화: 아래 간격도 기존보다 넉넉히 유지 */
     @media (max-width:560px) {
       .credits-root .people-title {
         margin-top: 28px !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 24px !important; /* 10px → 24px */
       }
+    }
+  </style>
+
+  <style id="credits-section-spacing-20240613">
+    #credits .section-title,
+    #credits .team-title,
+    #credits .designer-title,
+    #credits .committee-title {
+      margin-bottom: 120px !important;
+    }
+
+    #credits .studentstaff-grid,
+    #credits .designer-grid,
+    #credits .committee-grid {
+      margin-top: 80px !important;
     }
   </style>
 </head>
@@ -1516,7 +1526,7 @@ html, body{ overflow-x:hidden; }
       <div class="container">
         <div class="hero-grid">
           <div class="hero-left">
-            <span class="eyebrow"><span class="dot" style="background:var(--red);"></span> 27th Graduation Exhibition</span>
+            <span class="eyebrow"><span class="dot" style="background:var(--red);"></span> 27th TUVD Graduation Exhibition</span>
             <h1 class="title">ABOUT - BLOOM </h1>
             <p class="subtitle">우리의 시간은 하나의 씨앗처럼 작은 가능성을 품고 시작되었습니다. 순수함과 열정을 더한 <br>과정은 마침내 꽃이 되었고, 졸업전시 BLOOM에서 그 결실의 순간을 맞이합니다.</p>
           </div>
@@ -1534,23 +1544,26 @@ html, body{ overflow-x:hidden; }
     <!-- Theme & Intro: 전시 주제 설명 + 카테고리 카드 -->
     <div class="explain-divider" aria-hidden="true"></div>
     <section class="section explain-section" id="explain">
-      <div class="container"><div class="about-mark">Explain</div></div>
-      <!-- ===== Sub Navigation Bar (Poster | Exhibition Explain | Credits) ===== -->
-      <nav class="sub-nav" aria-label="Explain Navigation">
-        <ul>
-          <li><a href="#poster">Poster</a></li>
-          <li><a href="#explain">Exhibition Explain</a></li>
-          <li><a href="#credits">Credits</a></li>
-        </ul>
-      </nav>
+      <div class="container explain-head">
+        <div class="about-mark">Explain</div>
+        <!-- Sub Navigation (Explain 옆) -->
+        <nav class="sub-nav" aria-label="Explain Navigation">
+          <ul>
+            <li><a href="#poster">Poster</a></li>
+            <li class="sep" aria-hidden="true">|</li>
+            <li><a href="#exhibit">Exhibition</a></li>
+            <li class="sep" aria-hidden="true">|</li>
+            <li><a href="#credits">Credits</a></li>
+          </ul>
+        </nav>
+      </div>
       <div class="bloom-section" id="poster">
-        <h2>BLOOM Poster</h2>
         <img class="about-poster" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_Poster/가로.jpg" alt="BLOOM Poster">
         <p class="lead">한 장의 스케치에서 시작된 작은 가능성이, 리서치와 프로토타입, 피드백과 개선을 거쳐 <strong>완성의 순간</strong>을 맞이합니다.  그 여정 전체가 우리가 피워 낸 <strong>꽃</strong>입니다.</p>
       </div>
       
       <div class="container" style="margin-top:28px;">
-        <h2>로고</h2>
+        <h1>Logo</h1>
 
         <div class="media-grid">
           <figure>
@@ -1573,12 +1586,12 @@ html, body{ overflow-x:hidden; }
 
 
     <!-- Highlights: 행사/프로그램 카드 -->
-    <section class="section" id="credits">
+    <section class="section">
       <div class="container">
         
         <div style="height:40px;"></div>
-        <div class="exhibit-info panel">
-          <h2 class="section-title">전시장 정보</h2>
+        <div class="exhibit-info panel" id="exhibit">
+          <h1 class="section-title">전시장 정보</h1>
           <section class="stripe">
             <div class="container info-grid">
               <div class="info-item"><span class="info-label">기간</span><span class="info-value">2025. 10. 17 — 10. 20</span></div>
@@ -1590,7 +1603,7 @@ html, body{ overflow-x:hidden; }
           <div class="container venue">
             <div class="panel">
               
-                <h2>교통정보</h2>
+                <h1>교통정보</h1>
 
                 <div class="traffic-table">
                   <div class="traffic-row">
@@ -1641,47 +1654,103 @@ html, body{ overflow-x:hidden; }
           </div>
         </div>
 <style id="explain-subnav-20251018">
-  /* Sub Navigation below Explain */
-  .sub-nav {
-    position: sticky;
-    top: 90px;
-    z-index: 10;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(6px);
-    border-bottom: 1px solid rgba(255,255,255,0.12);
-    padding: 10px 0;
-    margin: 8px 0 24px;
+  /* Explain 제목 옆 보조 네비게이션 (static, always in place) */
+  #explain .explain-head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(12px, 2.2vw, 24px);
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
   }
 
-  .sub-nav ul {
+  #explain .sub-nav{
+    position: static;                         /* ✅ 항상 제자리(상단) — 스크롤 고정/겹침 없음 */
+    top: auto;
+    left: auto;
+    width: auto;
+    z-index: auto;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: transparent;                  /* 배경/블러/보더 제거 → 아래 내용 가림 방지 */
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    padding: 0;                                /* 컴팩트하게 */
+    border: 0;
+    border-radius: 0;
+    margin-top: 6px;                           /* Explain 제목과 살짝 간격 */
+  }
+
+  #explain .sub-nav.is-stuck{ background: transparent; }
+  #explain .sub-nav.is-fixed{ position: static; top:auto; left:auto; width:auto; }
+  #explain .sub-nav-ghost{ display:none; height:0; }
+  #explain .sub-nav.is-fixed + .sub-nav-ghost{ display:none; }
+
+  /* Align baseline so it sits neatly beside 'Explain' */
+  #explain .explain-head{
+    align-items: baseline;
+  }
+
+  #explain .sub-nav ul{
     list-style: none;
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 36px;
+    gap: clamp(12px, 2vw, 22px);
     margin: 0;
     padding: 0;
+    white-space: nowrap;
   }
 
-  .sub-nav a {
+  /* Explicit separator items */
+  #explain .sub-nav .sep{
+    display:inline-block;
+    margin: 0 clamp(8px, 1.2vw, 12px);
+    opacity:.55;
+    color: rgba(255,255,255,.82);
+    pointer-events:none;
+    user-select:none;
+    font-weight:700;
+    line-height:1;
+  }
+
+  #explain .sub-nav li{
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  #explain .sub-nav li:not(:last-child)::after{ content: none !important; }
+
+  #explain .sub-nav a{
     text-decoration: none;
     font-size: 15px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.8);
-    transition: color .25s ease;
+    font-weight: 700;
+    color: rgba(255,255,255,.82);
+    letter-spacing: .2px;
+    padding: 6px 0;
+    transition: color .2s ease, opacity .2s ease;
   }
-
-  .sub-nav a:hover,
-  .sub-nav a:focus {
+  #explain .sub-nav a:hover,
+  #explain .sub-nav a:focus{
     color: #ff3b3b;
+    outline: none;
   }
 
-  @media (max-width:560px){
-    .sub-nav ul {
-      gap: 20px;
+  /* 섹션 앵커가 sticky 요소에 가려지지 않도록 (헤더 + 보조네비 높이 반영) */
+  #poster, #exhibit, #explain, #credits{
+    scroll-margin-top: calc(var(--header-h, 90px) + 10px);
+  }
+
+  /* 작은 화면 최적화 */
+  @media (max-width: 720px){
+    #explain .explain-head{
+      gap: 10px;
     }
-    .sub-nav a {
+    #explain .sub-nav a{
       font-size: 14px;
+      font-weight: 600;
+    }
+    #poster, #exhibit, #explain, #credits{
+      scroll-margin-top: 110px;
     }
   }
 </style>
@@ -1704,7 +1773,7 @@ html, body{ overflow-x:hidden; }
 
 
     <!-- ==================== Credits (졸업전시 크레딧) ==================== -->
-    <section class="section">
+    <section class="section" id="credits">
       
       <div class="container panel credits-root">
   <style id="credits-panel-lineup-20251017">
@@ -1725,7 +1794,7 @@ html, body{ overflow-x:hidden; }
     }
 
     /* Align main title and subtitle */
-    .credits-root > h2,
+    .credits-root > h1,
     .credits-root > .lead {
       margin: 0 !important;
       padding-left: 0 !important;
@@ -1735,7 +1804,7 @@ html, body{ overflow-x:hidden; }
 
     /* Align every group heading (Committee, Designers, Web, Thanks to, etc.) */
     .credits-root .people-group .people-title,
-    .credits-root .thanks-section > h2,
+    .credits-root .thanks-section > h1,
     .credits-root .thanks-section > h3,
     .credits-root .faculty .people-title {
       margin-left: 0 !important;
@@ -1816,7 +1885,7 @@ html, body{ overflow-x:hidden; }
       display: block;
     }
   </style>
-        <h2>Credits</h2>
+        <h1>Credits</h1>
 
         <!-- 행사 타이틀 -->
         <p class="lead" style="margin:0 0 22px;">
@@ -1826,16 +1895,16 @@ html, body{ overflow-x:hidden; }
           <!-- Thanks/Credits: 지도교수/운영/도슨트 -->
     <section class="section">
       <div class="container panel edge-panel thanks-section">
-        <h2>Thanks to</h2>
+        
         <div class="people">
           <div class="people-group president">
-            <h3 class="people-title"><span class="pill">Advisor</span>동명대학교 총장 이상천</h3>
+            <h3 class="people-title"><span class="pill">Thanks to</span>동명대학교 총장 이상천</h3>
             <img class="about-photo" src="/1.Picture/3. Graduate_Propasser/Universitypresident.jpeg" alt="총장님">
           </div>
     <section class="faculty">
       <div class="container">
         <div class="people-group" style="margin-top:16px;">
-          <h3 class="people-title"><span class="pill">Designers</span>동명대학교 시각디자인학과 교수님</h3>
+          <h3 class="people-title"><span class="pill">Thanks to</span>동명대학교 시각디자인학과 교수님</h3>
           <ul class="people-list faculty-gallery">            
           <li class="faculty-card" data-name="정원준" data-filename="정원준교수님.jpeg">
             <img loading="lazy" alt="정원준 교수님" src="" onerror="handleFacultyError(this)" />
@@ -2048,6 +2117,7 @@ html, body{ overflow-x:hidden; }
               spacer.style.height = ref.offsetHeight + 'px';
               spacer.style.background = '#000';
               spacer.style.borderBottom = '1px solid rgba(255,255,255,.12)';
+              document.documentElement.style.setProperty('--header-h', (ref ? ref.offsetHeight : 90) + 'px');
             }
           }
           setSpacer();
@@ -2060,6 +2130,39 @@ html, body{ overflow-x:hidden; }
             const mo = new MutationObserver(()=>{ header = root.querySelector('header') || root.firstElementChild; setSpacer(); });
             mo.observe(root, { childList:true, subtree:true, attributes:true });
           } catch(_) {}
+        })();
+        // Sub navigation sticky behavior: stick with header height and toggle class
+        (function subNavStick(){
+          const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 90;
+          const subNav = document.querySelector('#explain .sub-nav');
+          if (!subNav) return;
+
+          // Observer toggles is-stuck when the sub-nav reaches the sticky top
+          const sentry = document.createElement('div');
+          sentry.style.position = 'absolute';
+          sentry.style.top = 0;
+          sentry.style.height = '1px';
+          sentry.style.width = '1px';
+          subNav.parentElement.insertBefore(sentry, subNav);
+
+          const io = new IntersectionObserver((entries)=>{
+            entries.forEach(e=>{
+              if (!e.isIntersecting) subNav.classList.add('is-stuck');
+              else subNav.classList.remove('is-stuck');
+            });
+          }, { root: null, rootMargin: `-${headerH}px 0px 0px 0px`, threshold: 0 });
+
+          io.observe(sentry);
+
+          // keep --header-h in sync on resize as well
+          const onResize = ()=>{
+            const h = document.getElementById('nav-placeholder')?.querySelector('header');
+            const hh = (h ? h.offsetHeight : 90);
+            document.documentElement.style.setProperty('--header-h', hh + 'px');
+          };
+          window.addEventListener('resize', onResize, { passive:true });
+          setTimeout(onResize, 200);
+          setTimeout(onResize, 800);
         })();
 
         // Hide the nav when scrolling down, show on scroll up
@@ -2360,3 +2463,104 @@ html, body{ overflow-x:hidden; }
     letter-spacing: 0.2px;
   }
 </style>
+  <script id="rose-baseline-sync-20251018">
+    (function(){
+      var hero = document.querySelector('.hero');
+      if(!hero) return;
+      var img = hero.querySelector('.hero-art img');
+      var line = hero.querySelector('.rose-line');
+      if(!img || !line) return;
+
+      // Permanently hide the external explain divider to avoid double lines
+      try{
+        var explainDivider = document.querySelector('.explain-divider');
+        if(explainDivider) explainDivider.style.display = 'none';
+      }catch(_){ }
+
+      function syncRoseBaseline(){
+        try{
+          var heroRect = hero.getBoundingClientRect();
+          var imgRect  = img.getBoundingClientRect();
+          // Compute bottom position of the rose image relative to the hero top
+          var bottomY = (imgRect.bottom - heroRect.top);
+          // Guardrails: clamp in hero box and nudge up 1px to eliminate any subpixel gap
+          if(!isFinite(bottomY)) return;
+          bottomY = Math.max(0, Math.min(bottomY, hero.offsetHeight));
+          hero.style.setProperty('--rose-bottom', (bottomY) + 'px');
+        }catch(e){ /* no-op */ }
+      }
+
+      // Run on critical events
+      if(img.complete) syncRoseBaseline();
+      img.addEventListener('load', syncRoseBaseline, { passive:true });
+      window.addEventListener('resize', syncRoseBaseline, { passive:true });
+      window.addEventListener('orientationchange', syncRoseBaseline, { passive:true });
+
+      // Observe layout shifts that may move the image
+      try{
+        var ro = new ResizeObserver(syncRoseBaseline);
+        ro.observe(hero);
+        ro.observe(img);
+      }catch(_){ }
+
+      // Small periodic fallback to catch late font/layout reflows
+      setTimeout(syncRoseBaseline, 60);
+      setTimeout(syncRoseBaseline, 260);
+      setTimeout(syncRoseBaseline, 800);
+    })();
+  </script>
+  <script id="explain-subnav-fix-js-20251018">
+(function(){
+  const header = document.querySelector('#nav-placeholder header');
+  const headWrap = document.querySelector('#explain .explain-head');
+  const sub = document.querySelector('#explain .sub-nav');
+  const ghost = document.querySelector('#explain .sub-nav-ghost');
+  if(!headWrap || !sub) return;
+
+  // Helper to read header height (with fallback)
+  function headerH(){ return (header && header.offsetHeight) ? header.offsetHeight : 90; }
+
+  // Cache original box so we can pin at the same x/width
+  function setVarsFromRect(){
+    const r = sub.getBoundingClientRect();
+    const docX = window.pageXOffset || document.documentElement.scrollLeft || 0;
+    const left = r.left + docX;
+    const top = headerH() + 8; // desired offset from top of viewport
+    sub.style.setProperty('--subnav-left', left + 'px');
+    sub.style.setProperty('--subnav-width', r.width + 'px');
+    sub.style.setProperty('--sticky-top', top + 'px');
+    sub.style.setProperty('--subnav-height', r.height + 'px');
+  }
+
+  // Use an IntersectionObserver on a sentinel placed where the sub-nav starts
+  const sentinel = document.createElement('div');
+  sentinel.setAttribute('aria-hidden','true');
+  sentinel.style.cssText = 'position:relative;height:1px;margin-top:-1px;';
+  headWrap.insertBefore(sentinel, sub);
+
+  let pinned = false;
+  function pin(){
+    if(pinned) return; pinned = true; setVarsFromRect(); sub.classList.add('is-fixed');
+  }
+  function unpin(){
+    if(!pinned) return; pinned = false; sub.classList.remove('is-fixed');
+  }
+
+  const io = new IntersectionObserver((entries)=>{
+    const e = entries[0];
+    // When the sentinel scrolls above the top spacer (header height), pin the sub-nav
+    if(e.boundingClientRect.top <= headerH()+8 && e.intersectionRatio === 0){
+      pin();
+    } else {
+      unpin();
+    }
+  }, { root: null, rootMargin: `-${headerH()+8}px 0px 0px 0px`, threshold: [0,1] });
+  io.observe(sentinel);
+
+  // Keep left/width in sync on resize/layout changes
+  const ro = new ResizeObserver(()=>{ if(pinned) setVarsFromRect(); });
+  ro.observe(headWrap); ro.observe(document.documentElement);
+  window.addEventListener('resize', ()=>{ if(pinned) setVarsFromRect(); }, {passive:true});
+  window.addEventListener('scroll', ()=>{ if(pinned) setVarsFromRect(); }, {passive:true});
+})();
+</script>

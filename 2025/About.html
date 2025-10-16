@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
   <!-- // 커서 스타일 -->
   <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Tob_button/Tob_button.css" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
   <style id="explain-hard-divider-20251018">
     /* Solid, reliable divider right above Explain (matches container gutters) */
@@ -350,7 +351,7 @@ html, body { overflow-x:hidden; scroll-behavior:smooth; }
     .media-grid .pad{ padding:18px; }
     .media-grid img{ width:100%; height:auto; display:block; opacity:0; transform:scale(.995); transition:opacity .35s ease, transform .35s ease; }
     .media-grid img.is-loaded{ opacity:1; transform:scale(1); }
-    .media-grid figcaption{ padding:10px 12px; font-size:12px; color:#fff; opacity:.9; border-top:1px solid var(--line); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); background:rgba(255,255,255,.03); }
+    .media-grid figcaption{ padding:10px 12px; margin-top:20px; font-size:12px; color:#fff; opacity:.9; border-top:1px solid var(--line); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); background:rgba(255,255,255,.03); }
     /* Logo vs Poster fit */
     .media-grid img.logo-img{ object-fit:contain; aspect-ratio: 5/2; background:linear-gradient(180deg,#101010,#0b0b0b); }
     .media-grid img.poster-img{ object-fit:cover; aspect-ratio: 3/4; }
@@ -1509,6 +1510,24 @@ html, body{ overflow-x:hidden; }
       margin-top: 80px !important;
     }
   </style>
+  <style id="logo-text-gap-20251018">
+  /* 로고 이미지 아래 캡션/설명 간격 보정 */
+  /* 1) 각 로고 이미지(figure 내부)와 캡션(figcaption) 사이 간격 확실히 */
+  .explain-section .media-grid .pad + figcaption{
+    margin-top: 20px !important;
+  }
+
+  /* 2) 로고 그리드 전체와 그 다음 설명 문단(lead) 사이 간격 */
+  .explain-section .media-grid + .lead{
+    margin-top: 20px !important;
+  }
+
+  /* 3) 로고 설명 텍스트 중앙 정렬 및 강조 */
+  .explain-section .lead {
+    text-align: center !important;
+    font-weight: 600 !important;
+  }
+  </style>
 </head>
 <body>
 
@@ -1517,6 +1536,7 @@ html, body{ overflow-x:hidden; }
   <!-- 상단 네비게이션 자리(스크립트로 Tob_nav.html을 주입) -->
   <div id="nav-placeholder"></div> 
   <div id="cursor-placeholder"></div>
+  <div id="tob-button-placeholder"></div>
 
 
   <!-- 페이지 메인 콘텐츠 시작 -->
@@ -1580,7 +1600,7 @@ html, body{ overflow-x:hidden; }
             <figcaption>워드마크 — 브랜드 이니셜 B를 중심으로</figcaption>
           </figure>
         </div>
-        <p class="lead">BLOOM의 상징인 장미와 이니셜 B를 하나의 구조로 엮어 완성했습니다. 장미는 순수·열정·아름다움을, B는 브랜드의 정체성과 중심축을 뜻합니다. 두 요소를 동일한 리듬으로 결합해 상징성과 완성도를 함께 높였습니다.</p>
+        <p class="lead">BLOOM의 상징인 장미와 이니셜 B를 하나의 구조로 엮어 완성했습니다. <strong>장미는 순수·열정·아름다움</strong>을, <br>B는 브랜드의 정체성과 중심축을 뜻합니다. 두 요소를 동일한 리듬으로 결합해 상징성과 완성도를 함께 높였습니다.</p>
       </div>
     </section>
 
@@ -1653,6 +1673,10 @@ html, body{ overflow-x:hidden; }
               </div>
           </div>
         </div>
+  
+       
+
+  
 <style id="explain-subnav-20251018">
   /* Explain 제목 옆 보조 네비게이션 (static, always in place) */
   #explain .explain-head{
@@ -1899,7 +1923,7 @@ html, body{ overflow-x:hidden; }
         <div class="people">
           <div class="people-group president">
             <h3 class="people-title"><span class="pill">Thanks to</span>동명대학교 총장 이상천</h3>
-            <img class="about-photo" src="/1.Picture/3. Graduate_Propasser/Universitypresident.jpeg" alt="총장님">
+            <img class="about-photo" src="../../1.Picture/3.%20Graduate_Propasser/Universitypresident.jpeg" alt="총장님">
           </div>
     <section class="faculty">
       <div class="container">
@@ -1998,9 +2022,99 @@ html, body{ overflow-x:hidden; }
             <li>안정연</li>
           </ul>
         </div>
-
       </div>
-    </section>
+    
+  <!-- Scroll to Top Button -->
+  <button onclick="scrollToTop()" id="scrollTopBtn" class="scroll-btn">▲</button>
+    <!-- Robust faculty image loader for deployed sites (handles spaces, Korean names, extension fallbacks) -->
+    <script id="faculty-image-loader-20251018">
+    // Robust faculty image loader for deployed sites (handles spaces, Korean names, extension fallbacks)
+    (function(){
+      var BASE = "../../1.Picture/3.%20Graduate_Propasser/"; // relative path; %20 for space
+      var EXTS = ["jpeg","jpg","png","webp"];
+
+      // Fallback handler attached per <img>
+      window.handleFacultyError = function(img){
+        var li = img.closest(".faculty-card");
+        if (!li) return;
+        var tries = img.dataset._tries ? JSON.parse(img.dataset._tries) : [];
+        if (!Array.isArray(tries) || !tries.length) return; // nothing left to try
+        var next = tries.shift();
+        img.dataset._tries = JSON.stringify(tries);
+        img.src = next;
+      };
+
+      // Build candidate URLs for a given li/img
+      function buildCandidates(li){
+        var list = [];
+        var name = (li.dataset.name || "").trim();
+
+        // 1) Explicit filename if provided
+        var fname = (li.dataset.filename || "").trim();
+        if (fname){
+          if (/\.(jpe?g|png|webp)$/i.test(fname)){
+            list.push(fname);
+          } else {
+            EXTS.forEach(function(ext){ list.push(fname + "." + ext); });
+          }
+        }
+
+        // 2) Name-based guesses (Korean with/without '교수님', plus Latinized could be added later)
+        if (name){
+          EXTS.forEach(function(ext){
+            list.push(name + "교수님." + ext);
+            list.push(name + "." + ext);
+          });
+        }
+
+        // De-duplicate while preserving order
+        var seen = Object.create(null);
+        list = list.filter(function(x){
+          var k = x.toLowerCase();
+          if (seen[k]) return false;
+          seen[k] = true; return true;
+        });
+
+        // Prefix base path and safely encode spaces & non-ascii
+        var urls = list.map(function(file){
+          // keep slashes, encode the rest
+          var path = BASE + file;
+          // encode only the filename portion for safety
+          var parts = path.split("/");
+          var encoded = parts.map(function(p, i){
+            // do not encode the empty string from leading slash (not used here) and directories we've already normalized
+            return i === parts.length - 1 ? encodeURIComponent(p) : p.replace(/ /g, "%20");
+          }).join("/");
+          return encoded;
+        });
+
+        return urls;
+      }
+
+      // Initialize all faculty images
+      document.querySelectorAll(".faculty-card img").forEach(function(img){
+        var li = img.closest(".faculty-card");
+        if (!li) return;
+
+        var candidates = buildCandidates(li);
+        if (!candidates.length) return;
+
+        // Store remaining tries on the element; first src will load now
+        var first = candidates.shift();
+        img.dataset._tries = JSON.stringify(candidates);
+
+        // Ensure good loading hints
+        img.loading = "lazy";
+        img.decoding = "async";
+
+        // Hook the error handler to try subsequent candidates
+        img.onerror = function(){ window.handleFacultyError(img); };
+
+        // Kick off the first src
+        img.src = first;
+      });
+    })();
+    </script>
 
   </main>
 
@@ -2011,6 +2125,29 @@ html, body{ overflow-x:hidden; }
   <div id="footer-placeholder"></div>
 
   <script>
+   // [버튼] Tob_button HTML 주입
+   (function injectTobButton(){
+      const target = document.getElementById('tob-button-placeholder');
+      if (!target) return;
+      fetch('../../2.PageElement/Tob_button/Tob_button.html', { cache: 'no-store' })
+        .then(res => {
+          if (!res.ok) throw new Error('tob_button load fail: ' + res.status);
+          return res.text();
+        })
+        .then(html => {
+          target.innerHTML = html;
+          // 기존 스크롤 버튼이 중복되면 숨김
+          const fallbackBtn = document.getElementById('scrollTopBtn');
+          if (fallbackBtn) fallbackBtn.style.display = 'none';
+        })
+        .catch(err => {
+          console.warn('[tob_button] load failed:', err);
+        });
+    })();
+    // [네비게이션] 경로 후보(우선: Tob_nav_project.html → 실패 시 Tob_nav.html)
+    const __navPaths = [
+      '../../2.PageElement/Tob_nav/Tob_nav.html'
+    ];
     // 네비게이션 HTML 삽입 (로고 교체 + 링크 정규화)
     fetch('../../2.PageElement/Tob_nav/Tob_nav.html', {cache: "no-store"})
       .then(res => res.text())

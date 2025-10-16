@@ -288,23 +288,13 @@ h1.project-title{
       transform: translateY(-300%) !important;
     }
     
-
-    footer, .site-footer, #footer{
-      position:relative !important;
-      width:100%;
-      background:#000 !important;
-      border-top:1px solid var(--line);
-      z-index: 1;
-      margin-top: 100px !important; /* 하단과 약간의 여백 추가 */
-    }
-
-    /* 상단 이동 버튼 */
-    #scrollTopBtn {
+    /* 맨 위로 버튼: 항상 최상단 표시 */
+    .scroll-btn{
       position:fixed;
       right:16px;
       bottom:16px;
       z-index:99999; /* 맨 위 */
-      display:flex;               /* ▼ 보여질 때 flex 정렬 적용 */
+      display:none;
       align-items:center;
       justify-content:center;
       width:44px; height:44px;
@@ -313,19 +303,17 @@ h1.project-title{
       color:#fff; font-weight:900; letter-spacing:.3px;
       box-shadow:0 6px 18px rgba(0,0,0,.35);
       cursor:pointer;
-      opacity:0;                  /* 처음엔 안 보이게 */
-      visibility:hidden;          /* 접근성/포커스 방지 */
-      transition: opacity .25s ease, visibility .25s ease, box-shadow .25s ease, color .25s ease;
     }
-    #scrollTopBtn.show {          /* 스크롤 조건 충족 시 노출 */
-      opacity:1;
-      visibility:visible;
-    }
-    #scrollTopBtn:hover {
-      color:#ff3b3b; 
-      box-shadow:0 6px 22px rgba(255,59,59,.25); 
-    }
+    .scroll-btn:hover{ color:#ff3b3b; box-shadow:0 6px 22px rgba(255,59,59,.25); }
+
     
+    footer, .site-footer, #footer{
+      position:relative !important; /* 이미지 위로 겹치지 않음 */
+      width:100%;
+      background:#000 !important;
+      border-top:1px solid var(--line);
+      z-index: 1;
+    }
   </style>
 </head>
 

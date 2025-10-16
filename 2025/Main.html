@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../2.PageElement/Footer/Footer.css" />
   <!-- // 커서 스타일 -->
   <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
+  <link rel="stylesheet" href="../../2.PageElement/Tob_button/Tob_button.css" />
   
   <style>
     /* 장미 커서 기본 스타일( .cursor-dot / .rose-cursor 공통 ) */
@@ -157,6 +158,7 @@
     <!-- 🔺 네비게이션 영역 -->
     <div id="nav-placeholder"></div>
     <div id="cursor-placeholder"></div>
+    <div id="tob-button-placeholder"></div>
 
     <!-- 🔻 전시 정보: 화면에 딱 맞게 포스터 표시 -->
     <div class="poster-stage">
@@ -174,6 +176,25 @@
   
   <!-- 📜 JavaScript -->
   <script>
+    // [버튼] Tob_button HTML 주입
+    (function injectTobButton(){
+      const target = document.getElementById('tob-button-placeholder');
+      if (!target) return;
+      fetch('../../2.PageElement/Tob_button/Tob_button.html', { cache: 'no-store' })
+        .then(res => {
+          if (!res.ok) throw new Error('tob_button load fail: ' + res.status);
+          return res.text();
+        })
+        .then(html => {
+          target.innerHTML = html;
+          // 기존 스크롤 버튼이 중복되면 숨김
+          const fallbackBtn = document.getElementById('scrollTopBtn');
+          if (fallbackBtn) fallbackBtn.style.display = 'none';
+        })
+        .catch(err => {
+          console.warn('[tob_button] load failed:', err);
+        });
+    })();
     // [네비게이션] 경로 후보(우선: Tob_nav_project.html → 실패 시 Tob_nav.html)
     const __navPaths = [
       '../../2.PageElement/Tob_nav/Tob_nav.html'

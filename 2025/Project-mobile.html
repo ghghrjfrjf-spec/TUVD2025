@@ -165,55 +165,52 @@ contain:content;
   </style>
 </head>
 <body>
+  <!-- ⬇️ 모바일 헤더 주입 -->
   <div id="m-header-placeholder"></div>
   <script>
-    (function(){
-      const mount = document.getElementById("m-header-placeholder");
-      fetch("../../2.PageElement/Mobile-header/mobile-header.html")
-        .then(res => res.text())
-        .then(html => {
-          mount.innerHTML = html;
-          // === 헤더 내부 링크를 현재 디렉터리 기준으로 정규화 ===
-          (function fixLinks(){
-            const baseDir = location.pathname.replace(/[^/]*$/, '');
-            const scope = mount; // 헤더가 주입된 영역
-            // 로고 및 메뉴 내 모든 앵커
-            const anchors = scope.querySelectorAll('a');
-            anchors.forEach(a => {
-              const raw = a.getAttribute('href');
-              if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:')) return;
-              try{
-                // 원래 href를 절대경로로 해석
-                const abs = new URL(raw, location.href);
-                // 파일명(마지막 세그먼트)만 추출
-                const file = abs.pathname.split('/').pop();
-                if (!file) return;
-                // 현재 디렉터리 기준으로 링크 재설정
-                a.setAttribute('href', baseDir + file);
-              }catch(e){ /* no-op */ }
-            });
-          })();
-          // === 햄버거 토글 바인딩 (include된 스크립트가 실행되지 않으므로 여기서 연결) ===
-          const btn = document.getElementById('menuBtn');
-          const menu = document.getElementById('mMenu');
-          const overlay = document.getElementById('menuOverlay');
-          if (!btn || !menu) return;
-          function setState(open){
-            document.body.classList.toggle('nav-open', open);
-            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-            btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-          }
-          function toggle(){ setState(!document.body.classList.contains('nav-open')); }
-          btn.addEventListener('click', toggle);
-          if (overlay) overlay.addEventListener('click', () => setState(false));
-          // 메뉴 링크 클릭 시 자동 닫힘
-          menu.addEventListener('click', (e)=>{ if(e.target.closest('a')) setState(false); });
-          // ESC로 닫기 (선택)
-          window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') setState(false); });
-        })
-        .catch(err => console.error("모바일 헤더 로드 오류:", err));
-    })();
+  (function(){
+    const mount = document.getElementById("m-header-placeholder");
+    fetch("../../2.PageElement/Mobile-header/mobile-header.html", { cache: "no-store" })
+      .then(res => res.text())
+      .then(html => {
+        mount.innerHTML = html;
+
+        // (1) 헤더 내부 링크를 현재 디렉터리 기준으로 정규화
+        (function fixLinks(){
+          const baseDir = location.pathname.replace(/[^/]*$/, '');
+          mount.querySelectorAll('a[href]').forEach(a => {
+            const raw = a.getAttribute('href');
+            if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:')) return;
+            try{
+              const abs = new URL(raw, location.href);
+              const file = abs.pathname.split('/').pop();
+              if (file) a.setAttribute('href', baseDir + file);
+            }catch(_) {}
+          });
+        })();
+
+        // (2) 햄버거 토글 바인딩
+        const btn = document.getElementById('menuBtn');
+        const menu = document.getElementById('mMenu');
+        const overlay = document.getElementById('menuOverlay');
+        if (!btn || !menu) return;
+
+        function setState(open){
+          document.body.classList.toggle('nav-open', open);
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+        }
+        function toggle(){ setState(!document.body.classList.contains('nav-open')); }
+
+        btn.addEventListener('click', toggle);
+        if (overlay) overlay.addEventListener('click', ()=> setState(false));
+        menu.addEventListener('click', (e)=>{ if (e.target.closest('a')) setState(false); });
+        window.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') setState(false); });
+      })
+      .catch(err => console.error("[모바일 헤더] 로드 오류:", err));
+  })();
   </script>
+  <!-- ⬆️ 모바일 헤더 주입 끝 -->
 
   <!-- 본문 (스케일 컨테이너) -->
   <div id="fit-root">

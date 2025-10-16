@@ -323,13 +323,6 @@
     }
 
     /* === Tob_nav 룩&필 통일 오버라이드 (이 파일 전용) === */
-    #nav-placeholder{
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      transition: transform 0.6s ease-in-out; /* 시간 늘리고 부드러운 곡선 적용 */
-      will-change: transform;
-    }
 
     /* 헤더 비주얼: 반투명 블랙 + 블러 + 얇은 구분선 */
     #nav-placeholder header{
@@ -343,8 +336,25 @@
       padding-left: 59px;
       padding-right: 60px;
       box-shadow: 0 4px 12px rgba(0,0,0,.28);
-      transition: transform .38s cubic-bezier(.22,.61,.36,1), box-shadow .24s ease;
+      transition: transform .6s cubic-bezier(.22,.61,.36,1), box-shadow .24s ease;
     }
+
+    /* === Force predictable header container so transforms always work === */
+    #nav-placeholder{
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      transition: transform .75s cubic-bezier(.2,.8,.2,1), opacity .35s ease-out !important;
+      opacity: 1;
+      will-change: transform, opacity;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    #nav-placeholder > header{ position: relative !important; top:0; left:0; right:0; }
+    /* Ensure spacer starts at the current header height; collapsed via JS when hidden */
+    .nav-spacer{ height: 90px; }
 
     /* 로고 크기 조정 */
     #nav-placeholder header .logo img{
@@ -379,11 +389,6 @@
       padding: 0;
     }
 
-    /* 스크롤 시 네비게이션 숨김 */
-    body.nav-hidden #nav-placeholder,
-    body.nav-hidden #nav-placeholder > header {
-      transform: translateY(-300%) !important;
-    }
     
 
     footer, .site-footer, #footer{
@@ -883,185 +888,56 @@
          const parser = new DOMParser();
          const doc = parser.parseFromString(html, 'text/html');
 
-         // 로고 이미지 교체 (상대경로 이슈 방지)
-         const logoContainer = doc.querySelector('.logo');
-         if (logoContainer) {
-           const imgs = logoContainer.querySelectorAll('img');
-           if (imgs.length > 0) {
-             imgs[0].outerHTML = '<img src="../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
-             if (imgs.length > 1) {
-               imgs[1].setAttribute('src', '../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png');
-             }
-           }
-         } else {
-           // 혹시 .logo 래퍼가 없으면 이미지 전체에서 대체
-           doc.querySelectorAll('img').forEach(img => {
-             const alt = img.getAttribute('alt') || '';
-             const src = img.getAttribute('src') || '';
-             if (alt.includes('장미') || /BLOOM_LOGO|대지\.png|대지\.png/.test(src)) {
-               img.outerHTML = '<img src="../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="장미로고" />';
-             }
-           });
-         }
-
-         // 링크 정규화 (어느 페이지에서든 동작)
-         const baseEl = doc.querySelector('base');
-         if (baseEl) baseEl.remove();
-
-         // ======== 링크 매핑 (2025 폴더 내 페이지끼리 정확히 연결) ========
-         // 현재 페이지가 위치한 디렉터리(예: /.../2025)를 기준으로 링크를 만든다.
-         const baseDir = location.pathname.replace(/\/[^/]*$/, ''); // /2025
-         const toURL = (file) => `${baseDir}/${file}`.replace(/\/{2,}/g, '/');
-
-         const linkMap = {
-           'home': toURL('Main.html'),
-           'about': toURL('About.html'),
-           'project': toURL('Project.html'),
-           'designer': toURL('Designer.html'),
-           'guest': toURL('Guest.html'),
-           'guest book': toURL('Guest.html'),
-           'guestbook': toURL('Guest.html'),
-         };
-
-         // 로고 링크도 홈으로 고정
-         const logoLink = doc.querySelector('a.logo, .logo a');
-         if (logoLink) logoLink.setAttribute('href', linkMap['home']);
-
-         // 모든 a 태그를 매핑 규칙에 맞춰 교체
-         doc.querySelectorAll('a[href]').forEach(a => {
-           const text = (a.textContent || '').trim().toLowerCase();
-           const href = (a.getAttribute('href') || '').trim();
-
-           if (linkMap[text]) {
-             a.setAttribute('href', linkMap[text]);
-             return;
-           }
-
-           if (/about/i.test(href))          a.setAttribute('href', linkMap['about']);
-           else if (/project/i.test(href))   a.setAttribute('href', linkMap['project']);
-           else if (/designer/i.test(href))  a.setAttribute('href', linkMap['designer']);
-           else if (/guest(\s*book)?/i.test(href)) a.setAttribute('href', linkMap['guest']);
-           else if (/main|home|index/i.test(href)) a.setAttribute('href', linkMap['home']);
-         });
-
-         // 현재 페이지 표시(활성 상태)
-         const currentName = location.pathname.split('/').pop().toLowerCase(); // project.html 등
-         doc.querySelectorAll('a[href]').forEach(a => {
-           const target = (a.getAttribute('href') || '').toLowerCase();
-           if (target.endsWith(currentName)) {
-             a.setAttribute('aria-current', 'page');
-             a.classList.add('is-active');
-           }
-         });
-
-         // === inject ONLY the <header> from Tob_nav to avoid extra wrappers ===
+         // === inject ONLY the <header> from Tob_nav ===
          const navRoot = document.getElementById('nav-placeholder');
          const headerEl = doc.querySelector('header');
          if (navRoot && headerEl) {
            navRoot.innerHTML = '';
            navRoot.appendChild(headerEl);
          }
-
-         // Remove dropdown structures and classes (flat menu like Guest)
-         (function stripDropdowns(){
-           const navRootEl = document.getElementById('nav-placeholder');
-           if (!navRootEl) return;
-           navRootEl.querySelectorAll('nav ul ul, .dropdown, .submenu, .menu .sub, [aria-haspopup="true"] > ul').forEach(el=>{
-             try{ el.remove(); }catch(_){ el.parentNode && el.parentNode.removeChild(el); }
-           });
-           navRootEl.querySelectorAll('.has-dropdown, .has-children, .dropdown-toggle').forEach(el=>{
-             el.classList.remove('has-dropdown','has-children','dropdown-toggle');
-             el.removeAttribute('aria-haspopup');
-             el.removeAttribute('aria-expanded');
-           });
-         })();
-
-         // Single scroll listener: hide nav on scroll down, show on scroll up
-         (function bindHideShowNav(){
-           let prevY = window.pageYOffset || 0;
-           window.addEventListener('scroll', function(){
-             const y = window.pageYOffset || 0;
-             const delta = y - prevY;
-             if (y > 40 && delta > 6) {
-               document.body.classList.add('nav-hidden');
-             } else if (delta < -6) {
-               document.body.classList.remove('nav-hidden');
-             }
-             prevY = y;
-           }, { passive:true });
-         })();
-        // —— Global safety bind: always toggle, and also set inline transform ——
-        (function hardBindHideShow(){
-          if (window.__navSmoothBind) return; // prevent duplicate binding
-          window.__navSmoothBind = true;
-
-          let prevY = window.pageYOffset || 0;
-          let accDown = 0;   // accumulate downward scroll distance
-          let accUp   = 0;   // accumulate upward scroll distance
-          const root  = document.getElementById('nav-placeholder');
-
-          function apply(hide){
-            document.body.classList.toggle('nav-hidden', hide);
-            if (!root) return;
-            // inline styles as a safety net against external CSS overrides
-            root.style.transform = hide ? 'translate3d(0,-110%,0)' : '';
-            root.style.opacity   = hide ? '0' : '';
-            root.style.filter    = hide ? 'blur(4px)' : '';
-          }
-
-          window.addEventListener('scroll', function(){
-            const y  = window.pageYOffset || 0;
-            const dy = y - prevY;
-
-            if (dy > 0){
-              accDown += dy; // scrolling down
-              accUp = 0;
-            } else if (dy < 0){
-              accUp += -dy;  // scrolling up
-              accDown = 0;
-            }
-
-            // 더 많이 내릴 때 숨기고(accDown), 더 올려야 나타나게(accUp) 설정
-            if (y > 60 && accDown > 140) {
-              apply(true);
-            } else if (accUp > 24) {
-              apply(false);
-            }
-
-            prevY = y;
-          }, { passive: true });
-
-          // quick reveal when user wheels upward or swipes down
-          window.addEventListener('wheel', (e)=>{ if (e.deltaY < 0) apply(false); }, { passive:true });
-          let touchStartY = 0;
-          window.addEventListener('touchstart', (e)=>{ touchStartY = e.touches[0]?.clientY || 0; }, { passive:true });
-          window.addEventListener('touchmove',  (e)=>{
-            const y = e.touches[0]?.clientY || 0;
-            if (y - touchStartY > 8) apply(false);
-          }, { passive:true });
-        })();
-
-         // --- dynamically match spacer to header height ---
-         (function syncNavSpacer(){
-           const root = document.getElementById('nav-placeholder');
-           let spacer = document.querySelector('.nav-spacer');
-           if (!spacer && root) {
-             spacer = document.createElement('div');
-             spacer.className = 'nav-spacer';
-             root.after(spacer);
+         // ensure only one header inside nav-placeholder (dedupe if any)
+         (function dedupeNavHeader(){
+           const host = document.getElementById('nav-placeholder');
+           if (!host) return;
+           const headers = host.querySelectorAll(':scope > header');
+           for (let i = 1; i < headers.length; i++) {
+             try { headers[i].remove(); } catch(_) { headers[i].parentNode && headers[i].parentNode.removeChild(headers[i]); }
            }
-           function setSpacer(){
-             if (spacer){
-               const header = document.querySelector('#nav-placeholder header');
-               const h = header ? header.offsetHeight : 0;
-               spacer.style.height = h + 'px';
-             }
-           }
-           setSpacer();
-           window.addEventListener('resize', setSpacer, { passive:true });
-           setTimeout(setSpacer, 150);
-           setTimeout(setSpacer, 600);
          })();
+
+         // --- normalize header links to this folder (2025) ---
+         (function normalizeHeaderLinks(){
+           const host = document.querySelector('#nav-placeholder');
+           if (!host) return;
+           const baseDir = location.pathname.replace(/\/[^/]*$/, '');
+           const toURL = (file) => `${baseDir}/${file}`.replace(/\/{2,}/g, '/');
+
+           const linkMap = {
+             'home':     toURL('Main.html'),
+             'main':     toURL('Main.html'),
+             'index':    toURL('Main.html'),
+             'about':    toURL('About.html'),
+             'project':  toURL('Project.html'),
+             'designer': toURL('Designer.html'),
+             'guest':    toURL('Guest.html'),
+             'guest book': toURL('Guest.html'),
+             'guestbook':  toURL('Guest.html'),
+           };
+
+           host.querySelectorAll('a[href]').forEach(a => {
+             const text = (a.textContent || '').trim().toLowerCase();
+             const href = (a.getAttribute('href') || '').trim().toLowerCase();
+             if (linkMap[text]) { a.setAttribute('href', linkMap[text]); return; }
+             if (/about/.test(href))          a.setAttribute('href', linkMap['about']);
+             else if (/project/.test(href))   a.setAttribute('href', linkMap['project']);
+             else if (/designer/.test(href))  a.sㅋetAttribute('href', linkMap['designer']);
+             else if (/guest(\s*book)?/.test(href)) a.setAttribute('href', linkMap['guest']);
+             else if (/(^|\/)main|home|index/.test(href))  a.setAttribute('href', linkMap['home']);
+           });
+         })();
+
+         // fire a simple ready event for any other listeners
+         window.dispatchEvent(new Event('nav-ready'));
        }) 
        .catch(err => console.warn('[guest] nav load failed:', err));
      
@@ -1415,8 +1291,117 @@ window.addEventListener("scroll", () => {
   }
 });
 
-scrollTopBtn.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
-</script>
+// ✅ 헤더: 아래(↓)로 스크롤 시만 숨김, 위(↑)로 스크롤 시에는 항상 표시
+(function headerHideShow(){
+  const getY = () => (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0);
+
+  const TOPSAFE   = 10;  // 최상단에서는 항상 표시
+  const MIN_DELTA = 1;   // 미세 스크롤 거의 즉시 반응
+
+  let lastY = getY();
+  let hidden = false; // 현재 숨김 상태
+
+  const wrap = document.getElementById('nav-placeholder');
+  const header = document.querySelector('#nav-placeholder > header');
+
+  function show(){
+    hidden = false;
+    if (wrap){
+      wrap.style.setProperty('transition', 'transform .75s cubic-bezier(.2,.8,.2,1), opacity .35s ease-out', 'important');
+      wrap.style.setProperty('transform', 'translateY(0)', 'important');
+      wrap.style.setProperty('opacity', '1', 'important');
+    }
+    if (header){
+      header.style.setProperty('transition', 'box-shadow .24s ease', 'important');
+      header.style.removeProperty('transform');
+    }
+  }
+  function hide(){
+    hidden = true;
+    if (wrap){
+      wrap.style.setProperty('transition', 'transform .75s cubic-bezier(.2,.8,.2,1), opacity .35s ease-out', 'important');
+      wrap.style.setProperty('transform', 'translateY(-100%)', 'important');
+      wrap.style.setProperty('opacity', '0', 'important');
+    }
+  }
+
+  function onScroll(){
+    const y = getY();
+    const dy = y - lastY;
+
+    // 최상단에 가깝다면 항상 표시
+    if (y <= TOPSAFE){
+      if (hidden) show();
+      lastY = y; return;
+    }
+
+    // 아주 작은 위쪽 움직임에도 즉시 표시 (감도 ↑)
+    if (dy < 0 && hidden) {
+      show();
+      lastY = y; return;
+    }
+
+    // 아래쪽의 미세한 떨림은 무시하여 깜빡임 방지
+    if (Math.abs(dy) < MIN_DELTA){ lastY = y; return; }
+
+    if (dy > 0){
+      // ▼ 아래로 스크롤 중 → 숨김
+      if (!hidden) hide();
+    } else {
+      // ▲ 위로 스크롤 중 → 표시 (이미 위에서 한번 처리했지만, 이 분기로도 안전 보장)
+      if (hidden) show();
+    }
+
+    lastY = y;
+  }
+
+  // 초기 상태 표시
+  show();
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('wheel', onScroll, { passive:true });
+  window.addEventListener('touchmove', onScroll, { passive:true });
+  window.addEventListener('touchstart', onScroll, { passive:true });
+})();
+</script><script>
+  (function responsiveRoute(){
+    const DESKTOP_BASE = 'Project';
+    const MOBILE_BASE  = 'Project-mobile';
+  
+    function isOnBase(base){
+      const p = location.pathname.toLowerCase().replace(/\/+$/, '');
+      const b = base.toLowerCase().replace(/\.html?$/, '');
+      return (
+        p.endsWith('/'+b) ||
+        p.endsWith('/'+b+'.html') ||
+        p.endsWith('/'+b+'/') ||
+        p.endsWith('/'+b+'/index.html')
+      );
+    }
+  
+    function goToBase(base){
+      const baseDir = location.pathname.replace(/[^/]*$/, '');
+      const file = base + '.html';
+      location.replace(baseDir + file);
+    }
+  
+    const mq = window.matchMedia('(max-width: 639px)');
+    let ticking = false;
+    function check(){
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(() => {
+        const isMobile = mq.matches;
+        if (isMobile && !isOnBase(MOBILE_BASE)) goToBase(MOBILE_BASE);
+        if (!isMobile && !isOnBase(DESKTOP_BASE)) goToBase(DESKTOP_BASE);
+        ticking = false;
+      });
+    }
+  
+    if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
+    else if (mq.addListener) mq.addListener(check);
+    window.addEventListener('resize', check, {passive:true});
+    window.addEventListener('orientationchange', check, {passive:true});
+    document.addEventListener('DOMContentLoaded', check);
+    setTimeout(check, 120);
+  })();
+  </script>
 </html>

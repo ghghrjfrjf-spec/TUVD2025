@@ -3,198 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BLOOM — 모바일</title>
+  <title>About — 모바일</title>
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" />
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" />
   <link rel="preload" as="image" href="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" />
-  <style>
-    :root{ --line: rgba(255,255,255,.12); }
-    html,body{ margin:0; padding:0; background:#000; color:#fff; }
-
-    /* ===== 헤더 (모바일 전용) ===== */
-    .m-header{
-      position:sticky; top:0; z-index:1000;
-      height:64px; display:flex; align-items:center; justify-content:space-between;
-      padding:0 14px; box-sizing:border-box;
-      background:rgba(0,0,0,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-      border-bottom:1px solid rgba(255,255,255,.12);
-      transition:transform .5s ease; will-change:transform;
-    }
-    .m-title{ font:800 16px/1 Pretendard, system-ui, -apple-system, sans-serif; letter-spacing:.2px; }
-
-    /* 로고: Main.html과 동일한 위치/크기로 */
-    .m-header .logo{
-      display:flex; align-items:center; gap:8px;
-      text-decoration:none; color:#fff;
-    }
-    .m-header .logo img{
-      max-height:32px;
-      display:block;
-    }
-    .m-header .logo-text{
-      display:flex; flex-direction:column;
-      /* 줄 간격 타이트하게 */
-      line-height:1;
-    }
-    .m-header .logo-text .main{
-      font-size:15px; font-weight:800; color:#fff;
-      /* 아래 간격 2px */
-      display:block; margin:0 0 2px 0;
-    }
-    .m-header .logo-text .sub{
-      font-size:14px; font-weight:800; color:#ff4d4d;
-      display:block; letter-spacing:.2px;
-    }
-
-    /* 햄버거 버튼: 미니멀/얇은 스타일, hover/active에만 테두리 */
-    .m-menu-btn{
-      width:40px; height:40px; border-radius:10px;
-      display:inline-flex; align-items:center; justify-content:center;
-      background:transparent; border:none; box-shadow:none; cursor:pointer; overflow:hidden;
-    }
-    .m-menu-btn img{ width:20px; height:20px; display:block; }
-
-    /* hover/active 시에만 미세한 테두리 표시 (시각 피드백) */
-    .m-menu-btn:hover{ border:1px solid rgba(255,255,255,.18); }
-    .m-menu-btn:active{ border:1px solid rgba(255,255,255,.28); }
-
-    /* ===== 모바일 메뉴 오버레이 ===== */
-    .m-menu{
-      position:fixed; top:64px; right:0; bottom:0; width:260px;
-      /* 투명한 유리 느낌 */
-      background:rgba(255,255,255,0.10);
-      color:#fff; z-index:9999;
-      display:flex; flex-direction:column; padding:0; margin:0; overflow:auto;
-      transform:translateX(100%); transition:transform .35s ease, background .25s ease;
-      box-shadow:-8px 0 24px rgba(0,0,0,0.35);
-      backdrop-filter: blur(16px) saturate(160%);
-      -webkit-backdrop-filter: blur(16px) saturate(160%);
-      border-left:1px solid rgba(255,255,255,0.18);
-    }
-    body.nav-open .m-menu{ transform:translateX(0); }
-    /* 반투명 배경 */
-    .menu-overlay{
-      content:''; position:fixed; left:0; top:64px; right:0; bottom:0;
-      background:rgba(0,0,0,.35); z-index:900; display:none;
-    }
-    body.nav-open .menu-overlay{ display:block; }
-
-    .m-menu ul{ list-style:none; padding:0; margin:0; }
-    .m-menu li a{
-      display:flex; align-items:center; height:64px; padding:0 20px;
-      color:#fff; text-decoration:none; font:800 22px/1 Pretendard, system-ui, -apple-system, sans-serif;
-      border-top:1px solid rgba(255,255,255,.18);
-      /* 유리 위에 텍스트만 */
-      background:transparent;
-      text-shadow:0 1px 0 rgba(0,0,0,.3);
-    }
-    .m-menu li:first-child a{ border-top:none; }
-    .m-menu li a:hover{ background:rgba(255,255,255,.08); }
-
-    .m-menu li a:active{ background:rgba(255,255,255,.16); }
-
-    /* ===== 햄버거 클릭 시 나타나는 라인(글라스 상단바 아래) ===== */
-    .nav-line{
-      position:fixed; left:0; right:0; top:64px; height:2px;
-      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%);
-      transform: scaleX(0); transform-origin: left center;
-      transition: transform .45s ease, opacity .3s ease;
-      opacity:.95;
-      /* 헤더 위, 오버레이 아래 */
-      z-index:1001;
-      pointer-events:none;
-    }
-    body.nav-open .nav-line{ transform: scaleX(1); }
-
-    /* 작은 화면(아이폰 SE)에서 헤더 높이 56px 대응 */
-    @media (max-width: 375px){
-      .nav-line{ top:56px; }
-    }
-
-    /* 콘텐츠: 포스터와 푸터 */
-    .poster{ display:block; width:100%; height:auto; margin:0 auto; }
-    /* .rose-left{
-      display:block;
-      max-width:50%;  절반 정도 크기 
-      height:auto;
-      margin:40px 0 0 10px;  위에서 조금 내리고 왼쪽으로 붙임 
-    } */
-    /* .gun-poster{
-      display:block;
-      width:80%;
-      max-width:500px;
-      height:auto;
-      margin:30px auto 0 auto;  위쪽 여백 주고 중앙 정렬 
-    } */
-    .promo-video{
-      display:block; width:100%; height:auto;
-      /* 아래 여백으로 푸터 고정 높이 피함 */
-      margin:20px auto 80px;
-      border:1px solid rgba(255,255,255,.2); border-radius:8px;
-      /* 로딩 중 배경 */
-      background:#000;
-    }
-    /* 푸터(고정)와 겹치지 않도록 여백 확보 */
-    .stage{ background:#000; line-height:0; padding-bottom:72px; }
-
-    footer{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      width:100%;
-      background:#000;
-      color: #f3f3f3;
-      border-top:1px solid var(--line);
-      padding:6px 10px;
-      box-sizing:border-box;
-      font-size:12px;
-      text-align:center;
-    }
-
-    /* 작은 화면(아이폰 SE) 폰트/여백 조정 */
-    @media (max-width: 375px){
-      .m-header{ height:56px; }
-      .m-menu{ top:56px; }
-      .menu-overlay{ top:56px; }
-      .m-menu li a{ height:56px; font-size:20px; padding:0 18px; }
-      .m-menu-btn{ width:36px; height:36px; }
-      .m-menu-btn img{ width:22px; height:22px; }
-    }
-
-    .poster-wrapper{
-      position:relative;
-      display:inline-block;
-      width:100%;
-      text-align:left;
-    }
-    .poster-wrapper .logo-bg{
-      position:absolute;
-      top:0; left:0;
-      width:100%; height:auto;    
-      z-index:0;
-    }
-    .poster-wrapper .rose-left{
-      position:relative;
-      z-index:1;
-      /* 훨씬 크게 확대 */
-      max-width:100%;
-      /* 왼쪽으로 이동하고 아래로 10% 내림 */
-      transform:translate(-23%, 6%);
-    }
-    .poster-wrapper .gun-below{
-      position:absolute;
-      /* BLOOM 텍스트 바로 밑에 */
-      top:22%;
-      /* 오른쪽에 맞춤 */
-      right:5%;
-      transform:translateY(-50%);
-      max-width:70%;
-      z-index:2;
-      /* 살짝 투명하게 */
-      opacity:0.6;
-    }
-  </style>
   <style id="explain-subnav-20251018-mobile">
     /* Explain 옆 보조 네비게이션 (모바일) — 바로 옆에 붙이기 */
     .explain-section > .container:first-child{
@@ -208,6 +20,19 @@
       margin: 0 !important;           /* 위아래 마진 제거 */
       line-height: 1.0 !important;    /* 베이스라인 안정화 */
       display: inline-block !important;
+
+      /* ✅ 항상 순백 텍스트로 보이게 강제 */
+      color: #fff !important;
+      -webkit-text-fill-color: #fff !important;
+      -webkit-text-stroke: 0 !important;
+      opacity: 1 !important;
+      filter: none !important;
+      mix-blend-mode: normal !important;
+      text-shadow: none !important;
+      background: none !important;
+      background-image: none !important;
+      background-clip: initial !important;
+      -webkit-background-clip: initial !important;
     }
     .sub-nav{
       position: sticky;
@@ -254,37 +79,87 @@
       }
       .sub-nav ul{ white-space: normal; }
     }
+    
+  </style>
+  <style id="mobile-header-sticky-20251018">
+    /* 모바일 헤더가 항상 화면 상단에 보이도록 */
+    #m-header-placeholder{ position: sticky; top: 0; z-index: 1200; }
+    /* 햄버거 메뉴 오픈 시 배경 스크롤 방지 (모바일 헤더에서 .nav-open 사용) */
+    body.nav-open{ overflow: hidden; }
+    /* 헤더 실제 높이만큼 본문 상단 여백 확보 */
+    :root{ --mnav-safe: 64px; }
+    main, .stage{ padding-top: var(--mnav-safe); }
   </style>
 </head>
 
 
 <body>
-  <!-- 상단: 제목 + 햄버거 버튼 -->
-  <header class="m-header">
-    <a class="logo" aria-label="BLOOM" href="Main.html">
-      <img src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/1.png" alt="BLOOM 로고" decoding="async" />
-      <span class="logo-text">
-        <strong class="main">TUVD</strong>
-        <span class="sub">27th Graduate Exhibition</span>
-      </span>
-    </a>
-    <button id="menuBtn" class="m-menu-btn" aria-label="메뉴 열기" aria-expanded="false">
-      <img src="../../1.Picture/Another/Menu.png" alt="메뉴" />
-    </button>
-  </header>
-  <div class="nav-line" aria-hidden="true"></div>
-  <div class="menu-overlay" id="menuOverlay"></div>
-
-  <!-- 모바일 메뉴(링크 연결 제거 요청: # 처리) -->
-   <nav class="m-menu" id="mMenu" aria-label="모바일 메뉴">
-    <ul>
-      <li><a href="Main.html">HOME</a></li>
-      <li><a href="About.html#">ABOUT</a></li>
-      <li><a href="Project.html#">PROJECT</a></li>
-      <li><a href="Designer.html#">DESIGNER</a></li>
-      <li><a href="Guest.html">GUEST BOOK</a></li>
-    </ul>
-  </nav>
+  <div id="m-header-placeholder"></div>
+  <script id="set-mnav-safe-20251018">
+    (function(){
+      function applySafeH(){
+        var ph = document.getElementById('m-header-placeholder');
+        if(!ph) return;
+        var h = 0;
+        if (ph.firstElementChild){
+          h = ph.firstElementChild.getBoundingClientRect().height || 0;
+        }
+        if (!h) h = 64; // fallback
+        document.documentElement.style.setProperty('--mnav-safe', Math.round(h) + 'px');
+      }
+      // 초기 적용 + 리사이즈/방향 전환 시 갱신
+      window.addEventListener('load', applySafeH, {passive:true});
+      window.addEventListener('resize', applySafeH, {passive:true});
+      window.addEventListener('orientationchange', applySafeH, {passive:true});
+      // 헤더 HTML이 주입된 직후에도 갱신
+      var mo = new MutationObserver(applySafeH);
+      mo.observe(document.getElementById('m-header-placeholder'), {childList:true, subtree:true});
+      // iOS 주소창 애니메이션 등 지연 대비 킥
+      var n=0, t=setInterval(function(){ n++; applySafeH(); if(n>10) clearInterval(t); }, 200);
+    })();
+  </script>
+  <script>
+    (function(){
+      const mount = document.getElementById("m-header-placeholder");
+      fetch("../../2.PageElement/Mobile-header/mobile-header.html")
+        .then(res => res.text())
+        .then(html => {
+          mount.innerHTML = html;
+          // === 헤더 내부 링크를 현재 디렉터리 기준으로 정규화 ===
+          (function fixLinks(){
+            const baseDir = location.pathname.replace(/[^/]*$/, '');
+            const scope = mount; // 헤더가 주입된 영역
+            const anchors = scope.querySelectorAll('a');
+            anchors.forEach(a => {
+              const raw = a.getAttribute('href');
+              if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:')) return;
+              try{
+                const abs = new URL(raw, location.href);
+                const file = abs.pathname.split('/').pop();
+                if (!file) return;
+                a.setAttribute('href', baseDir + file);
+              }catch(e){ /* no-op */ }
+            });
+          })();
+          // === 햄버거 토글 바인딩 ===
+          const btn = document.getElementById('menuBtn');
+          const menu = document.getElementById('mMenu');
+          const overlay = document.getElementById('menuOverlay');
+          if (!btn || !menu) return;
+          function setState(open){
+            document.body.classList.toggle('nav-open', open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+          }
+          function toggle(){ setState(!document.body.classList.contains('nav-open')); }
+          btn.addEventListener('click', toggle);
+          if (overlay) overlay.addEventListener('click', () => setState(false));
+          menu.addEventListener('click', (e)=>{ if(e.target.closest('a')) setState(false); });
+          window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') setState(false); });
+        })
+        .catch(err => console.error("모바일 헤더 로드 오류:", err));
+    })();
+  </script>
 
   <main>
     <!-- Hero: 전시 타이틀/소개/날짜 + 오른쪽 장미 이미지 -->
@@ -294,7 +169,7 @@
           <div class="hero-left">
             <span class="eyebrow"><span class="dot" style="background:var(--red);"></span> 27th Graduation Exhibition</span>
             <h1 class="title">ABOUT - BLOOM </h1>
-            <p class="subtitle">우리의 시간은 하나의 씨앗처럼 작은 가능성을 품고 시작되었습니다. 순수함과 열정을 더한 <br>과정은 마침내 꽃이 되었고, 졸업전시 BLOOM에서 그 결실의 순간을 맞이합니다.</p>
+            <p class="subtitle">우리의 시간은 하나의 씨앗처럼 작은 가능성을 품고 시작되었습니다. 순수함과 열정을 더한 과정은 마침내 꽃이 되었고, 졸업전시 BLOOM에서 그 결실의 순간을 맞이합니다.</p>
           </div>
         </div>
         <div class="hero-art">
@@ -313,7 +188,6 @@
         <nav class="sub-nav" aria-label="보조 네비게이션">
           <ul>
             <li><a href="#poster">Poster</a></li>
-            <li><a href="#exhibit">Exhibitions explain</a></li>
             <li><a href="#credits">Credits</a></li>
           </ul>
         </nav>
@@ -348,71 +222,7 @@
       </div>
     </section>
 
-    <!-- Highlights: 행사/프로그램 카드 -->
-    <section class="section">
-      <div class="container">
-        <div style="height:40px;"></div>
-        <div class="exhibit-info panel" id="exhibit">
-          <h2 class="section-title">전시장 정보</h2>
-          <section class="stripe">
-            <div class="container info-grid">
-              <div class="info-item"><span class="info-label">기간</span><span class="info-value">2025. 10. 17 — 10. 20</span></div>
-              <div class="info-item"><span class="info-label">장소</span><span class="info-value">부산디자인진흥원 전시홀</span></div>
-              <div class="info-item"><span class="info-label">관람</span><span class="info-value">무료 · AM 10:00 — PM 6:00</span></div>
-            </div>
-          </section>
-
-          <div class="container venue">
-            <div class="panel">
-              <h2>교통정보</h2>
-              <div class="traffic-table">
-                <div class="traffic-row">
-                  <div class="traffic-cell traffic-label">지하철</div>
-                  <div class="traffic-cell traffic-body">
-                    <p>2번출구 : 스타벅스 앞 - 좌회전 - <b>300m</b> 직진 <small>(도보 10분 소요)</small></p>
-                    <p>4번출구 : 대우트럼프월드센텀 - 우회전 - <b>300m</b> 직진</p>
-                  </div>
-                </div>
-                <div class="traffic-row">
-                  <div class="traffic-cell traffic-label">시내버스</div>
-                  <div class="traffic-cell traffic-body">
-                    <p>센텀시티역 하차 : 1001, 1002, 139, 141, 155, 36, 39, 40, 5, 5-1, 63</p>
-                    <p>삼성홈플러스 하차 : 100-1, 31, 115-1, 307, 200, 100</p>
-                    <p>센텀벤처타운 하차 : 181</p>
-                    <p>부산디자인진흥원 하차 : 115</p>
-                  </div>
-                </div>
-                <div class="traffic-row">
-                  <div class="traffic-cell traffic-label">승용차</div>
-                  <div class="traffic-cell traffic-body">
-                    <p>경부고속도로 : 부산톨게이트 → 원동IC → 해운대방면 → 수비사거리</p>
-                    <p>남해고속도로 : 부산톨게이트 → 동서고가로 → 황령산터널 → 수비사거리</p>
-                  </div>
-                </div>
-              </div>
-              <div class="traffic-note">* 내부가 혼잡하여 대중교통을 추천 드립니다</div>
-            </div>
-            <div class="map-wrapper">
-              <div class="map">
-                <iframe
-                  title="부산디자인진흥원 지도"
-                  src="https://www.google.com/maps?hl=ko&output=embed&q=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90&z=18"
-                  loading="lazy"
-                  referrerpolicy="no-referrer-when-downgrade"
-                  allowfullscreen
-                ></iframe>
-              </div>
-              <div class="map-links">
-                <a href="https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">네이버 지도에서 열기</a>
-                <a href="https://map.kakao.com/?q=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">카카오맵에서 열기</a>
-                <a href="https://www.google.com/maps/search/?api=1&query=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">Google 지도에서 열기</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
+  
     <!-- ==================== Credits (졸업전시 크레딧) ==================== -->
     <section class="section" id="credits">
       <div class="container panel credits-root">
@@ -425,14 +235,14 @@
             <h2>Thanks to</h2>
             <div class="people">
               <div class="people-group president">
-                <h3 class="people-title"><span class="pill">Advisor</span>동명대학교 총장 이상천</h3>
+                <h3 class="people-title"><span class="pill">동명대학교 총장 이상천</h3>
                 <img class="about-photo" src="/1.Picture/3. Graduate_Propasser/Universitypresident.jpeg" alt="총장님">
               </div>
 
               <section class="faculty">
                 <div class="container">
                   <div class="people-group" style="margin-top:16px;">
-                    <h3 class="people-title"><span class="pill">Designers</span>동명대학교 시각디자인학과 교수님</h3>
+                    <h3 class="people-title"><span class="pill">시각디자인학과 교수님</h3>
                     <ul class="people-list faculty-gallery">
                       <li class="faculty-card" data-name="정원준" data-filename="정원준교수님.jpeg">
                         <img loading="lazy" alt="정원준 교수님" src="" onerror="handleFacultyError(this)" />
@@ -534,31 +344,72 @@ body.nav-hidden #nav-placeholder, body.nav-hidden #nav-placeholder > header { tr
 #nav-placeholder nav ul li ul, #nav-placeholder .dropdown, #nav-placeholder .submenu, #nav-placeholder .has-dropdown > ul, #nav-placeholder .has-children > ul{ display:none !important; }
 
 /* Hero */
-.hero{ position:relative; overflow:hidden; padding:48px 0 40px; background-image: radial-gradient(60% 40% at 70% 0%, rgba(255,59,59,.10), rgba(0,0,0,0)), linear-gradient(180deg, rgba(255,59,59,.10), rgba(0,0,0,0)); }
-.hero .container{ position:relative; z-index:2 }
+.hero {
+  position: relative;
+  overflow: visible; /* 장미가 잘리지 않도록 */
+  /* 헤더 바로 밑으로 붙도록(상단 여백 최소화) */
+  padding: 8px 0 var(--hero-bottom-pad, 72px);
+  margin-top: calc(var(--mnav-safe) * -1);
+  background-image:
+    radial-gradient(60% 40% at 70% 0%, rgba(255,59,59,.10), rgba(0,0,0,0)),
+    linear-gradient(180deg, rgba(255,59,59,.10), rgba(0,0,0,0));
+}
+.hero .container{ position:relative; z-index:2; }
 .hero .eyebrow{ display:inline-flex; align-items:center; gap:10px; padding:6px 12px; border:1px solid var(--line); border-radius:999px; font-weight:700; letter-spacing:.4px; }
 .hero .title{ margin:8px 0 10px; font-family:'Playfair Display','Noto Serif KR',serif; font-weight:800; font-size:clamp(44px, 6vw, 68px); line-height:1.1; color:var(--red-600) !important; letter-spacing:.02em; }
-.hero .subtitle{ color:#fff !important; font-size:20px !important; line-height:1.6 !important; opacity:.9 !important; max-width:62ch !important; margin-top:6px !important; }
-.hero-art{ position:absolute; top:-50px; right:clamp(-42px,-3.2vw,-10px); z-index:0; pointer-events:none; }
+.hero .subtitle{
+  color:#fff !important;
+  font-size: clamp(14px, 3.8vw, 18px) !important;
+  line-height: 1.55 !important;
+  opacity:.9 !important;
+  max-width:62ch !important;
+  margin-top:6px !important;
+}
+.hero-art {
+  position: absolute;
+  top: 12px;
+  right: clamp(-42px,-3.2vw,-10px);
+  z-index: 1;              /* 낮은 값으로 조정하여 제목보다 뒤에 표시 */
+  pointer-events: none;    /* 클릭 불가 */
+  opacity: 0.85;           /* 약간 투명하게 */
+  mix-blend-mode: lighten; /* 텍스트와 자연스럽게 어우러지도록 */
+}
 .hero-art img{ display:block; width:min(440px,36vw); height:auto; filter: drop-shadow(0 10px 30px rgba(0,0,0,.35)); }
-.hero::after{ content:""; position:absolute; left:0; right:0; top: var(--rose-bottom, 60%); height:260px; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.88) 100%); pointer-events:none; z-index:1; }
-.rose-line{ position:absolute; left:0; right:0; top: calc(var(--rose-bottom, 60%) - 1px); height:2px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.78) 45%, rgba(255,255,255,.78) 55%, rgba(255,255,255,0)); box-shadow:0 0 12px rgba(255,255,255,.28); pointer-events:none; z-index:5; }
+.hero::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top: var(--rose-bottom, 60%);
+  bottom: 0;                 /* ⬅️ hero의 바닥까지만 채움 */
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.88) 100%);
+  pointer-events:none;
+  z-index:1;
+}
+
+/* 히어로 내부 실제 콘텐츠는 항상 맨 위 레이어 */
+.hero .container{ position:relative; z-index:2; }
 
 /* Explain & BLOOM */
 .section{ padding:48px 0 48px; position:relative; }
 .container{ max-width:var(--max); margin:0 auto; padding-left: clamp(18px, 4vw, 36px); padding-right: clamp(18px, 4vw, 36px); }
 .about-mark{ margin: clamp(28px, 5vh, 48px) 0 16px; text-align:left; padding-left: clamp(12px, 2.5vw, 24px); font-family:'Playfair Display','Noto Serif KR',serif; font-weight:700; font-size: clamp(40px,6vw,96px); line-height:1.12; letter-spacing:.02em; color:#fff; }
-.bloom-section{ text-align:left; max-width:var(--max); margin: clamp(40px, 6vh, 80px) auto 56px; padding-left: clamp(12px, 2.5vw, 24px); padding-right: clamp(12px, 2.5vw, 24px); }
+.bloom-section{ text-align:left; max-width:var(--max); margin: clamp(40px, 6vh, 80px) auto 56px; padding-left: clamp(22px, 6vw, 40px); padding-right: clamp(22px, 6vw, 40px); }
+@media (max-width: 480px){
+  .bloom-section{ padding-left: 24px; padding-right: 24px; }
+}
 .about-poster{ display:block; width:100%; max-width:1800px; margin:0 auto 40px; border-radius:12px; border:1px solid rgba(255,255,255,.14); box-shadow:0 14px 36px rgba(0,0,0,.38); }
-.section h2{ font-size:24px; font-weight:900; color:#fff !important; padding-bottom:10px; }
-.section h2::after{ content:""; position:absolute; left:0; bottom:0; width:88px; height:3px; border-radius:999px; background: linear-gradient(90deg, #ff3b3b, rgba(255,59,59,.25)); }
+
 .lead{ font-size:18px !important; line-height:1.9; opacity:.95; }
 .media-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:14px; }
 .media-grid figure{ margin:0; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.10); border-radius:14px; overflow:hidden; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
 .media-grid figure:hover{ transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0,0,0,.34); border-color: rgba(255,255,255,.18); }
 .media-grid .pad{ padding:18px; }
 .media-grid img.logo-img{ object-fit:contain; aspect-ratio:5/2; background:linear-gradient(180deg,#101010,#0b0b0b); width:100%; display:block; }
-.media-grid figcaption{ padding:10px 12px; font-size:12px; color:#fff; opacity:.9; border-top:1px solid var(--line); background:rgba(255,255,255,.03); }
+.media-grid figcaption{ padding:10px 12px; font-size:12px; color:#fff; opacity:.9; border-top:1px solid var(--line); background:rgba(255,255,255,.03); text-align:center; }
+
+/* 로고 섹션 설명 문단 중앙 정렬 */
+.edge-panel .lead{ text-align:center; margin-left:auto; margin-right:auto; }
 
 /* 전시장 정보 */
 .exhibit-info{ border-radius:16px; background:#121212; border:1px solid var(--line); padding:18px 0 24px; margin-top:12px; box-shadow: var(--shadow); }
@@ -593,32 +444,49 @@ body.nav-hidden #nav-placeholder, body.nav-hidden #nav-placeholder > header { tr
 .faculty .container{ max-width:var(--max); }
 .faculty-gallery{ list-style:none; margin:0; padding:0; display:grid !important; grid-template-columns:repeat(4,1fr) !important; gap:40px !important; justify-items:center; }
 .faculty-card{ width:100%; max-width:300px; aspect-ratio:4/5; position:relative; overflow:hidden; border-radius:8px; background:var(--card); border:1px solid var(--line); }
-.faculty-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+.faculty-card img {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  width: auto;
+  min-width: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
 .faculty-card .cap{ position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,.9); color:#fff; padding:10px 12px; display:flex; align-items:center; justify-content:center; border-top:1px solid rgba(255,255,255,.15); }
 .faculty-card .name{ font-weight:800; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:92%; }
 .people-group{ background:transparent; border:0; padding:0; }
 .people-title{ font-size:22px; margin-bottom:12px; }
 .people-list{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px 14px }
 .people-list li{ position:relative; padding-left:14px; }
-.people-list li::before{ content:'•'; position:absolute; left:0; top:0; color:var(--red) }
 @media (max-width:1000px){ .faculty-gallery{ grid-template-columns:repeat(3,1fr) !important; } }
 @media (max-width:720px){ .faculty-gallery{ grid-template-columns:repeat(2,1fr) !important; } .venue{ grid-template-columns:1fr; } }
 @media (max-width:520px){ .faculty-gallery{ grid-template-columns:1fr !important; } .people-list{ grid-template-columns:1fr } }
+/* ==================== Viewport-safe images (exclude top hero rose) ==================== */
+/* 모든 본문(히어로 장미 제외) 이미지가 화면 너비를 넘지 않도록 고정 */
+.section img,
+.panel img,
+.people-group img,
+.bloom-section img,
+.media-grid img,
+.faculty-card img,
+.about-poster{
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain;
+  display: block;
+}
+/* 인물/감사 섹션의 단일 이미지들도 안전하게 */
+.about-photo{ max-width:100% !important; height:auto !important; display:block; }
+
+/* 그리드/패널이 작아져도 가로 스크롤이 생기지 않게 */
+.media-grid,
+.panel,
+.container{ overflow-x: clip; }
 </style>
-<script>
-// Hide the nav when scrolling down, show on scroll up
-(function hideNavOnScroll(){
-  if (window.__navHideBound) return;
-  window.__navHideBound = true;
-  let prevY = window.pageYOffset || 0;
-  window.addEventListener('scroll', function(){
-    const y = window.pageYOffset || 0;
-    if (y > prevY + 8 && y > 40) document.body.classList.add('nav-hidden');
-    else if (y < prevY - 8) document.body.classList.remove('nav-hidden');
-    prevY = y;
-  }, { passive:true });
-})();
-</script>
 
 <script>
 // Simple lightbox for media-grid images
@@ -715,13 +583,23 @@ document.querySelectorAll('.section,.hero,.venue,.faculty,.traffic-table').forEa
   const hero = document.querySelector('.hero');
   const art  = document.querySelector('.hero-art img');
   if (!hero || !art) return;
+
   function setBaseline(){
     const heroRect = hero.getBoundingClientRect();
     const artRect  = art.getBoundingClientRect();
+
+    // 1) 하얀 그라데이션(rose-line) 기준선 유지
     const bottomY  = Math.max(0, Math.round(artRect.bottom - heroRect.top));
-    const adjusted = bottomY + 0;
-    hero.style.setProperty('--rose-bottom', adjusted + 'px');
+    hero.style.setProperty('--rose-bottom', bottomY + 'px');
+
+    // 2) 장미 이미지가 히어로 영역을 넘어가면, 넘어간 만큼 아래 패딩을 추가
+    //    => "배치로 인식"되어 다음 섹션과 겹치거나 가리지 않도록
+    const overflowBelow = Math.max(0, Math.round(artRect.bottom - heroRect.bottom));
+    const cushion = 24; // 살짝 여유
+    const pad = Math.max(48, overflowBelow + cushion);
+    hero.style.setProperty('--hero-bottom-pad', pad + 'px');
   }
+
   if (art.complete) setBaseline(); else art.addEventListener('load', setBaseline, { once:true });
   window.addEventListener('resize', setBaseline, { passive:true });
   window.addEventListener('orientationchange', setBaseline, { passive:true });
@@ -729,84 +607,51 @@ document.querySelectorAll('.section,.hero,.venue,.faculty,.traffic-table').forEa
   try { document.fonts && document.fonts.ready.then(setBaseline); } catch(_) {}
 })();
 </script>
-  <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
 
-  <script>
-    // 햄버거 버튼으로 오버레이 열고/닫기
-    (function(){
-      const btn = document.getElementById('menuBtn');
-      const menu = document.getElementById('mMenu');
-      if(!btn || !menu) return;
-
-      const overlay = document.getElementById('menuOverlay');
-      function toggle(){
-        const open = !document.body.classList.contains('nav-open');
-        document.body.classList.toggle('nav-open', open);
-        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-      }
-      btn.addEventListener('click', toggle);
-      if(overlay){ overlay.addEventListener('click', toggle); }
-
-      // 메뉴 항목 탭 시 닫기(링크는 모두 '#')
-      menu.addEventListener('click', (e)=>{
-        if(e.target.closest('a')) document.body.classList.remove('nav-open');
-      });
-
-      // 바깥 스크롤 시 닫힘(선택)
-      window.addEventListener('scroll', () => {
-        if(document.body.classList.contains('nav-open')){
-          document.body.classList.remove('nav-open');
-          btn.setAttribute('aria-expanded', 'false');
-          btn.setAttribute('aria-label', '메뉴 열기');
-        }
-      }, { passive:true });
-    })();
   </script>
-<script>
-// [라우팅] 화면 너비 기준 페이지 전환 // (>=640: Main.html, <=639: Main-mobile.html)
-(function responsiveRoute(){
-  const DESKTOP_BASE = 'About';
-  const MOBILE_BASE  = 'About-mobile';
 
-  function isOnBase(base){
-    const p = location.pathname.toLowerCase().replace(/\/+$/, '');
-    const b = base.toLowerCase().replace(/\.html?$/, '');
-    return (
-      p.endsWith('/'+b) ||
-      p.endsWith('/'+b+'.html') ||
-      p.endsWith('/'+b+'/') ||
-      p.endsWith('/'+b+'/index.html')
-    );
-  }
-  function goToBase(base){
-    const baseDir = location.pathname.replace(/[^/]*$/, '');
-    const file = base + '.html';
-    location.replace(baseDir + file);
-  }
-
-  const mq = window.matchMedia('(max-width: 639px)');
-  let ticking = false;
-  function check(){
-    if (ticking) return; ticking = true;
-    requestAnimationFrame(() => {
-      const isMobile = mq.matches;
-      if (!isMobile && isOnBase(MOBILE_BASE)) goToBase(DESKTOP_BASE);
-      ticking = false;
-    });
-  }
-
-  if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
-  else if (mq.addListener) mq.addListener(check);
-  window.addEventListener('resize', check, {passive:true});
-  window.addEventListener('orientationchange', check, {passive:true});
-  document.addEventListener('DOMContentLoaded', check);
-  setTimeout(check, 120);
-  // iOS/Safari 지연 대응
-  let kicks = 0; const kickTimer = setInterval(()=>{ kicks++; check(); if (kicks>10) clearInterval(kickTimer); }, 200);
-  window.addEventListener('pageshow', check, {passive:true});
-  document.addEventListener('visibilitychange', check, {passive:true});
-})();
-</script>
 </body>
+<script id="route-about-desktop-mobile-20251018">
+  (function responsiveRoute(){
+    var DESKTOP_BASE = 'About';
+    var MOBILE_BASE  = 'About-mobile';
+
+    function baseMatch(base){
+      var p = location.pathname.toLowerCase().replace(/\/+$/, '');
+      var b = base.toLowerCase().replace(/\.html?$/, '');
+      return (
+        p.endsWith('/'+b) ||
+        p.endsWith('/'+b+'.html') ||
+        p.endsWith('/'+b+'/') ||
+        p.endsWith('/'+b+'/index.html')
+      );
+    }
+    function swapTo(base){
+      var baseDir = location.pathname.replace(/[^/]*$/, '');
+      location.replace(baseDir + base + '.html');
+    }
+
+    var mq = window.matchMedia('(max-width: 639px)');
+    var ticking = false;
+    function check(){
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(function(){
+        var isMobile = mq.matches;
+        if (isMobile && baseMatch(DESKTOP_BASE))      swapTo(MOBILE_BASE);
+        else if (!isMobile && baseMatch(MOBILE_BASE)) swapTo(DESKTOP_BASE);
+        ticking = false;
+      });
+    }
+
+    if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
+    else if (mq.addListener) mq.addListener(check);
+    window.addEventListener('resize', check, {passive:true});
+    window.addEventListener('orientationchange', check, {passive:true});
+    document.addEventListener('DOMContentLoaded', check, {passive:true});
+    setTimeout(check, 120);
+    var kicks = 0, t = setInterval(function(){ kicks++; check(); if (kicks > 10) clearInterval(t); }, 200);
+    window.addEventListener('pageshow', check, {passive:true});
+    document.addEventListener('visibilitychange', check, {passive:true});
+  })();
+</script>
 </html>

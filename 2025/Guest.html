@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>방명록</title>
-  <meta name="guest-api" content="https://script.google.com/macros/s/AKfycbzv2q6tQP8CILNnkPYhKy-VF_ugJq4XaI4v79XTRbUsU0ZaBKOxJojnJGZyEgcBz1vBMA/exec">
+  <meta name="guest-api" content="/.netlify/functions/guestbook-list">
+  <meta name="guest-post" content="/">
   <link rel="preconnect" href="https://script.google.com" crossorigin>
   <link rel="dns-prefetch" href="//script.google.com">
   <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
@@ -378,6 +379,9 @@
     }
     .message .edit-form textarea { min-height: 80px; resize: vertical; }
 
+    /* Hide edit UI when using Netlify Forms */
+    .message .edit-toggle, .message .msg-actions { display: none !important; }
+
     /* Guest message text: scroll inside the card (no page jump) */
     .message p.msg-text {
       line-height: 1.5;
@@ -565,7 +569,11 @@
             <button id="toggleWriteForm">✍ 글쓰기</button>
           </div>
           <div class="guestbook-form-container hidden">
-            <form id="guestForm">
+            <form id="guestForm" name="guestbook" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+              
+              <input type="hidden" name="form-name" value="guestbook">
+              <input type="hidden" name="ownerId" id="ownerId-hidden">
+              <p style="display:none;"><label>Don’t fill this out: <input name="bot-field"></label></p>
               <input type="text" id="name" name="name" placeholder="To" required />
               <textarea id="message" name="message" placeholder="메시지를 남겨주세요" required></textarea>
               <input type="text" id="from" name="from" placeholder="From" required />
@@ -579,6 +587,22 @@
         </div>
       </div>
     </main>
+    <!-- Netlify Forms Registry (hidden) -->
+<div aria-hidden="true" hidden style="display:none!important">
+  <!-- GUESTBOOK 등록 -->
+  <form name="guestbook" netlify netlify-honeypot="bot-field" method="POST">
+    <input type="text" name="name" />
+    <textarea name="message"></textarea>
+    <input type="text" name="from" />
+    <input type="text" name="ownerId" />
+    <input type="hidden" name="form-name" value="guestbook" />
+    <p><label>Don’t fill this out: <input name="bot-field" /></label></p>
+  </form>
+
+  
+  <!-- 필요하면 추후 다른 폼도 같은 방식으로 추가: name/value만 바꾸면 됩니다 -->
+
+</div>
     <div id="footer-placeholder"></div>
   </div>
   <script> 
@@ -782,7 +806,8 @@
         .catch(err => console.error('Cursor load failed:', err));
     })();
 
-    const API_URL = (document.querySelector('meta[name="guest-api"]')?.content || "https://script.google.com/macros/s/AKfycbzv2q6tQP8CILNnkPYhKy-VF_ugJq4XaI4v79XTRbUsU0ZaBKOxJojnJGZyEgcBz1vBMA/exec");
+    const API_URL = (document.querySelector('meta[name="guest-api"]')?.content || "/.netlify/functions/guestbook-list");
+    const POST_URL = (document.querySelector('meta[name="guest-post"]')?.content || "/");
     const messagesPerPage = 6; // 3 columns x 2 rows per page
 let messages = [];
 let currentPage = 1;
@@ -800,6 +825,7 @@ const OWNER_ID = (() => {
     return 'u-anon';
   }
 })();
+try{ document.getElementById('ownerId-hidden').value = OWNER_ID; }catch(_){}
 
 // --- local cache helpers (prevent temporary messages from "disappearing") ---
 function loadCache(){
@@ -861,34 +887,18 @@ loadCache();
         const owned = String(item.ownerId || '') === OWNER_ID;
         if (owned) msgDiv.classList.add('owned');
 
-        if (editing && owned) {
-          msgDiv.innerHTML = `
-      <form class="edit-form" data-index="${idx}">
-        <input type="text" id="edit-name-${idx}" value="${escAttr(name)}" placeholder="To" required />
-        <input type="text" id="edit-from-${idx}" value="${escAttr(item.from || '')}" placeholder="From" required />
-        <textarea id="edit-message-${idx}" required>${escHtml(message)}</textarea>
-        <div class="msg-actions">
-          <button type="submit" class="save-btn">수정완료</button>
-          <button type="button" class="cancel-btn">취소</button>
-          <button type="button" class="delete-btn" data-index="${idx}">삭제</button>
-        </div>
-      </form>
-    `;
+        if (false) {
+          msgDiv.innerHTML = '';
         } else {
           const safeName = escHtml(name);
           const safeMsg = escHtml(message).replace(/\n/g,'<br>');
           msgDiv.innerHTML = `
-      <button class="edit-toggle" aria-label="수정 메뉴 열기" title="본인이 작성한 글만 수정/삭제 가능합니다">✏️</button>
-      <div class="kv">
-        <div class="row to"><span class="label">To</span><span class="value">${safeName}</span></div>
-        <div class="row message"><span class="label">Message</span><p class="msg-text">${safeMsg}</p></div>
-        <div class="row from"><span class="label">From</span><span class="value">${escHtml(item.from || safeName)}</span></div>
-      </div>
-      ${owned ? `<div class="msg-actions">
-        <button class="edit-btn" data-index="${idx}">수정</button>
-        <button class="delete-btn" data-index="${idx}">삭제</button>
-      </div>` : ''}
-    `;
+  <div class="kv">
+    <div class="row to"><span class="label">To</span><span class="value">${safeName}</span></div>
+    <div class="row message"><span class="label">Message</span><p class="msg-text">${safeMsg}</p></div>
+    <div class="row from"><span class="label">From</span><span class="value">${escHtml(item.from || safeName)}</span></div>
+  </div>
+`;
         }
 
         messageList.appendChild(msgDiv);
@@ -916,113 +926,28 @@ loadCache();
       document.documentElement.style.setProperty('--footer-safe', (document.getElementById('footer-placeholder').offsetHeight || 0) + 'px');
     }
 
-  // (kept above code untouched)
+  // Netlify Forms submission with optimistic UI
   document.getElementById("guestForm").addEventListener("submit", function (e) {
     e.preventDefault();
     const form = e.currentTarget;
-
     const name = document.getElementById("name").value.trim();
     const message = document.getElementById("message").value.trim();
     const from = document.getElementById("from").value.trim();
-
-    if (!name || !message) {
-      alert("이름과 메시지를 입력해주세요.");
-      return;
-    }
-
-    // ---------- 1) 즉시 화면 반영(초고속) ----------
+    if (!name || !message) { alert("이름과 메시지를 입력해주세요."); return; }
+    // 1) Optimistic UI
     const tempId = 'temp-' + Date.now();
     messages.unshift({ id: tempId, name, message, from, ownerId: OWNER_ID });
-    currentPage = 1;
-    renderMessages();
-    saveCache();
-    form.reset();
-
-    // Helper: choose payload format (can switch to JSON on your server by setting meta[name="guest-api-format"]=json)
-    const API_FORMAT = (document.querySelector('meta[name="guest-api-format"]')?.content || 'form'); // 'form' | 'json'
-    function buildPayload(name, message, from) {
-      if (API_FORMAT === 'json') {
-        return {
-          type: 'json',
-          body: JSON.stringify({ name, message, from, ownerId: OWNER_ID }),
-          headers: { "Content-Type": "application/json;charset=UTF-8" }
-        };
-      }
-      // default: x-www-form-urlencoded
-      const form = new URLSearchParams();
-      form.set("name", name);
-      form.set("message", message);
-      form.set("from", from);
-      form.set("ownerId", OWNER_ID);
-      return { type: 'form', body: form, headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" } };
+    currentPage = 1; renderMessages(); saveCache(); form.reset();
+    // 2) Submit to Netlify Forms (static endpoint)
+    const body = new URLSearchParams({ 'form-name':'guestbook', name, message, from, ownerId: OWNER_ID }).toString();
+    // Try sendBeacon first
+    let sent = false;
+    try { if (navigator.sendBeacon) { sent = navigator.sendBeacon(POST_URL, new Blob([body], { type: 'application/x-www-form-urlencoded;charset=UTF-8' })); } } catch(_) {}
+    if (!sent) {
+      fetch(POST_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' }, body, keepalive:true }).catch(()=>{});
     }
-
-    // ---------- 2) 서버 전송을 '가장 빨리' 시도 ----------
-    // 공통 페이로드 (format aware)
-    const payload = buildPayload(name, message, from);
-
-    // (a) sendBeacon: 즉시 반환 & OS가 백그라운드 전송
-    let beaconsent = false;
-    try {
-      if (navigator.sendBeacon) {
-        const dataToSend = (payload.type === 'json')
-          ? new Blob([payload.body], { type: "application/json;charset=UTF-8" })
-          : new Blob([payload.body.toString()], { type: "application/x-www-form-urlencoded;charset=UTF-8" });
-        beaconsent = navigator.sendBeacon(API_URL, dataToSend);
-      }
-    } catch(_) {}
-
-    // (b) 초단타 fetch: 900ms 안에 응답 없으면 포기(no-cors로 백업)
-    if (!beaconsent) {
-      (async ()=>{
-        const controller = new AbortController();
-        const to = setTimeout(()=>controller.abort(), 900); // 더 짧게
-        try{
-          const resp = await fetch(API_URL, {
-            method: "POST",
-            mode: "cors",
-            headers: payload.headers,
-            body: payload.body,
-            signal: controller.signal,
-            keepalive: true
-          });
-          if (!resp.ok) {
-            // 읽기 불가여도 전송만 되면 OK
-            await fetch(API_URL, { method:"POST", mode:"no-cors", body: (payload.type==='json'? payload.body : payload.body), keepalive:true, headers: (payload.type==='json'? undefined : undefined) });
-          }
-        } catch(_){
-          try { await fetch(API_URL, { method:"POST", mode:"no-cors", body: (payload.type==='json'? payload.body : payload.body), keepalive:true, headers: (payload.type==='json'? undefined : undefined) }); } catch(__) {}
-        } finally {
-          clearTimeout(to);
-        }
-      })();
-    }
-
-    // ---------- 3) 빠른 재동기화 루프(점진적 백오프) ----------
-    (function scheduleFastSync(){
-      let tries = 0;
-      let delay = 700; // 0.7s부터 시작
-      const maxDelay = 4000; // 4s 까지 증가
-      const started = Date.now();
-
-      const tick = async () => {
-        tries++;
-        try { await loadInitialMessages(); } catch(_) {}
-        saveCache();
-
-        // temp 아이템 사라졌는지 확인
-        const noTemps = !messages.some(m => m.id && String(m.id).startsWith('temp-'));
-        // 3분 넘으면 중단
-        const expired = (Date.now() - started) > 180000;
-
-        if (noTemps || expired) return;
-        // 지수 백오프(최대 4초)
-        delay = Math.min(maxDelay, Math.floor(delay * 1.4));
-        setTimeout(tick, delay);
-      };
-
-      setTimeout(tick, delay);
-    })();
+    // 3) Fast re-sync from Netlify list function
+    setTimeout(()=>{ loadInitialMessages().catch(()=>{}); }, 900);
   });
 
     document.getElementById("toggleWriteForm").addEventListener("click", function () {
@@ -1030,133 +955,6 @@ loadCache();
       formContainer.classList.toggle("hidden");
     });
 
-    // --- delegated edit/delete handlers on the message list ---
-    document.getElementById('messageList').addEventListener('click', (e) => {
-      const editBtn = e.target.closest('.edit-btn');
-      const cancelBtn = e.target.closest('.cancel-btn');
-      const delBtn = e.target.closest('.delete-btn');
-      const toggleBtn = e.target.closest('.edit-toggle');
-      if (toggleBtn) {
-        // Shift+연필 클릭: 레거시 글을 내 글로 등록 (local only)
-        if (e.shiftKey) {
-          const claimCard = toggleBtn.closest('.message');
-          const claimIdx = Array.from(document.querySelectorAll('#messageList .message')).indexOf(claimCard);
-          if (claimIdx > -1 && messages[claimIdx]) {
-            messages[claimIdx].ownerId = OWNER_ID;
-            saveCache();
-            renderMessages();
-            return;
-          }
-        }
-        const card = toggleBtn.closest('.message');
-        const cardIdx = Array.from(document.querySelectorAll('#messageList .message')).indexOf(card);
-        if (cardIdx > -1 && String(messages[cardIdx]?.ownerId || '') !== OWNER_ID) {
-          const yes = confirm('이 카드가 본인이 작성한 글이라면\n“내 글로 등록” 후 수정/삭제할 수 있어요.\n\n내 글로 등록하시겠어요?');
-          if (yes) {
-            messages[cardIdx].ownerId = OWNER_ID;
-            saveCache();
-            renderMessages();
-          }
-          return;
-        }
-        if (card) card.classList.toggle('show-actions');
-        return;
-      }
-      if (editBtn) {
-        const idx = parseInt(editBtn.dataset.index, 10);
-        if (!isNaN(idx) && messages[idx] && String(messages[idx].ownerId || '') !== OWNER_ID) {
-          alert('본인이 작성한 글만 수정할 수 있습니다.');
-          return;
-        }
-        if (!isNaN(idx) && messages[idx]) {
-          messages[idx].editing = true;
-          renderMessages();
-        }
-        return;
-      }
-      if (cancelBtn) {
-        const form = e.target.closest('.edit-form');
-        const idx = form ? parseInt(form.dataset.index, 10) : -1;
-        if (!isNaN(idx) && messages[idx]) {
-          messages[idx].editing = false;
-          renderMessages();
-        }
-        return;
-      }
-      if (delBtn) {
-        const idx = parseInt(delBtn.dataset.index, 10);
-        if (!isNaN(idx) && messages[idx] && String(messages[idx].ownerId || '') !== OWNER_ID) {
-          alert('본인이 작성한 글만 삭제할 수 있습니다.');
-          return;
-        }
-        if (!isNaN(idx) && messages[idx]) {
-          const target = messages[idx];
-          if (!target.id || String(target.id).startsWith('temp-')) {
-            // 서버에 아직 저장되지 않은 임시 글은 즉시 로컬에서 제거
-            messages.splice(idx, 1);
-            renderMessages();
-            saveCache();
-            return;
-          }
-          if (confirm('정말 삭제하시겠어요?')) {
-            fetch(API_URL, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ action: "delete", id: target.id, ownerId: OWNER_ID })
-            })
-            .then(res => {
-              // 성공/실패와 관계없이 UI에서는 제거, 필요시 추후 보강
-              messages.splice(idx, 1);
-              renderMessages();
-            })
-            .catch(() => {
-              alert("삭제 중 오류가 발생했습니다.");
-            });
-          }
-        }
-        return;
-      }
-    });
-    
-
-document.getElementById('messageList').addEventListener('submit', (e) => {
-  const form = e.target.closest('.edit-form');
-  if (!form) return;
-  e.preventDefault();
-
-  const idx = parseInt(form.dataset.index, 10);
-  if (isNaN(idx) || !messages[idx]) return;
-  if (messages[idx].ownerId !== OWNER_ID) return; // only mine
-
-  const newName = document.getElementById(`edit-name-${idx}`).value.trim();
-  const newFrom = document.getElementById(`edit-from-${idx}`).value.trim();
-  const newMsg  = document.getElementById(`edit-message-${idx}`).value.trim();
-
-  // Optimistic local update
-  const current = messages[idx];
-  messages[idx] = { ...current, name: newName, from: newFrom, message: newMsg, editing: false };
-  renderMessages();
-  saveCache();
-
-  // If it doesn't have a real id yet, skip server update (will be picked up on next sync)
-  if (!current.id || String(current.id).startsWith('temp-')) return;
-
-  // Server update
-  fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      action: 'update',
-      id: current.id,
-      name: newName,
-      from: newFrom,
-      message: newMsg,
-      ownerId: OWNER_ID
-    })
-  }).catch(()=>{
-    // On error, revert UI change (optional). Here we keep optimistic change but you can restore old values if needed.
-  });
-});
 
     // Merge server messages, restoring ownerId for legacy posts created before server returned ownerId
     function mergeServerMessages(serverList){

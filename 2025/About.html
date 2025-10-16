@@ -2751,6 +2751,46 @@ html, body { overflow-x:hidden; scroll-behavior:smooth; }
   try { document.fonts && document.fonts.ready.then(setBaseline); } catch(_) {}
 })();
 </script>
+<script>
+  (function responsiveRoute(){
+    const DESKTOP_BASE = 'About';
+    const MOBILE_BASE  = 'About-mobile';
+  
+    function isOnBase(base){
+      const p = location.pathname.toLowerCase().replace(/\/+$/, '');
+      const b = base.toLowerCase().replace(/\.html?$/, '');
+      return (
+        p.endsWith('/'+b) ||
+        p.endsWith('/'+b+'.html') ||
+        p.endsWith('/'+b+'/index.html')
+      );
+    }
+    function goToBase(base){
+      const baseDir = location.pathname.replace(/[^/]*$/, '');
+      const file = base + '.html';
+      location.replace(baseDir + file);
+    }
+  
+    const mq = window.matchMedia('(max-width: 639px)');
+    let ticking = false;
+  
+    function check(){
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(() => {
+        const isMobile = mq.matches;
+        if (isMobile && isOnBase(DESKTOP_BASE)) goToBase(MOBILE_BASE);
+        else if (!isMobile && isOnBase(MOBILE_BASE)) goToBase(DESKTOP_BASE);
+        ticking = false;
+      });
+    }
+  
+    if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
+    else if (mq.addListener) mq.addListener(check);
+    ['resize','orientationchange','pageshow','DOMContentLoaded','visibilitychange']
+      .forEach(evt => window.addEventListener(evt, check, {passive:true}));
+    setTimeout(check, 120);
+  })();
+  </script>
 </body>
 </html>
   <style id="align-president-title-20251018">
@@ -3181,4 +3221,68 @@ html, body { overflow-x:hidden; scroll-behavior:smooth; }
   
     tryLoad(0);
   })();
+  
   </script>
+  <script id="about-responsive-route-2025">
+    /* Auto-route: Desktop ↔ Mobile for About page (<=639px → About-mobile.html) */
+    (function(){
+      var DESKTOP = 'About.html';
+      var MOBILE  = 'About-mobile.html';
+    
+      function baseDir(){
+        // 현재 폴더 경로 (끝에 /)
+        return location.pathname.replace(/[^/]*$/, '');
+      }
+    
+      function isOn(fileBase){
+        // About, About.html, About/, About/index.html 모두 인식
+        var p = location.pathname.toLowerCase().replace(/\/+$/, '');
+        var b = fileBase.toLowerCase().replace(/\.html?$/, '');
+        return (
+          p.endsWith('/'+b) ||
+          p.endsWith('/'+b+'.html') ||
+          p.endsWith('/'+b+'/index') ||
+          p.endsWith('/'+b+'/index.html')
+        );
+      }
+    
+      function goTo(file){
+        var dir = baseDir();
+        var q = location.search || '';
+        var h = location.hash   || '';
+        // replace로 히스토리 루프 방지
+        location.replace(dir + file + q + h);
+      }
+    
+      var mq = window.matchMedia('(max-width: 639px)');
+      var ticking = false;
+    
+      function check(){
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function(){
+          var small = mq.matches;
+          if (small && isOn(DESKTOP.replace('.html',''))){
+            goTo(MOBILE);
+          } else if (!small && isOn(MOBILE.replace('.html',''))){
+            goTo(DESKTOP);
+          }
+          ticking = false;
+        });
+      }
+    
+      // 초기/이벤트 체크
+      if (mq.addEventListener) mq.addEventListener('change', check, {passive:true});
+      else if (mq.addListener) mq.addListener(check); // 구형 사파리
+    
+      ['resize','orientationchange','pageshow'].forEach(function(evt){
+        window.addEventListener(evt, check, {passive:true});
+      });
+      document.addEventListener('visibilitychange', check, {passive:true});
+      document.addEventListener('DOMContentLoaded', check, {once:true});
+    
+      // iOS 뷰포트 지연 대응 킥
+      var kicks = 0, timer = setInterval(function(){ kicks++; check(); if (kicks > 10) clearInterval(timer); }, 180);
+      setTimeout(check, 120);
+    })();
+    </script>

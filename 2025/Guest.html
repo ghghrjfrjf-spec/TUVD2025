@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>방명록</title>
-  <meta name="guest-api" content="/.netlify/functions/guestbook">
-  <meta name="guest-api-format" content="json">
+  <meta name="guest-api" content="https://script.google.com/macros/s/AKfycbzC2nHBBZjzEib6eQZ3lsoLvwtMVdy-Blb9cbshEXM-PIxDijAnBU6rAjwObhate-Ea/exec">
+  <meta name="guest-api-format" content="form">
   <link rel="preconnect" href="https://script.google.com" crossorigin>
   <link rel="dns-prefetch" href="//script.google.com">
   <link rel="stylesheet" href="../../2.PageElement/Tob_nav/Tob_nav.css" />
@@ -783,7 +783,7 @@
         .catch(err => console.error('Cursor load failed:', err));
     })();
 
-    const API_URL = (document.querySelector('meta[name="guest-api"]')?.content || "https://script.google.com/macros/s/AKfycbzv2q6tQP8CILNnkPYhKy-VF_ugJq4XaI4v79XTRbUsU0ZaBKOxJojnJGZyEgcBz1vBMA/exec");
+    const API_URL = (document.querySelector('meta[name="guest-api"]')?.content || "https://script.google.com/macros/s/AKfycbzC2nHBBZjzEib6eQZ3lsoLvwtMVdy-Blb9cbshEXM-PIxDijAnBU6rAjwObhate-Ea/exec");
     const messagesPerPage = 6; // 3 columns x 2 rows per page
 let messages = [];
 let currentPage = 1;

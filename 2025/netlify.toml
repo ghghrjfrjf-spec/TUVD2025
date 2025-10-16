@@ -1,6 +1,2 @@
-[build]
-  publish = "2025"                 # public root (Guest.html이 있는 폴더)
-  functions = "2025/netlify/functions"
-
 [functions]
-  node_bundler = "esbuild"
+  directory = "netlify/functions"

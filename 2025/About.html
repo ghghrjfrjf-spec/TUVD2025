@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
+  <!-- 스크롤 시 네비게이션 숨김 -->
+  <!-- 이미 존재하는지 확인 후 추가 -->
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -60,13 +62,15 @@
       font-family:'Pretendard', system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     }
 
+      :root { --header-h: 90px; }
+      /* Header fixed at top; allow translateY for hide/show */
+      #nav-placeholder { position: fixed; top: 0; left: 0; width: 100%; z-index: 1200; transform: translateY(0); transition: transform .5s ease; }
+      #nav-placeholder > header { will-change: transform; }
+      /* Content starts below header */
+      body { padding-top: var(--header-h, 90px); }
+      /* Hidden state when scrolling down */
+      body.nav-hidden #nav-placeholder { transform: translateY(-110%); }
 
-    /* 스크롤 시 네비게이션 숨김 */
-    body.nav-hidden #nav-placeholder,
-    body.nav-hidden #nav-placeholder > header {
-      transform: translateY(-100%) !important;
-    }
-    
     /* 전체 화면 레이아웃 + 푸터 하단 고정 */
     html, body { background:#000; }
     .page { background:#000; width:100%; }
@@ -74,13 +78,12 @@
     
     /* ==================== 상단 네비게이션(공용 Tob_nav 적용 + 스크롤시 숨김) ==================== */
     #nav-placeholder{
-      position: sticky;
+      position: fixed;
       top: 0;
       z-index: 1200;              /* above fixed footer (1000) */
-      transition: transform .3s ease;
+      transition: transform 0.6s ease-in-out;
       will-change: transform;
     }
-    body.nav-hidden #nav-placeholder{ transform: translateY(-100%); }
     .nav-spacer{
       height: 90px;                 /* equal to header height */
       background: #000;             /* keep black band under the header */
@@ -100,6 +103,8 @@
       height: 90px;               /* keep rectangle height */
       padding-left: 60px;
       padding-right: 60px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+      transition: transform .38s cubic-bezier(.22,.61,.36,1), box-shadow .24s ease;
     }
 
     /* Typography & links */
@@ -240,7 +245,6 @@
       max-width: 62ch !important;
       margin-top: 6px !important;
     }
-    .hero .cta{margin-top:28px; display:flex; gap:12px; flex-wrap:wrap}
     .btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:12px 18px; border-radius:10px; border:1px solid #222; background:#fff; color:#111; font-weight:800}
 
     /* Hero layout upgrade: left copy + date pill */
@@ -249,7 +253,6 @@
     .hero-right{display:flex; justify-content:flex-end; align-items:flex-end}
     .date-large{font-weight:900; text-align:right; letter-spacing:.5px; color:#fff; line-height:.9; font-size: clamp(44px, 8vw, 120px)}
     .date-large .yy{font-size: .58em; display:block; opacity:.95}
-    .hero .cta{margin-top:28px; display:flex; gap:12px; flex-wrap:wrap}
     /* Date pill inside red gradient hero */
     /* 히어로 내부 날짜 pill 스타일 */
     .date-pill{
@@ -519,10 +522,9 @@ html, body { overflow-x:hidden; scroll-behavior:smooth; }
       transform: translateY(-2px);
     }
     
-    /* === Compact & Safe Layout Patch (no horizontal scroll, compact spacing) === */
+/* === Compact & Safe Layout Patch (no horizontal scroll, compact spacing) === */
 
 /* 어떤 요소가 옆으로 새도 가로 스크롤이 안 생기도록 */
-html, body { overflow-x: hidden; }
 
 /* 컨테이너 살짝 더 조여서 넘침 방지 */
 .container { max-width: var(--max); margin: 0 auto; padding: 0 20px; box-sizing: border-box; }
@@ -600,7 +602,8 @@ html, body { overflow-x: hidden; }
     }
 
     /* Prevent accidental horizontal scroll on tablet landscape */
-    html, body{ overflow-x:hidden; }
+    /* Prevent accidental horizontal scroll on tablet landscape */
+    /* html, body{ overflow-x:hidden; } */
 
     /* Section rhythm + subtle separators (no extra markup) */
     .section{ position:relative; }
@@ -845,8 +848,6 @@ html, body { overflow-x: hidden; }
 }
 
 /* 안전장치: 효과 때문에 가로 스크롤 생기지 않게 */
-html, body{ overflow-x:hidden; }
-  </style>
   </style>
   <style id="title-serif-upgrade">
     /* Upgrade the topmost BLOOM title to a refined serif */
@@ -881,7 +882,6 @@ html, body{ overflow-x:hidden; }
 </style>
 <style id="layout-fixes-20251015">
   /* ===== Layout Safety & Aesthetic Overrides (2025-10-15) ===== */
-  html, body { overflow-x: hidden; }
 
   /* 카드/정보 그리드 자동 줄바꿈 */
   .info-grid{ grid-template-columns: repeat(auto-fit, minmax(220px,1fr)) !important; gap:16px !important; }
@@ -1529,6 +1529,88 @@ html, body{ overflow-x:hidden; }
   }
   </style>
 </head>
+<script id="nav-inject-and-linkmap-20251018">
+(function(){
+  function init(){
+    var NAV_PATH = '../../2.PageElement/Tob_nav/Tob_nav.html';
+    var root = document.getElementById('nav-placeholder');
+    if (!root) return;
+
+    fetch(NAV_PATH, { cache: 'no-store' })
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+      .then(function(html){
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var header = doc.querySelector('header') || doc.body.firstElementChild;
+        root.innerHTML = '';
+        if (header) root.appendChild(header);
+
+        // 현재 폴더 기준 파일 경로
+        var baseDir = location.pathname.replace(/\/[^/]*$/, '/');
+        function to(file){ return (baseDir + file).replace(/\/{2,}/g, '/'); }
+        var map = {
+          'home': to('Main.html'),
+          'main': to('Main.html'),
+          'index': to('Main.html'),
+          'about': to('About.html'),
+          'project': to('Project.html'),
+          'designer': to('Designer.html'),
+          'guest': to('Guest.html'),
+          'guest book': to('Guest.html'),
+          'guestbook': to('Guest.html')
+        };
+
+        // 링크 정규화
+        root.querySelectorAll('a[href]').forEach(function(a){
+          var text = (a.textContent || '').trim().toLowerCase();
+          var href = (a.getAttribute('href') || '').trim().toLowerCase();
+          if (map[text]) {
+            a.setAttribute('href', map[text]);
+          } else if (/about/.test(href)) {
+            a.setAttribute('href', map['about']);
+          } else if (/project/.test(href)) {
+            a.setAttribute('href', map['project']);
+          } else if (/designer/.test(href)) {
+            a.setAttribute('href', map['designer']);
+          } else if (/guest/.test(href)) {
+            a.setAttribute('href', map['guest']);
+          } else if (/main|home|index/.test(href)) {
+            a.setAttribute('href', map['home']);
+          }
+        });
+
+        // 현재 페이지 is-active 표시
+        var p = location.pathname.toLowerCase();
+        var curr = /about/.test(p) ? 'about'
+                 : /project/.test(p) ? 'project'
+                 : /designer/.test(p) ? 'designer'
+                 : /guest/.test(p) ? 'guest'
+                 : 'home';
+        root.querySelectorAll('a').forEach(function(a){
+          var h = (a.getAttribute('href') || '').toLowerCase();
+          if (h && h.indexOf(map[curr].toLowerCase()) !== -1) {
+            a.classList.add('is-active');
+          }
+        });
+
+        // 헤더 높이 반영(본문 겹침 방지)
+        function setSafe(){
+          var h = root.firstElementChild ? root.firstElementChild.offsetHeight : 90;
+          document.documentElement.style.setProperty('--header-h', h + 'px');
+        }
+        setSafe();
+        window.addEventListener('resize', function(){ requestAnimationFrame(setSafe); }, { passive:true });
+        setTimeout(setSafe, 120); setTimeout(setSafe, 480);
+      })
+      .catch(function(err){ console.warn('[nav] load failed:', err); });
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+</script>
 <body>
 
 
@@ -1778,6 +1860,7 @@ html, body{ overflow-x:hidden; }
     }
   }
 </style>
+<!-- HEAD CLOSE FIX & STYLE RELOCATE -->
 </head>
 <style id="exhibit-info-title-20251018">
   .exhibit-info .section-title {
@@ -1789,6 +1872,11 @@ html, body{ overflow-x:hidden; }
     margin-bottom: 16px;
     letter-spacing: 0.2px;
   }
+</style>
+<style id="header-hide-on-scroll-20251018">
+  /* Enforce the translateY hide/show behavior */
+  #nav-placeholder { transform: translateY(0); transition: transform .5s ease; }
+  body.nav-hidden #nav-placeholder { transform: translateY(-110%); }
 </style>
       </div>
     </section>
@@ -1982,28 +2070,28 @@ html, body{ overflow-x:hidden; }
         </ul>
       </div>
     </section>
-       <!-- 졸업준비위원회 -->
-       <div class="people-group" style="margin-top:16px;">
-        <h3 class="people-title"><span class="pill">Committee</span> 졸업준비위원회</h3>
-        <ul class="people-list">
-          <li>최자연</li>
-          <li>박은제</li>
-          <li>김준성</li>
-          <li>김혜연</li>
-          <li>지영현</li>
-          <li>차은지</li>
-          <li>황만규</li>
-          <li>안정연</li> 
-          <li>김혜림</li> 
-          <li>배유진</li>
-          <li>박은제</li>
-          <li>김사율</li>
-          <li>이다현</ul>
-          <li>이혜주</li>
-          <li>안예진</li>
-          <li>홍화정</li>
-        </ul>
-      </div>
+      <!-- 졸업준비위원회 -->
+      <div class="people-group" style="margin-top:16px;">
+       <h3 class="people-title"><span class="pill">Committee</span> 졸업준비위원회</h3>
+       <ul class="people-list">
+         <li>최자연</li>
+         <li>박은제</li>
+         <li>김준성</li>
+         <li>김혜연</li>
+         <li>지영현</li>
+         <li>차은지</li>
+         <li>황만규</li>
+         <li>안정연</li> 
+         <li>김혜림</li> 
+         <li>배유진</li>
+         <li>박은제</li>
+         <li>김사율</li>
+         <li>이다현</li>
+         <li>이혜주</li>
+         <li>안예진</li>
+         <li>홍화정</li>
+       </ul>
+     </div>
 
         <!-- 디자이너 명단 -->
         <div class="people-group" style="margin-top:16px;">
@@ -2024,13 +2112,16 @@ html, body{ overflow-x:hidden; }
         </div>
       </div>
     
-  <!-- Scroll to Top Button -->
-  <button onclick="scrollToTop()" id="scrollTopBtn" class="scroll-btn">▲</button>
     <!-- Robust faculty image loader for deployed sites (handles spaces, Korean names, extension fallbacks) -->
     <script id="faculty-image-loader-20251018">
     // Robust faculty image loader for deployed sites (handles spaces, Korean names, extension fallbacks)
     (function(){
-      var BASE = "../../1.Picture/3.%20Graduate_Propasser/"; // relative path; %20 for space
+      var BASES = [
+        "../../1.Picture/3.%20Graduate_Professor/",
+        "../../1.Picture/3.%20Graduate_Propasser/",
+        "../../1.Picture/3. Graduate_Professor/",
+        "../../1.Picture/3. Graduate_Propasser/"
+      ];
       var EXTS = ["jpeg","jpg","png","webp"];
 
       // Fallback handler attached per <img>
@@ -2075,17 +2166,29 @@ html, body{ overflow-x:hidden; }
           seen[k] = true; return true;
         });
 
-        // Prefix base path and safely encode spaces & non-ascii
-        var urls = list.map(function(file){
-          // keep slashes, encode the rest
-          var path = BASE + file;
-          // encode only the filename portion for safety
-          var parts = path.split("/");
-          var encoded = parts.map(function(p, i){
-            // do not encode the empty string from leading slash (not used here) and directories we've already normalized
-            return i === parts.length - 1 ? encodeURIComponent(p) : p.replace(/ /g, "%20");
-          }).join("/");
-          return encoded;
+        // Try multiple base directories and two encoding modes per file
+        var urls = [];
+        BASES.forEach(function(BASE){
+          list.forEach(function(file){
+            // 1) Encode filename only (safe default)
+            var path1 = BASE + file;
+            var parts1 = path1.split("/");
+            var enc1 = parts1.map(function(p, i){
+              return i === parts1.length - 1 ? encodeURIComponent(p) : p.replace(/ /g, "%20");
+            }).join("/");
+            urls.push(enc1);
+
+            // 2) Space-only encoding (in case server expects raw UTF-8 path)
+            var path2 = BASE + file;
+            var enc2 = path2.replace(/ /g, "%20");
+            urls.push(enc2);
+          });
+        });
+
+        // De-duplicate the expanded url list while preserving order
+        var seenUrl = Object.create(null);
+        urls = urls.filter(function(u){
+          if (seenUrl[u]) return false; seenUrl[u] = true; return true;
         });
 
         return urls;
@@ -2124,7 +2227,132 @@ html, body{ overflow-x:hidden; }
   </dialog>
   <div id="footer-placeholder"></div>
 
-  <script>
+  <script id="cursor-path-check-20251018">
+    (function(){
+      var baseDir = location.pathname.replace(/\/[^/]*$/, '/');
+      function join(p){ return (baseDir + p).replace(/\/{2,}/g, '/'); }
+      var CANDIDATES = [
+        '../../2.PageElement/Cursor/cursor.html',
+        '../../2.PageElement/Cursor/Cursor.html',
+        '../../2.PageElement/cursor/cursor.html',
+        '../2.PageElement/Cursor/cursor.html',
+        './2.PageElement/Cursor/cursor.html'
+      ].map(join);
+    
+      console.group('[cursor-path-check] candidates');
+      var found = null;
+      (function next(i){
+        if (i >= CANDIDATES.length){
+          if (!found) console.warn('[cursor-path-check] No working cursor.html found in candidates');
+          console.groupEnd();
+          return;
+        }
+        var url = CANDIDATES[i];
+        fetch(url, { cache: 'no-store' })
+          .then(function(r){
+            console[r.ok ? 'info' : 'warn']((r.ok?'FOUND ':'MISS  ') + url + (r.ok?'':'  (status '+r.status+')'));
+            if (r.ok && !found) found = url;
+          })
+          .catch(function(err){ console.warn('ERR   ' + url, err); })
+          .finally(function(){ next(i+1); });
+      })(0);
+    })();
+    </script>
+  <script id="nav-inject-lite-20251018">
+  (function(){
+    var root = document.getElementById('nav-placeholder');
+    if (!root) return;
+    // If a header already exists (server-side or earlier script), do nothing
+    if (root.querySelector('header')) return;
+
+    // Fetch and inject only the <header> from Tob_nav.html
+    fetch('../../2.PageElement/Tob_nav/Tob_nav.html', { cache:'no-store' })
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+      .then(function(html){
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var header = doc.querySelector('header');
+        if (!header) return;
+        root.innerHTML = '';
+        root.appendChild(header);
+      })
+      .catch(function(err){ console.warn('[nav-inject-lite] failed:', err); });
+  })();
+  </script>
+  <script id="nav-autohide-20251018">
+    (function(){
+      // 헤더 자동 숨김/표시: 내리면 사라지고, 올리면 다시 나타남 (header만 제어)
+      var lastY = window.scrollY || window.pageYOffset || 0;
+      var THRESH = 4;     // 미세한 흔들림 무시
+      var TOPSAFE = 40;   // 상단 40px 이내 항상 표시
+    
+      function getHeader(){
+        var h = document.querySelector('#nav-placeholder header');
+        if (!h) return null;
+        if (!h.dataset._autoHideInit){
+          // 부드러운 전환: 한 번만 지정
+          h.style.transition = h.style.transition || 'transform .4s ease, opacity .4s ease';
+          h.style.willChange  = h.style.willChange  || 'transform, opacity';
+          h.dataset._autoHideInit = '1';
+        }
+        return h;
+      }
+    
+      function toggle(){
+        var header = getHeader();
+        if (!header) return;
+    
+        var y  = window.scrollY || window.pageYOffset || 0;
+        var dy = y - lastY;
+    
+        if (y <= TOPSAFE){
+          // 상단에서는 항상 보이기
+          header.style.transform = 'translateY(0)';
+          header.style.opacity   = '1';
+        } else if (dy > THRESH){
+          // 아래로 스크롤 → 헤더 숨김
+          header.style.transform = 'translateY(-100%)';
+          header.style.opacity   = '0.85';
+        } else if (dy < -THRESH){
+          // 위로 스크롤 → 헤더 표시
+          header.style.transform = 'translateY(0)';
+          header.style.opacity   = '1';
+        }
+    
+        lastY = y;
+      }
+    
+      // 헤더가 fetch로 나중에 주입되어도 동작하도록 감시
+      var ph = document.getElementById('nav-placeholder');
+      if (ph){
+        new MutationObserver(function(){ getHeader(); })
+          .observe(ph, { childList:true, subtree:true });
+      }
+    
+      // 이벤트 바인딩 (다른 코드는 건드리지 않음)
+      window.addEventListener('scroll',     toggle, { passive:true });
+      window.addEventListener('wheel',      toggle, { passive:true });
+      window.addEventListener('touchmove',  toggle, { passive:true });
+    
+      // 초기 적용
+      document.addEventListener('DOMContentLoaded', function(){ getHeader(); toggle(); });
+      window.addEventListener('load',       function(){ getHeader(); toggle(); });
+    })();
+
+      // Bind
+      window.addEventListener('scroll', onScroll, { passive:true });
+      window.addEventListener('wheel', onScroll, { passive:true });
+      window.addEventListener('touchmove', onScroll, { passive:true });
+      window.addEventListener('touchstart', onScroll, { passive:true });
+      window.addEventListener('keydown', onScroll, { passive:true });
+      window.addEventListener('resize', setHeaderHeightVar, { passive:true });
+      window.addEventListener('pageshow', function(){ setHeaderHeightVar(); onScroll(); }, { passive:true });
+
+      // Initial
+      requestAnimationFrame(function(){
+        setHeaderHeightVar();
+        apply(window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0, 0);
+      });
+
    // [버튼] Tob_button HTML 주입
    (function injectTobButton(){
       const target = document.getElementById('tob-button-placeholder');
@@ -2167,6 +2395,40 @@ html, body{ overflow-x:hidden; }
           }
         }
         
+  // ✅ 스크롤 시 헤더가 자연스럽게 사라졌다가 다시 나타나는 코드
+  (function(){
+    let lastScrollY = window.pageYOffset;
+    let ticking = false;
+    const nav = document.querySelector("#nav-placeholder");
+    let isHidden = false;
+
+    function update() {
+      const currentY = window.pageYOffset;
+
+      if (currentY > lastScrollY && currentY > 80 && !isHidden) {
+        // 아래로 스크롤 중
+        nav.style.transform = "translateY(-100%)";
+        nav.style.transition = "transform 0.4s ease";
+        isHidden = true;
+      } 
+      else if (currentY < lastScrollY && isHidden) {
+        // 위로 스크롤 중
+        nav.style.transform = "translateY(0)";
+        nav.style.transition = "transform 0.4s ease";
+        isHidden = false;
+      }
+
+      lastScrollY = currentY;
+      ticking = false;
+    }
+
+    window.addEventListener("scroll", () => {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    });
+  })();
 
         // base 태그 제거 (상대 경로 꼬임 방지)
         const baseEl = doc.querySelector('base');
@@ -2701,3 +2963,251 @@ html, body{ overflow-x:hidden; }
   window.addEventListener('scroll', ()=>{ if(pinned) setVarsFromRect(); }, {passive:true});
 })();
 </script>
+<script id="rose-cursor-loader-simple">
+  (function(){
+    const ROOT_ID = 'cursor-placeholder';
+    let root = document.getElementById(ROOT_ID);
+    if (!root) {
+      root = document.createElement('div');
+      root.id = ROOT_ID;
+      document.body.insertBefore(root, document.body.firstChild);
+    }
+  
+    const PATHS = [
+      '../../2.PageElement/Cursor/cursor.html',
+      '../../2.PageElement/Cursor/RoseCursor.html'
+    ];
+  
+    function loadCursor(i=0){
+      if(i>=PATHS.length){
+        createFallback();
+        return;
+      }
+      fetch(PATHS[i],{cache:'no-store'})
+        .then(r=>{if(!r.ok)throw 0;return r.text();})
+        .then(html=>{
+          root.innerHTML=html;
+          const el = root.querySelector('.rose-cursor, .cursor-dot, [data-rose-cursor]');
+          if(!el) return loadCursor(i+1);
+          initCursor(el);
+        })
+        .catch(()=>loadCursor(i+1));
+    }
+  
+    function createFallback(){
+      const dot=document.createElement('div');
+      dot.className='cursor-dot';
+      dot.style.cssText='width:12px;height:12px;border-radius:999px;background:#ff3b3b;opacity:0;position:fixed;left:0;top:0;pointer-events:none;z-index:99999;';
+      root.appendChild(dot);
+      initCursor(dot);
+    }
+  
+    function initCursor(el){
+      document.addEventListener('mousemove', e=>{
+        el.style.transform=`translate3d(${e.clientX}px,${e.clientY}px,0)`;
+        el.style.opacity='1';
+      });
+    }
+  
+    loadCursor();
+  })();
+  </script>
+</body>
+<script id="nav-inject-lite-20251018">
+(function(){
+  var root = document.getElementById('nav-placeholder');
+  if (!root) return;
+  if (root.querySelector('header')) return;
+
+  fetch('../../2.PageElement/Tob_nav/Tob_nav.html', { cache:'no-store' })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+    .then(function(html){
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var header = doc.querySelector('header');
+      if (!header) return;
+      root.innerHTML = '';
+      root.appendChild(header);
+    })
+    .catch(function(err){ console.warn('[nav-inject-lite] failed:', err); });
+})();
+</script>
+<style id="rose-cursor-basics-20251018">
+  .cursor-dot, .rose-cursor, [data-rose-cursor]{
+    position: fixed !important;
+    left: 0; top: 0;
+    transform: translate3d(-9999px,-9999px,0);
+    transform-origin: 50% 50%;
+    pointer-events: none !important;
+    z-index: 99999 !important; /* 헤더/모든 요소 위 */
+    will-change: transform, opacity;
+  }
+</style>
+<script id="nav-hide-on-scroll-20251018">
+(function bindHideNavOnScroll(){
+  const THRESH = 6;
+  const TOPSAFE = 48;
+  let lastY = window.pageYOffset || 0;
+  let ticking = false;
+
+  function applyState(y, dy){
+    var header = document.querySelector('#nav-placeholder header');
+    if (!header) return;
+    if (y <= TOPSAFE){
+      document.body.classList.remove('nav-hidden');
+      header.style.transform = 'translateY(0)';
+      return;
+    }
+    if (Math.abs(dy) < THRESH) return;
+    if (dy > 0){
+      document.body.classList.add('nav-hidden');
+    } else {
+      document.body.classList.remove('nav-hidden');
+    }
+  }
+
+  function onScroll(){
+    const y = window.pageYOffset || 0;
+    const dy = y - lastY;
+    lastY = y;
+    if (!ticking){
+      ticking = true;
+      requestAnimationFrame(function(){ applyState(y, dy); ticking = false; });
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive:true });
+  ;['wheel','touchmove','touchstart','keydown'].forEach(function(evt){
+    window.addEventListener(evt, onScroll, { passive:true });
+  });
+
+  requestAnimationFrame(function(){ applyState(window.pageYOffset || 0, 0); });
+  window.addEventListener('load', function(){ applyState(window.pageYOffset || 0, 0); });
+
+  var ph = document.getElementById('nav-placeholder');
+  if (ph){
+    new MutationObserver(function(){ applyState(window.pageYOffset || 0, 0); })
+      .observe(ph, { childList:true, subtree:true });
+  }
+})();
+
+</script>
+<script>
+  /* === Rose cursor: robust loader (paths fallback + no side-effects) === */
+  (function loadRoseCursor(){
+    const root = document.getElementById('cursor-placeholder');
+    if (!root) { console.warn('[rose-cursor] #cursor-placeholder not found'); return; }
+  
+    // cursor.html 위치가 폴더/대소문자에 따라 달라질 수 있어 후보 경로를 순서대로 시도
+    const CANDIDATES = [
+      '../../2.PageElement/Cursor/cursor.html',
+      '../../2.PageElement/Cursor/RoseCursor.html',
+      '../../2.PageElement/Cursor/rose-cursor.html',
+      '../../2.PageElement/Cursor/rose.html',
+      '../../2.PageElement/cursor/cursor.html',
+      '../2.PageElement/Cursor/cursor.html',
+      './2.PageElement/Cursor/cursor.html',
+      '/2.PageElement/Cursor/cursor.html'
+    ];
+  
+    function injectAndInit(html){
+      root.innerHTML = html;
+  
+      // #cursor-placeholder 내부에서만 찾기 (페이지 다른 커서와 충돌 방지)
+      const el = root.querySelector('.cursor-dot, .rose-cursor, [data-rose-cursor]');
+      if (!el) { console.warn('[rose-cursor] markup injected, but element not found'); return; }
+      if (el.dataset.raf === 'on') return; // 중복 방지
+  
+      // 기본 안전 스타일 (네가 준 CSS와 동일한 방향)
+      el.style.pointerEvents = 'none';
+      el.style.position = 'fixed';
+      el.style.zIndex = '99999';
+      el.style.willChange = 'transform, opacity';
+      el.style.left = '0px';
+      el.style.top  = '0px';
+  
+      // 접근성: 모션 축소 선호 시 즉시 추종
+      try{
+        const prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReduce){
+          document.addEventListener('mousemove', (e)=>{
+            el.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+            el.style.opacity = '1';
+          }, { passive:true });
+          return;
+        }
+      }catch(_) {}
+  
+      // spring follow
+      let x=0,y=0, px=0,py=0, vx=0,vy=0;
+      const STIFF=0.20, DAMP=0.88;
+  
+      const hotspotX = parseFloat(el.getAttribute('data-hotspot-x'));
+      const hotspotY = parseFloat(el.getAttribute('data-hotspot-y'));
+      let anchorX = parseFloat(el.getAttribute('data-anchor-x'));
+      let anchorY = parseFloat(el.getAttribute('data-anchor-y'));
+      if (!isFinite(anchorX)) anchorX = 0.5;
+      if (!isFinite(anchorY)) anchorY = 0.5;
+  
+      const calXAttr = parseFloat(el.getAttribute('data-cal-x'));
+      const calYAttr = parseFloat(el.getAttribute('data-cal-y'));
+      const CALX = Number.isFinite(calXAttr) ? calXAttr : 0;
+      const CALY = Number.isFinite(calYAttr) ? calYAttr : 0;
+  
+      let offX=0, offY=0;
+      const updateOffset = () => {
+        const r = el.getBoundingClientRect();
+        const w = r.width  || el.offsetWidth  || 0;
+        const h = r.height || el.offsetHeight || 0;
+        offX = isFinite(hotspotX) ? hotspotX : w * anchorX;
+        offY = isFinite(hotspotY) ? hotspotY : h * anchorY;
+        el.style.transformOrigin = `${offX}px ${offY}px`;
+      };
+      updateOffset();
+      try { new ResizeObserver(updateOffset).observe(el); } catch(_) {}
+  
+      let targetScale=1, scale=1, lastTs=performance.now();
+      function raf(now){
+        const dt = Math.min((now - lastTs)/16.67, 3);
+        lastTs = now;
+  
+        const dampPow = Math.pow(DAMP, dt);
+        vx = (vx + (x - px) * STIFF * dt) * dampPow;
+        vy = (vy + (y - py) * STIFF * dt) * dampPow;
+        px += vx; py += vy;
+  
+        scale += (targetScale - scale) * 0.28 * dt;
+  
+        el.style.transform = `translate3d(${(px - offX + CALX)}px, ${(py - offY + CALY)}px, 0) scale(${scale})`;
+        requestAnimationFrame(raf);
+      }
+  
+      document.addEventListener('mousemove', (e)=>{
+        x = e.clientX; y = e.clientY;
+        if (el.dataset.started !== '1'){
+          px = x; py = y; vx = 0; vy = 0;
+          el.style.opacity = '1';
+          el.dataset.started = '1';
+        }
+      }, { passive:true });
+      document.addEventListener('mousedown', ()=>{ targetScale = 0.94; }, { passive:true });
+      document.addEventListener('mouseup',   ()=>{ targetScale = 1;    }, { passive:true });
+  
+      el.dataset.raf='on';
+      requestAnimationFrame((t)=>{ lastTs=t; raf(t); });
+    }
+  
+    function tryLoad(i){
+      if (i >= CANDIDATES.length){
+        console.warn('[rose-cursor] all candidates failed. Check the exact path/name of cursor.html');
+        return;
+      }
+      const url = CANDIDATES[i];
+      fetch(url, { cache: 'no-store' })
+        .then(r => { if (!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+        .then(html => { console.info('[rose-cursor] Loaded from', url); injectAndInit(html); })
+        .catch(err => { console.warn('[rose-cursor] MISS', url, err && err.message); tryLoad(i+1); });
+    }
+  
+    tryLoad(0);
+  })();
+  </script>

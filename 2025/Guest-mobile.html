@@ -194,6 +194,63 @@
   <script>
     const API_URL = (document.querySelector('meta[name="guest-api"]')?.content || '');
 
+    // --- cross-tab / cross-page sync helpers ---
+    const GB_CHANNEL = 'guestbook-sync';
+    const bc = ('BroadcastChannel' in window) ? new BroadcastChannel(GB_CHANNEL) : null;
+    function notifyGuestbookUpdate(){
+      try { localStorage.setItem(GB_CHANNEL, String(Date.now())); } catch(_){ }
+      try { bc && bc.postMessage('updated'); } catch(_){ }
+    }
+    if (bc) bc.onmessage = (ev)=>{ if (ev && ev.data === 'updated') { loadMessages().catch(()=>{}); } };
+    window.addEventListener('storage', (e)=>{ if (e.key === GB_CHANNEL) { loadMessages().catch(()=>{}); } });
+
+    // --- shared loader (re-usable by sync + polling) ---
+    async function loadMessages(){
+      // 1) Try same-origin proxy if any
+      try{
+        const res1 = await fetch('/api/guestbook', { cache:'no-store' });
+        if (res1.ok) {
+          const rows = await res1.json();
+          messages = Array.isArray(rows) ? rows.map(r => ({
+            name: r.name || r.to || '', message: r.message || '', from: r.from || (r.name || r.to || '')
+          })) : [];
+          currentPage = 1; renderMessages(); return;
+        }
+      }catch(_){}
+      // 2) Direct GAS (works only if CORS allows)
+      try{
+        if (API_URL) {
+          const res2 = await fetch(API_URL, { cache:'no-store' });
+          if (res2.ok) {
+            const rows = await res2.json();
+            messages = Array.isArray(rows) ? rows.map(r => ({
+              name: r.name || r.to || '', message: r.message || '', from: r.from || (r.name || r.to || '')
+            })) : [];
+            currentPage = 1; renderMessages(); return;
+          }
+        }
+      }catch(_){}
+      // 3) Fallback to cache
+      try{
+        const cached = JSON.parse(localStorage.getItem('guestbook-cache') || '[]');
+        messages = cached.map(r => ({ name:r.name, message:r.message, from:r.from }));
+      }catch(_){ messages = []; }
+      currentPage = 1; renderMessages();
+    }
+
+    // --- light polling while visible (cross-device freshness) ---
+    (function autoRefresh(){
+      let timer = null;
+      function tick(){ loadMessages().catch(()=>{}); }
+      function onVis(){
+        if (document.visibilityState === 'visible') {
+          if (!timer) { timer = setInterval(tick, 15000); tick(); }
+        } else { if (timer) { clearInterval(timer); timer = null; } }
+      }
+      document.addEventListener('visibilitychange', onVis);
+      onVis();
+    })();
+
     // === Mount shared Mobile Header (fetch + inject) ===
     (function mountMobileHeader(){
       var host = document.getElementById('mobile-header-host');
@@ -430,6 +487,7 @@
           localStorage.setItem('guestbook-cache', JSON.stringify(cached.slice(0,200)));
         }catch(_){}
         currentPage = 1; renderMessages(); form.reset();
+        notifyGuestbookUpdate();
         alert('작성되었습니다!');
       }catch(err){
         console.error('submit failed', err);
@@ -506,36 +564,9 @@
 
     // 초기 데이터 로드
     (async function loadInitial(){
-      try{
-        // 1) Try existing same-origin endpoint if present
-        const res1 = await fetch('/api/guestbook', { cache:'no-store' });
-        if (res1.ok) {
-          const rows = await res1.json();
-          messages = Array.isArray(rows) ? rows.map(r => ({
-            name: r.name || r.to || '', message: r.message || '', from: r.from || (r.name || r.to || '')
-          })) : [];
-          currentPage = 1; renderMessages(); return;
-        }
-      }catch(_){}
-      try{
-        // 2) Try direct Google Apps Script GET (will only work if CORS allows)
-        if (API_URL) {
-          const res2 = await fetch(API_URL, { cache:'no-store' });
-          if (res2.ok) {
-            const rows = await res2.json();
-            messages = Array.isArray(rows) ? rows.map(r => ({
-              name: r.name || r.to || '', message: r.message || '', from: r.from || (r.name || r.to || '')
-            })) : [];
-            currentPage = 1; renderMessages(); return;
-          }
-        }
-      }catch(_){}
-      try{
-        const cached = JSON.parse(localStorage.getItem('guestbook-cache') || '[]');
-        messages = cached.map(r => ({ name:r.name, message:r.message, from:r.from }));
-      }catch(_){ messages = []; }
-      currentPage = 1; renderMessages();
+      await loadMessages();
     })();
   </script>
+  
 </body>
 </html>

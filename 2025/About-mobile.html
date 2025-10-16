@@ -195,6 +195,66 @@
       opacity:0.6;
     }
   </style>
+  <style id="explain-subnav-20251018-mobile">
+    /* Explain 옆 보조 네비게이션 (모바일) — 바로 옆에 붙이기 */
+    .explain-section > .container:first-child{
+      display: flex;
+      align-items: baseline;   /* 제목의 베이스라인에 맞춰 정렬 */
+      gap: 10px;
+      flex-wrap: nowrap;
+    }
+    /* Explain 제목은 줄바꿈/여백을 최소화해서 옆에 나란히 */
+    .explain-section .about-mark{
+      margin: 0 !important;           /* 위아래 마진 제거 */
+      line-height: 1.0 !important;    /* 베이스라인 안정화 */
+      display: inline-block !important;
+    }
+    .sub-nav{
+      position: sticky;
+      top: 64px;               /* 모바일 헤더 높이와 맞춤 */
+      z-index: 1201;           /* 헤더(1000)보다 위 */
+      display: inline-flex;
+      align-items: center;
+      margin-left: 6px;        /* Explain 오른쪽과 간격 */
+      padding: 0;
+      background: transparent;
+      transform: translateY(-6px);   /* 시각적으로 조금 더 위로 */
+    }
+    .sub-nav ul{
+      list-style: none;
+      display: flex;
+      gap: 14px;               /* 항목 간격 조금 타이트하게 */
+      margin: 0;
+      padding: 0;
+      white-space: nowrap;     /* 한 줄 유지 */
+    }
+    .sub-nav a{
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      color: rgba(255,255,255,.85);
+      padding: 4px 0;          /* 줄간격을 낮춰 상하 중앙 정렬 */
+      border-bottom: 2px solid transparent;
+      transition: color .2s ease, border-color .2s ease;
+    }
+    .sub-nav a:hover{ color:#ff3b3b; }
+    .sub-nav a.is-active,
+    .sub-nav a[aria-current="page"]{ color:#ff4d4d; border-color:#ff4d4d; }
+
+    /* 작은 화면에서는 줄바꿈 허용하고 정렬 정돈 */
+    @media (max-width: 420px){
+      .explain-section > .container:first-child{
+        flex-wrap: wrap;
+        gap: 8px 10px;
+      }
+      .sub-nav{
+        margin-left: 0;
+        transform: none;       /* 위로 올린 보정 해제 */
+      }
+      .sub-nav ul{ white-space: normal; }
+    }
+  </style>
 </head>
 
 
@@ -226,14 +286,449 @@
     </ul>
   </nav>
 
-  <!-- 본문: 포스터 이미지 + 푸터(바로 맞닿음) -->
-  <main class="stage">
-    <div class="poster-wrapper">
-      <img class="logo-bg" src="../../1.Picture/1. 27th Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" alt="배경 로고" loading="eager" decoding="async" />
-      <img class="gun-below" src="../../1.Picture/1. 27th Graduation/BLOOM_GUN/Gum.png" alt="BLOOM Gun 포스터" loading="eager" decoding="async" />
-      <img class="rose-left" src="../../1.Picture/1. 27th Graduation/BLOOM_ROSE/BLOOM_ROSE_LEFT.png" alt="BLOOM 장미 포스터" loading="eager" decoding="async" fetchpriority="high" />
-    </div>
+  <main>
+    <!-- Hero: 전시 타이틀/소개/날짜 + 오른쪽 장미 이미지 -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-left">
+            <span class="eyebrow"><span class="dot" style="background:var(--red);"></span> 27th Graduation Exhibition</span>
+            <h1 class="title">ABOUT - BLOOM </h1>
+            <p class="subtitle">우리의 시간은 하나의 씨앗처럼 작은 가능성을 품고 시작되었습니다. 순수함과 열정을 더한 <br>과정은 마침내 꽃이 되었고, 졸업전시 BLOOM에서 그 결실의 순간을 맞이합니다.</p>
+          </div>
+        </div>
+        <div class="hero-art">
+          <!-- 히어로 내부 이미지: src만 교체해서 사용하세요 -->
+          <img src="../../1.Picture/1.%2027th%20Graduation/BLOOM_ROSE/BLOOM_ROSE.png" alt="BLOOM rose" />
+        </div>
+        <!-- Rose baseline line (positioned via CSS var --rose-bottom) -->
+        <div class="rose-line" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Theme & Intro: 전시 주제 설명 + 카테고리 카드 -->
+    <section class="section explain-section">
+      <div class="container">
+        <div class="about-mark">Explain</div>
+        <nav class="sub-nav" aria-label="보조 네비게이션">
+          <ul>
+            <li><a href="#poster">Poster</a></li>
+            <li><a href="#exhibit">Exhibitions explain</a></li>
+            <li><a href="#credits">Credits</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="bloom-section" id="poster">
+        <h2>BLOOM Poster</h2>
+        <img class="about-poster" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_Poster/가로.jpg" alt="BLOOM Poster">
+        <p class="lead">한 장의 스케치에서 시작된 작은 가능성이, 리서치와 프로토타입, 피드백과 개선을 거쳐 <strong>완성의 순간</strong>을 맞이합니다.  그 여정 전체가 우리가 피워 낸 <strong>꽃</strong>입니다.</p>
+      </div>
+      
+      <div class="container" style="margin-top:28px;">
+        <div class="panel edge-panel">
+          <h2>로고</h2>
+          <p class="lead">BLOOM의 상징인 장미와 이니셜 B를 하나의 구조로 엮어 완성했습니다. 장미는 순수·열정·아름다움을, B는 브랜드의 정체성과 중심축을 뜻합니다. 두 요소를 동일한 리듬으로 결합해 상징성과 완성도를 함께 높였습니다.</p>
+
+          <div class="media-grid">
+              <figure>
+                <div class="pad">
+                  <img class="logo-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="BLOOM 장미 심볼마크" onload="this.classList.add('is-loaded')" />
+                </div>
+                <figcaption>장미 심볼 — 순수함과 열정의 상징</figcaption>
+              </figure>
+
+              <figure>
+                <div class="pad">
+                  <img class="logo-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" alt="BLOOM 워드마크" onload="this.classList.add('is-loaded')" />
+                </div>
+                <figcaption>워드마크 — 브랜드 이니셜 B를 중심으로</figcaption>
+              </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Highlights: 행사/프로그램 카드 -->
+    <section class="section">
+      <div class="container">
+        <div style="height:40px;"></div>
+        <div class="exhibit-info panel" id="exhibit">
+          <h2 class="section-title">전시장 정보</h2>
+          <section class="stripe">
+            <div class="container info-grid">
+              <div class="info-item"><span class="info-label">기간</span><span class="info-value">2025. 10. 17 — 10. 20</span></div>
+              <div class="info-item"><span class="info-label">장소</span><span class="info-value">부산디자인진흥원 전시홀</span></div>
+              <div class="info-item"><span class="info-label">관람</span><span class="info-value">무료 · AM 10:00 — PM 6:00</span></div>
+            </div>
+          </section>
+
+          <div class="container venue">
+            <div class="panel">
+              <h2>교통정보</h2>
+              <div class="traffic-table">
+                <div class="traffic-row">
+                  <div class="traffic-cell traffic-label">지하철</div>
+                  <div class="traffic-cell traffic-body">
+                    <p>2번출구 : 스타벅스 앞 - 좌회전 - <b>300m</b> 직진 <small>(도보 10분 소요)</small></p>
+                    <p>4번출구 : 대우트럼프월드센텀 - 우회전 - <b>300m</b> 직진</p>
+                  </div>
+                </div>
+                <div class="traffic-row">
+                  <div class="traffic-cell traffic-label">시내버스</div>
+                  <div class="traffic-cell traffic-body">
+                    <p>센텀시티역 하차 : 1001, 1002, 139, 141, 155, 36, 39, 40, 5, 5-1, 63</p>
+                    <p>삼성홈플러스 하차 : 100-1, 31, 115-1, 307, 200, 100</p>
+                    <p>센텀벤처타운 하차 : 181</p>
+                    <p>부산디자인진흥원 하차 : 115</p>
+                  </div>
+                </div>
+                <div class="traffic-row">
+                  <div class="traffic-cell traffic-label">승용차</div>
+                  <div class="traffic-cell traffic-body">
+                    <p>경부고속도로 : 부산톨게이트 → 원동IC → 해운대방면 → 수비사거리</p>
+                    <p>남해고속도로 : 부산톨게이트 → 동서고가로 → 황령산터널 → 수비사거리</p>
+                  </div>
+                </div>
+              </div>
+              <div class="traffic-note">* 내부가 혼잡하여 대중교통을 추천 드립니다</div>
+            </div>
+            <div class="map-wrapper">
+              <div class="map">
+                <iframe
+                  title="부산디자인진흥원 지도"
+                  src="https://www.google.com/maps?hl=ko&output=embed&q=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90&z=18"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  allowfullscreen
+                ></iframe>
+              </div>
+              <div class="map-links">
+                <a href="https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">네이버 지도에서 열기</a>
+                <a href="https://map.kakao.com/?q=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">카카오맵에서 열기</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">Google 지도에서 열기</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== Credits (졸업전시 크레딧) ==================== -->
+    <section class="section" id="credits">
+      <div class="container panel credits-root">
+        <h2>Credits</h2>
+        <p class="lead" style="margin:0 0 22px;">제 27회 동명대학교 시각디자인학과 졸업작품 전시회</p>
+
+        <!-- Thanks/Credits: 지도교수/운영/도슨트 -->
+        <section class="section">
+          <div class="container panel edge-panel thanks-section">
+            <h2>Thanks to</h2>
+            <div class="people">
+              <div class="people-group president">
+                <h3 class="people-title"><span class="pill">Advisor</span>동명대학교 총장 이상천</h3>
+                <img class="about-photo" src="/1.Picture/3. Graduate_Propasser/Universitypresident.jpeg" alt="총장님">
+              </div>
+
+              <section class="faculty">
+                <div class="container">
+                  <div class="people-group" style="margin-top:16px;">
+                    <h3 class="people-title"><span class="pill">Designers</span>동명대학교 시각디자인학과 교수님</h3>
+                    <ul class="people-list faculty-gallery">
+                      <li class="faculty-card" data-name="정원준" data-filename="정원준교수님.jpeg">
+                        <img loading="lazy" alt="정원준 교수님" src="" onerror="handleFacultyError(this)" />
+                        <div class="cap"><span class="name">정원준 교수님</span></div>
+                      </li>
+                      <li class="faculty-card" data-name="김재익" data-filename="김재익교수님1.png">
+                        <img loading="lazy" alt="김재익 교수님" src="" onerror="handleFacultyError(this)" />
+                        <div class="cap"><span class="name">김재익 교수님</span></div>
+                      </li>
+                      <li class="faculty-card" data-name="박규태" data-filename="박규태교수님.jpeg">
+                        <img loading="lazy" alt="박규태 교수님" src="" onerror="handleFacultyError(this)" />
+                        <div class="cap"><span class="name">박규태 교수님</span></div>
+                      </li>
+                      <li class="faculty-card" data-name="장경숙" data-filename="장경숙교수님.jpeg">
+                        <img loading="lazy" alt="장경숙 교수님" src="" onerror="handleFacultyError(this)" />
+                        <div class="cap"><span class="name">장경숙 교수님</span></div>
+                      </li>
+                      <li class="faculty-card" data-name="김정은">
+                        <img loading="lazy" alt="김정은 교수님" src="" onerror="handleFacultyError(this)" />
+                        <div class="cap"><span class="name">김정은 교수님</span></div>
+                      </li>
+                      <li class="faculty-card" data-name="원종윤" data-filename="원종윤교수님.jpeg">
+                        <img loading="lazy" alt="원종윤 교수님" src="" onerror="handleFacultyError(this)" />
+                        <div class="cap"><span class="name">원종윤 교수님</span></div>
+                      </li>
+                      <li class="faculty-card" data-name="선정훈" data-filename="선정훈교수님.jpeg">
+                        <img loading="lazy" alt="선정훈 교수님" src="" onerror="handleFacultyError(this)" />
+                        <div class="cap"><span class="name">선정훈 교수님</span></div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+
+              <!-- 졸업준비위원회 -->
+              <div class="people-group" style="margin-top:16px;">
+                <h3 class="people-title"><span class="pill">Committee</span> 졸업준비위원회</h3>
+                <ul class="people-list">
+                  <li>최자연</li>
+                  <li>박은제</li>
+                  <li>김준성</li>
+                  <li>김혜연</li>
+                  <li>지영현</li>
+                  <li>차은지</li>
+                  <li>황만규</li>
+                  <li>안정연</li>
+                  <li>김혜림</li>
+                  <li>배유진</li>
+                  <li>박은제</li>
+                  <li>김사율</li>
+                  <li>이다현</li>
+                  <li>이혜주</li>
+                  <li>안예진</li>
+                  <li>홍화정</li>
+                </ul>
+              </div>
+
+              <!-- 디자이너 명단 -->
+              <div class="people-group" style="margin-top:16px;">
+                <h3 class="people-title"><span class="pill">Designers</span> 디자이너</h3>
+                <ul class="people-list">
+                  <li>김나연</li><li>김민진</li><li>김사율</li><li>김유빈</li><li>김준성</li><li>김지우</li><li>김혜림</li><li>김혜연</li><li>남예주</li><li>라영강</li><li>박은제</li><li>배유진</li><li>배주아</li><li>범상우</li><li>서은선</li><li>설가심</li><li>안예진</li><li>안정연</li><li>양유성</li><li>왕몽연</li><li>윤민주</li><li>이다현</li><li>이서진</li><li>이수빈</li><li>이은경</li><li>이주영</li><li>이혜주</li><li>장세희</li><li>장주아</li><li>장청청</li><li>전우곤</li><li>주하우</li><li>지영현</li><li>차은지</li><li>최민원</li><li>최순주</li><li>최영인</li><li>최자연</li><li>한패달</li><li>홍화정</li><li>황만규</li><li>황예빈</li>
+                </ul>
+              </div>
+
+              <!-- 제작 -->
+              <div class="people-group" style="margin-top:16px;">
+                <h3 class="people-title"><span class="pill">Web</span> 홈페이지 디자인 및 개발</h3>
+                <ul class="people-list">
+                  <li>안정연</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- Fullscreen image viewer (click any gallery image) -->
+    <dialog id="imgViewer" class="img-viewer">
+      <img alt="viewer" />
+    </dialog>
   </main>
+<style>
+/* ==================== 전역 변수(색상/최대폭 등) ==================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root{ --bg:#0a0a0a; --text:#fff; --line:rgba(255,255,255,.12); --red:#ff3b3b; --red-600:#ff4d4d; --card:#121212; --card-2:#151515; --max:1280px; --radius:12px; --shadow:0 12px 28px rgba(0,0,0,.28); }
+body{ background:#000; color:#fff; font-family:'Pretendard', system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+html, body { overflow-x:hidden; scroll-behavior:smooth; }
+/* 네비게이션 숨김 핸들링 */
+body.nav-hidden #nav-placeholder, body.nav-hidden #nav-placeholder > header { transform: translateY(-100%) !important; }
+#nav-placeholder{ position: sticky; top: 0; z-index: 1200; transition: transform .3s ease; will-change: transform; }
+.nav-spacer{ height: 90px; background: #000; border-bottom: 1px solid rgba(255,255,255,.12); }
+#nav-placeholder header{ background: rgba(0,0,0,.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-bottom: 1px solid rgba(255,255,255,.12); width: 100%; height: 90px; padding-left: 60px; padding-right: 60px; }
+#nav-placeholder header a{ font-size:14px; font-weight:700; letter-spacing:.2px; color:#fff; text-decoration:none; padding:8px 0; }
+#nav-placeholder header a:hover{ color:#ff3b3b; }
+#nav-placeholder header a.is-active{ color:#ff4d4d; font-weight:700; }
+#nav-placeholder .logo .logo-main, #nav-placeholder .logo .logo-sub{ font-size:15px !important; }
+#nav-placeholder nav ul li ul, #nav-placeholder .dropdown, #nav-placeholder .submenu, #nav-placeholder .has-dropdown > ul, #nav-placeholder .has-children > ul{ display:none !important; }
+
+/* Hero */
+.hero{ position:relative; overflow:hidden; padding:48px 0 40px; background-image: radial-gradient(60% 40% at 70% 0%, rgba(255,59,59,.10), rgba(0,0,0,0)), linear-gradient(180deg, rgba(255,59,59,.10), rgba(0,0,0,0)); }
+.hero .container{ position:relative; z-index:2 }
+.hero .eyebrow{ display:inline-flex; align-items:center; gap:10px; padding:6px 12px; border:1px solid var(--line); border-radius:999px; font-weight:700; letter-spacing:.4px; }
+.hero .title{ margin:8px 0 10px; font-family:'Playfair Display','Noto Serif KR',serif; font-weight:800; font-size:clamp(44px, 6vw, 68px); line-height:1.1; color:var(--red-600) !important; letter-spacing:.02em; }
+.hero .subtitle{ color:#fff !important; font-size:20px !important; line-height:1.6 !important; opacity:.9 !important; max-width:62ch !important; margin-top:6px !important; }
+.hero-art{ position:absolute; top:-50px; right:clamp(-42px,-3.2vw,-10px); z-index:0; pointer-events:none; }
+.hero-art img{ display:block; width:min(440px,36vw); height:auto; filter: drop-shadow(0 10px 30px rgba(0,0,0,.35)); }
+.hero::after{ content:""; position:absolute; left:0; right:0; top: var(--rose-bottom, 60%); height:260px; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,.88) 100%); pointer-events:none; z-index:1; }
+.rose-line{ position:absolute; left:0; right:0; top: calc(var(--rose-bottom, 60%) - 1px); height:2px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.78) 45%, rgba(255,255,255,.78) 55%, rgba(255,255,255,0)); box-shadow:0 0 12px rgba(255,255,255,.28); pointer-events:none; z-index:5; }
+
+/* Explain & BLOOM */
+.section{ padding:48px 0 48px; position:relative; }
+.container{ max-width:var(--max); margin:0 auto; padding-left: clamp(18px, 4vw, 36px); padding-right: clamp(18px, 4vw, 36px); }
+.about-mark{ margin: clamp(28px, 5vh, 48px) 0 16px; text-align:left; padding-left: clamp(12px, 2.5vw, 24px); font-family:'Playfair Display','Noto Serif KR',serif; font-weight:700; font-size: clamp(40px,6vw,96px); line-height:1.12; letter-spacing:.02em; color:#fff; }
+.bloom-section{ text-align:left; max-width:var(--max); margin: clamp(40px, 6vh, 80px) auto 56px; padding-left: clamp(12px, 2.5vw, 24px); padding-right: clamp(12px, 2.5vw, 24px); }
+.about-poster{ display:block; width:100%; max-width:1800px; margin:0 auto 40px; border-radius:12px; border:1px solid rgba(255,255,255,.14); box-shadow:0 14px 36px rgba(0,0,0,.38); }
+.section h2{ font-size:24px; font-weight:900; color:#fff !important; padding-bottom:10px; }
+.section h2::after{ content:""; position:absolute; left:0; bottom:0; width:88px; height:3px; border-radius:999px; background: linear-gradient(90deg, #ff3b3b, rgba(255,59,59,.25)); }
+.lead{ font-size:18px !important; line-height:1.9; opacity:.95; }
+.media-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:14px; }
+.media-grid figure{ margin:0; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.10); border-radius:14px; overflow:hidden; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.media-grid figure:hover{ transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0,0,0,.34); border-color: rgba(255,255,255,.18); }
+.media-grid .pad{ padding:18px; }
+.media-grid img.logo-img{ object-fit:contain; aspect-ratio:5/2; background:linear-gradient(180deg,#101010,#0b0b0b); width:100%; display:block; }
+.media-grid figcaption{ padding:10px 12px; font-size:12px; color:#fff; opacity:.9; border-top:1px solid var(--line); background:rgba(255,255,255,.03); }
+
+/* 전시장 정보 */
+.exhibit-info{ border-radius:16px; background:#121212; border:1px solid var(--line); padding:18px 0 24px; margin-top:12px; box-shadow: var(--shadow); }
+.exhibit-info .container{ padding-left: clamp(12px, 2.5vw, 24px); padding-right: clamp(12px, 2.5vw, 24px); }
+.exhibit-info .section-title{ font-family:'Pretendard',sans-serif; font-size:22px; font-weight:700; color:#fff; margin:0 0 16px 0; letter-spacing:.2px; }
+.stripe{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:transparent; }
+.info-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; padding:18px 0; }
+.info-item{ background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 14px 16px; }
+.info-label{ color:#fff !important; font-weight:700; }
+.info-value{ font-size:18px; font-weight:800; color:#fff !important; }
+
+/* Venue / Map */
+.venue{ display:grid; grid-template-columns: 1fr 1fr; gap:18px; align-items:stretch; }
+.panel{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,.3); padding:28px 30px; }
+.map-wrapper{ height:100%; display:flex; flex-direction:column; gap:24px; }
+.map{ flex:1 1 auto; width:100%; height:auto; min-height:520px; background:#0f0f0f; border:1px solid var(--line); border-radius:14px; box-shadow: var(--shadow); }
+.map iframe{ width:100%; height:100%; border:0; border-radius:14px; }
+.map-links{ display:flex; justify-content:center; gap:12px; flex-wrap:nowrap; }
+.map-links a{ min-width:180px; text-align:center; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:#fff; font-weight:800; text-decoration:none; }
+
+/* 교통정보 */
+.traffic-table{ border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#121212; }
+.traffic-row{ display:grid; grid-template-columns:200px 1fr; }
+.traffic-cell{ padding:16px 18px; color:#fff; }
+.traffic-label{ font-size:20px; font-weight:900; text-align:center; background:#121212; border-right:1px solid var(--line); display:flex; align-items:center; justify-content:center; }
+.traffic-body p{ position:relative; margin:0 0 10px; line-height:1.8; padding-left:16px; }
+.traffic-body p::before{ content:""; position:absolute; left:2px; top:.8em; width:6px; height:6px; border-radius:999px; background:#ff3b3b; opacity:.9; }
+.traffic-note{ margin-top:14px; font-size:14px; opacity:.85; }
+
+/* Faculty */
+.faculty{ padding:56px 0; }
+.faculty .container{ max-width:var(--max); }
+.faculty-gallery{ list-style:none; margin:0; padding:0; display:grid !important; grid-template-columns:repeat(4,1fr) !important; gap:40px !important; justify-items:center; }
+.faculty-card{ width:100%; max-width:300px; aspect-ratio:4/5; position:relative; overflow:hidden; border-radius:8px; background:var(--card); border:1px solid var(--line); }
+.faculty-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+.faculty-card .cap{ position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,.9); color:#fff; padding:10px 12px; display:flex; align-items:center; justify-content:center; border-top:1px solid rgba(255,255,255,.15); }
+.faculty-card .name{ font-weight:800; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:92%; }
+.people-group{ background:transparent; border:0; padding:0; }
+.people-title{ font-size:22px; margin-bottom:12px; }
+.people-list{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px 14px }
+.people-list li{ position:relative; padding-left:14px; }
+.people-list li::before{ content:'•'; position:absolute; left:0; top:0; color:var(--red) }
+@media (max-width:1000px){ .faculty-gallery{ grid-template-columns:repeat(3,1fr) !important; } }
+@media (max-width:720px){ .faculty-gallery{ grid-template-columns:repeat(2,1fr) !important; } .venue{ grid-template-columns:1fr; } }
+@media (max-width:520px){ .faculty-gallery{ grid-template-columns:1fr !important; } .people-list{ grid-template-columns:1fr } }
+</style>
+<script>
+// Hide the nav when scrolling down, show on scroll up
+(function hideNavOnScroll(){
+  if (window.__navHideBound) return;
+  window.__navHideBound = true;
+  let prevY = window.pageYOffset || 0;
+  window.addEventListener('scroll', function(){
+    const y = window.pageYOffset || 0;
+    if (y > prevY + 8 && y > 40) document.body.classList.add('nav-hidden');
+    else if (y < prevY - 8) document.body.classList.remove('nav-hidden');
+    prevY = y;
+  }, { passive:true });
+})();
+</script>
+
+<script>
+// Simple lightbox for media-grid images
+(function(){
+  const dlg = document.getElementById('imgViewer');
+  if(!dlg) return;
+  const img = dlg.querySelector('img');
+  function open(src, alt){ if(!src) return; img.src = src; img.alt = alt||''; if(typeof dlg.showModal==='function') dlg.showModal(); }
+  document.addEventListener('click', function(e){
+    const t = e.target.closest('img.zoomable');
+    if(!t) return; open(t.currentSrc || t.src, t.alt);
+  });
+  dlg.addEventListener('click', function(e){ if(e.target===dlg) dlg.close(); });
+  window.addEventListener('keydown', function(e){ if(e.key==='Escape' && dlg.open) dlg.close(); });
+})();
+</script>
+
+<script>
+// Faculty image loader with fallback extensions + encoded folder
+(function(){
+  const BASES = [
+    '../../1.Picture/3.%20Graduate_Propasser/',
+    '../../1.Picture/3. Graduate_Propasser/',
+    '../../1.Picture/3.Graduate_Propasser/'
+  ];
+  const EXTS = ['.jpg', '.JPG', '.jpeg', '.png', '.webp'];
+  const SUFFIXES = ["", "교수", "교수님", " 교수", " 교수님"];
+
+  function stemsFor(img){
+    const specified = (img.closest('.faculty-card')?.getAttribute('data-filename') || '').trim();
+    if (specified){ const dot = specified.lastIndexOf('.'); const base = dot > 0 ? specified.slice(0, dot) : specified; return [base]; }
+    const raw = (img.closest('.faculty-card')?.getAttribute('data-name') || '').trim();
+    const noSpace = raw.replace(/\s+/g, '');
+    const variants = new Set();
+    SUFFIXES.forEach(s => { variants.add(raw + s); variants.add(noSpace + s); });
+    return Array.from(variants);
+  }
+  function nextCandidate(img){
+    const idxBase = +(img.getAttribute('data-base-idx') || '0');
+    const idxExt  = +(img.getAttribute('data-ext-idx')  || '0');
+    const idxStem = +(img.getAttribute('data-stem-idx') || '0');
+    const stems = stemsFor(img);
+    const stemRaw = stems[Math.min(idxStem, stems.length - 1)];
+    const stemEnc = encodeURIComponent(stemRaw);
+    const base = BASES[Math.min(idxBase, BASES.length - 1)];
+    const ext  = EXTS[Math.min(idxExt,  EXTS.length  - 1)];
+    const candidate = base + (idxBase === 0 ? stemRaw : stemEnc) + ext;
+    return { candidate, stemsLen: stems.length };
+  }
+  function advancePointer(img){
+    let idxBase = +(img.getAttribute('data-base-idx') || '0');
+    let idxExt  = +(img.getAttribute('data-ext-idx')  || '0');
+    let idxStem = +(img.getAttribute('data-stem-idx') || '0');
+    const stemsLen = stemsFor(img).length;
+    idxExt++; if(idxExt >= EXTS.length){ idxExt = 0; idxStem++; }
+    if(idxStem >= stemsLen){ idxStem = 0; idxBase++; }
+    img.setAttribute('data-base-idx', String(idxBase));
+    img.setAttribute('data-ext-idx',  String(idxExt));
+    img.setAttribute('data-stem-idx', String(idxStem));
+    return (idxBase < BASES.length);
+  }
+  function tryNext(img){
+    const idxBase = +(img.getAttribute('data-base-idx') || '0');
+    if(idxBase >= BASES.length){ img.remove(); img.closest('.faculty-card')?.classList.add('no-photo'); return; }
+    const { candidate } = nextCandidate(img); img.src = candidate;
+  }
+  window.handleFacultyError = function(img){ if(!advancePointer(img)){ img.remove(); img.closest('.faculty-card')?.classList.add('no-photo'); return; } tryNext(img); };
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.faculty-card img').forEach(img => {
+      img.setAttribute('data-base-idx', '0');
+      img.setAttribute('data-ext-idx',  '0');
+      img.setAttribute('data-stem-idx', '0');
+      const current = img.getAttribute('src') || '';
+      if(!current || /3\.\sGraduate_Propasser\//.test(current)){
+        img.removeAttribute('src');
+        tryNext(img);
+      }
+    });
+  });
+})();
+</script>
+
+<script>
+// IntersectionObserver for scroll-in reveal
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:.1});
+document.querySelectorAll('.section,.hero,.venue,.faculty,.traffic-table').forEach(el=>observer.observe(el));
+</script>
+
+<script>
+// Rose baseline alignment (keeps white line at rose bottom)
+(function alignRoseBaseline(){
+  const hero = document.querySelector('.hero');
+  const art  = document.querySelector('.hero-art img');
+  if (!hero || !art) return;
+  function setBaseline(){
+    const heroRect = hero.getBoundingClientRect();
+    const artRect  = art.getBoundingClientRect();
+    const bottomY  = Math.max(0, Math.round(artRect.bottom - heroRect.top));
+    const adjusted = bottomY + 0;
+    hero.style.setProperty('--rose-bottom', adjusted + 'px');
+  }
+  if (art.complete) setBaseline(); else art.addEventListener('load', setBaseline, { once:true });
+  window.addEventListener('resize', setBaseline, { passive:true });
+  window.addEventListener('orientationchange', setBaseline, { passive:true });
+  window.addEventListener('pageshow', setBaseline, { passive:true });
+  try { document.fonts && document.fonts.ready.then(setBaseline); } catch(_) {}
+})();
+</script>
   <footer>© TUVD 27th Graduate Exhibition • BLOOM</footer>
 
   <script>
@@ -271,8 +766,8 @@
 <script>
 // [라우팅] 화면 너비 기준 페이지 전환 // (>=640: Main.html, <=639: Main-mobile.html)
 (function responsiveRoute(){
-  const DESKTOP_BASE = 'Main';
-  const MOBILE_BASE  = 'Main-mobile';
+  const DESKTOP_BASE = 'About';
+  const MOBILE_BASE  = 'About-mobile';
 
   function isOnBase(base){
     const p = location.pathname.toLowerCase().replace(/\/+$/, '');

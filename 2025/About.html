@@ -12,7 +12,33 @@
   <!-- // 커서 스타일 -->
   <link rel="stylesheet" href="../../2.PageElement/Cursor/cursor.css" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
-  
+  <style id="explain-hard-divider-20251018">
+    /* Solid, reliable divider right above Explain (matches container gutters) */
+    .explain-divider{
+      width: 100%;
+      padding-left: clamp(18px, 4vw, 36px);
+      padding-right: clamp(18px, 4vw, 36px);
+      box-sizing: border-box;
+      margin: 24px 0 -6px;  /* small negative bottom to tuck under Explain heading */
+    }
+    .explain-divider::before {
+      content: "";
+      display: block;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(
+        90deg,
+        rgba(255,59,59,.35) 0%,
+        rgba(255,255,255,.25) 50%,
+        rgba(255,59,59,.35) 100%
+      );
+      box-shadow: 0 0 6px rgba(255,59,59,.08);
+    }
+    @media (max-width: 560px){
+      .explain-divider{ margin: 16px 0 -6px; }
+      .explain-divider::before{ height: 1.5px; }
+    }
+  </style>
   <style>
     /* ==================== 전역 변수(색상/최대폭 등) ==================== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -116,17 +142,17 @@
 
     /* Decorative ABOUT mark (centered, large serif) */
     /* ABOUT 대제목(Playfair Display 서체) */
-    .about-mark{
-      display:block;
-      margin:80px 0 6px 0; /* slightly more air + small bottom gap */
-      text-align:left;    /* left aligned text */
-      font-family:'Playfair Display','Noto Serif KR',serif;
-      font-weight:700;
-      font-size:clamp(40px,6vw,96px);
-      line-height:1;
-      color:#fff;
-      letter-spacing:.02em;
-      opacity:.95;
+    .about-mark {
+      margin: 100px 0 24px 0;
+      text-align: left;
+      padding-left: clamp(12px, 2.5vw, 24px);
+      font-family: 'Playfair Display','Noto Serif KR',serif;
+      font-weight: 700;
+      font-size: clamp(40px,6vw,96px);
+      line-height: 1;
+      color: #fff;
+      letter-spacing: .02em;
+      opacity: .95;
     }
     @media (max-width:720px){
       .about-mark{ font-size:clamp(32px,10vw,72px); margin-top:32px; }
@@ -140,6 +166,16 @@
     /* Layout */
     .container{max-width:var(--max); margin:0 auto; padding:0 24px; box-sizing:border-box}
     main{display:block}
+
+    /* Explain Section Alignment */
+    .explain-section {
+      max-width: var(--max);
+      margin: 0 auto clamp(80px, 12vh, 140px);
+      padding-left: clamp(12px, 2.5vw, 24px);
+      padding-right: clamp(12px, 2.5vw, 24px);
+      text-align: left;
+      box-sizing: border-box;
+    }
 
     /* Hero */
     /* Top visual banner (image-only at the very top) */
@@ -352,6 +388,14 @@ html, body { overflow-x:hidden; scroll-behavior:smooth; }
     .map-links a{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:#fff; font-weight:800; text-decoration:none; }
     .map-links a:hover{ border-color:#666; background:rgba(255,255,255,.1); }
 
+    /* Ensure map links sit directly under the map, not under the left panel */
+    .map-wrapper{ display:flex; flex-direction:column; align-items:stretch; gap:32px; }
+    /* remove default top margin since gap handles spacing */
+    .map-links{ margin-top:0 !important; }
+    /* make link row center on wide screens */
+    .map-links{ display:flex; flex-wrap:wrap; justify-content:center; }
+    .map-links a{ min-width:180px; text-align:center; }
+
     /* ============ Traffic Info (교통정보) ============ */
     .traffic-table{
       border:1px solid var(--line);
@@ -465,50 +509,12 @@ html, body { overflow-x:hidden; scroll-behavior:smooth; }
       aspect-ratio: 4 / 5;
       display: flex;
       align-items: flex-end;
-      transform: scale(0.9);
+      transform: none;
       transform-origin: center center;
-      transition: transform .22s ease, box-shadow .22s ease;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
     }
-    .faculty-card img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    /* 이미지가 없을 때(로드 실패 시) 카드에 플레이스홀더 */
-    .faculty-card.no-photo {
-      background: linear-gradient(180deg, #1b1b1b, #101010);
-    }
-    .faculty-card.no-photo::before {
-      content: attr(data-name);
-      position: absolute;
-      inset: auto 12px 46px 12px;
-      color: #fff;
-      font-weight: 900;
-      font-size: 18px;
-      letter-spacing: .3px;
-      opacity: .9;
-    }
-    .faculty-card .cap {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      padding: 10px 12px;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      border-top: 1px solid rgba(255,255,255,.1);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .faculty-card .cap .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--red); flex: none; }
-    .faculty-card .cap .name { color: #fff; font-weight: 800; letter-spacing: .2px; }
-    /* 살짝 떠오르는 효과 */
     .faculty-card:hover {
-      transform: scale(0.92);
+      transform: translateY(-2px);
     }
     
     /* === Compact & Safe Layout Patch (no horizontal scroll, compact spacing) === */
@@ -555,6 +561,27 @@ html, body { overflow-x: hidden; }
   .lead { font-size: 17px !important; }
 }
 </style>
+  <style id="credits-uniform-left-20251016">
+    /* Ensure all Credits section titles share the same horizontal start as 교수님 section */
+    .people-group h3.people-title {
+      margin-left: clamp(18px, 4vw, 36px) !important;
+      margin-right: clamp(18px, 4vw, 36px) !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      text-align: left !important;
+    }
+
+    /* Align containers themselves equally */
+    .people-group {
+      padding-left: clamp(18px, 4vw, 36px) !important;
+      padding-right: clamp(18px, 4vw, 36px) !important;
+    }
+
+    /* Make sure spacing between groups remains consistent */
+    .people-group + .people-group {
+      margin-top: 36px !important;
+    }
+  </style>
   <style id="aesthetic-polish-v2">
     /* ===== Aesthetic Polish v2 (non-breaking, overrides only) ===== */
     :root{
@@ -710,39 +737,25 @@ html, body { overflow-x: hidden; }
 
     /* ===== BLOOM Section Centered & Responsive ===== */
     .bloom-section {
-      text-align: center;
-      max-width: 880px;
-      margin: 0 auto 60px;
-      padding: 0 20px;
-    }
-    .bloom-section h2 {
-      font-size: clamp(24px, 3.5vw, 38px);
-      margin-bottom: 18px;
-      margin-top: -10px;
-      letter-spacing: .3px;
-    }
-    .bloom-section .lead {
-      font-size: 14px;
-      line-height: 1.65;
-      color: #fff;
-      opacity: .95;
-      margin-top: 14px;
-    }
-    .bloom-section strong {
-      color: #ff4d4d;
-      font-weight: 700;
+      text-align: left; /* 로고와 동일하게 좌측 정렬 */
+      max-width: var(--max); /* 동일한 폭 기준 */
+      margin: clamp(100px, 12vh, 160px) auto 80px; /* 상단 간격 여유 */
+      padding-left: clamp(12px, 2.5vw, 24px); /* 로고와 동일한 좌우 패딩 */
+      padding-right: clamp(12px, 2.5vw, 24px);
+      box-sizing: border-box;
     }
     .bloom-section .about-poster {
       display: block;
-      width: min(800px, 88%);
-      margin: 0 auto 24px;
-      border-radius: 14px;
-      box-shadow: 0 10px 32px rgba(0,0,0,.36);
-      transition: transform .25s ease, box-shadow .25s ease;
+      width: 100%; /* 컨테이너 전체 너비 사용 */
+      max-width: 1800px; /* 포스터 크기 크게 확대 */
+      margin: 0 auto 40px; /* 중앙 정렬 + 아래 여백 */
+      border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .bloom-section .about-poster:hover {
       transform: scale(1.02);
-      box-shadow: 0 16px 36px rgba(0,0,0,.45);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
     }
 
 /* Square-ish portrait or single photos */
@@ -838,7 +851,7 @@ html, body { overflow-x: hidden; }
 /* 안전장치: 효과 때문에 가로 스크롤 생기지 않게 */
 html, body{ overflow-x:hidden; }
   </style>
-</style>
+  </style>
   <style id="title-serif-upgrade">
     /* Upgrade the topmost BLOOM title to a refined serif */
     .hero .title{
@@ -848,24 +861,6 @@ html, body{ overflow-x:hidden; }
       font-feature-settings: "liga" 1, "kern" 1;
     }
     /* ===== Hero와 Explain 사이 구분선 ===== */
-.hero::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -2px; /* 장미 이미지 바로 밑에 딱 맞게 */
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    rgba(255,255,255,0),
-    rgba(255,255,255,0.7) 45%,
-    rgba(255,255,255,0.7) 55%,
-    rgba(255,255,255,0)
-  );
-  box-shadow: 0 0 8px rgba(255,255,255,.25);
-  pointer-events: none;
-  z-index: 5;
-}
 /* ===== Explain 위 구분선 추가 (상단 그라데이션과 명확히 분리) ===== */
 .explain-section {
   position: relative;
@@ -887,6 +882,622 @@ html, body{ overflow-x:hidden; }
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
   z-index: 10;
 }
+</style>
+<style id="layout-fixes-20251015">
+  /* ===== Layout Safety & Aesthetic Overrides (2025-10-15) ===== */
+  html, body { overflow-x: hidden; }
+
+  /* 카드/정보 그리드 자동 줄바꿈 */
+  .info-grid{ grid-template-columns: repeat(auto-fit, minmax(220px,1fr)) !important; gap:16px !important; }
+  .cards{ grid-template-columns: repeat(auto-fit, minmax(220px,1fr)) !important; gap:14px !important; }
+  .stats{ grid-template-columns: repeat(auto-fit, minmax(180px,1fr)) !important; gap:12px !important; }
+
+  /* Hero: 텍스트가 장미와 겹치지 않도록 */
+  .hero .title{ max-width: clamp(560px, 60vw, 900px); }
+  @media (max-width: 900px){
+    .hero .title{ max-width: 100%; }
+    .hero-art{ position: static !important; margin: 12px auto 0 !important; }
+  }
+  @media (min-width: 901px){
+    .hero .container{ display: grid; grid-template-columns: 1fr auto; align-items: end; column-gap: 24px; }
+    .hero .hero-left{ min-width: 0; }
+    .hero-art{ position: relative; top: auto; right: auto; }
+  }
+
+  /* Faculty 카드 hover 보정 */
+  .faculty-card{ transform: none !important; }
+  .faculty-card:hover{ transform: translateY(-2px) !important; }
+
+  /* 장미 기준선 레이어 안정화 */
+  .rose-line{ z-index: 3; }
+</style>
+</style>
+<style id="map-size-20251015">
+  /* Enlarge embedded map size (override earlier aspect-ratio) */
+  .map { 
+    width: 100%;
+    max-width: 900px;   /* wider map */
+    height: 480px;      /* taller map */
+    aspect-ratio: auto !important; /* cancel earlier 16/10 ratio */
+    margin-left: auto;  /* center within column */
+    margin-right: auto;
+  }
+  .map iframe{
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 14px;
+  }
+
+  /* Keep links in one row beneath the map */
+  .map-wrapper{ align-items: center; gap: 36px; }
+  .map-links{ justify-content: center; gap: 18px; flex-wrap: nowrap; }
+  .map-links a{ min-width: 180px; text-align: center; }
+
+  /* Optional: on very small screens, scale height a bit down */
+  @media (max-width: 560px){
+    .map{ height: 380px; }
+  }
+</style>
+<style id="venue-match-sides-20251015">
+  /* Make the two columns equal width and equal height */
+  .venue{ grid-template-columns: 1fr 1fr !important; align-items: stretch !important; }
+  .venue > .panel, .venue > .map-wrapper{ height: 100%; }
+
+  /* Let the map-wrapper fill the column height, with links under the map */
+  .map-wrapper{ height: 100%; display:flex; flex-direction:column; gap: 18px; }
+
+  /* Override previous fixed width on .map so it matches the panel width */
+  .map{ flex: 1 1 auto; width: 100% !important; max-width: none !important; margin: 0 !important; height: auto; min-height: 520px; }
+  .map iframe{ width:100%; height:100%; }
+
+  /* Keep the three map links on one row and centered */
+  .map-links{ display:flex; justify-content:center; gap: 12px; flex-wrap: nowrap; }
+  .map-links a{ min-width: 180px; text-align:center; }
+
+  /* Responsive: stack on small screens */
+  @media (max-width: 1000px){ .venue{ grid-template-columns: 1fr !important; } .map{ min-height: 420px; } }
+  @media (max-width: 560px){ .map{ min-height: 360px; } }
+</style>
+  <style id="faculty-fix-20251016">
+    /* === Faculty gallery: 4 per row fixed, full width === */
+    .faculty-gallery {
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr) !important; /* 한 줄에 4개 고정 */
+      gap: 40px !important; /* 카드 간격 넉넉히 */
+      justify-items: center;
+      align-items: start;
+      margin: 40px 0 0;   /* 상단 여백만, 좌우 auto 제거 */
+      width: 100%;        /* 전체 폭 사용 */
+    }
+
+    .faculty-card {
+      width: 100%;
+      max-width: 300px;  /* 카드 크기 확대 */
+      aspect-ratio: 4/5;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .faculty-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .faculty-card .cap {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(0, 0, 0, 0.9);
+      color: #fff;
+      padding: 10px 12px;           /* 좌우 패딩 복원 */
+      display: flex;                /* 중앙 정렬 + 도트/이름 수평 배치 */
+      align-items: center;
+      justify-content: center;
+      gap: 0;                       /* 도트 제거로 간격 0 */
+      border-top: 1px solid rgba(255,255,255,.15);
+    }
+
+    .faculty-card .cap .name{
+      color:#fff !important;
+      font-weight:800;
+      font-size:15px;
+      line-height:1.2;
+      letter-spacing:.2px;
+      white-space:nowrap;           /* 길면 잘라서 말줄임표 */
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 92%;               /* 캡션 폭 안에서 넘치지 않게 */
+      text-shadow: 0 1px 0 rgba(0,0,0,.35);
+    }
+
+    /* Faculty wrapper를 다른 섹션과 같은 폭/스타일로 맞춤 */
+    .faculty .container { max-width: var(--max); padding-left: clamp(18px, 4vw, 36px); padding-right: clamp(18px, 4vw, 36px); }
+    .faculty .people-group { background: transparent; border: 0; padding: 0; }
+    .faculty .people-title { margin-bottom: 16px; font-size: 22px; }
+  </style>
+</style>
+  <style id="thanks-layout-20251016">
+    /* Make the Thanks to section visually match full-width faculty layout */
+    .thanks-section{ background:transparent !important; border:0 !important; padding:0 !important; box-shadow:none !important; }
+    .thanks-section > h2{ margin-bottom:16px; }
+    .thanks-section .people{ gap:16px; }
+    .thanks-section .people-group{ background:transparent !important; border:0 !important; padding:0 !important; }
+    /* Keep consistent horizontal paddings with other sections */
+    .thanks-section.container{ padding-left: clamp(18px,4vw,36px); padding-right: clamp(18px,4vw,36px); }
+  </style>
+  <style id="faculty-bullet-fix-20251016">
+    /* Remove inherited red bullet from faculty gallery items */
+    .people-list.faculty-gallery li::before,
+    .faculty-gallery .faculty-card::before { content: none !important; }
+    .people-list.faculty-gallery li { padding-left: 0 !important; }
+  </style>
+  <style id="credits-alignment-20251016">
+    /* Align Committee, Designer, and Web titles with Faculty title */
+    .people-group h3.people-title {
+      padding-left: clamp(18px, 4vw, 36px);
+      padding-right: clamp(18px, 4vw, 36px);
+      box-sizing: border-box;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: var(--max);
+    }
+
+    /* Ensure all credit group containers share same internal padding */
+    .container.panel > .people-group {
+      padding-left: clamp(18px, 4vw, 36px);
+      padding-right: clamp(18px, 4vw, 36px);
+      box-sizing: border-box;
+    }
+
+    /* Unify vertical rhythm */
+    .container.panel > .people-group + .people-group {
+      margin-top: 32px !important;
+    }
+  </style>
+  <style id="align-faculty-title-to-committee-20251017">
+    /* Align faculty title to the same baseline as Committee section */
+    .faculty .people-title {
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+      text-align: left !important;
+    }
+    .faculty .container {
+      padding-left: clamp(18px, 4vw, 36px) !important;
+      padding-right: clamp(18px, 4vw, 36px) !important;
+      box-sizing: border-box;
+    }
+  </style>
+  <style id="align-faculty-with-committee-20251016">
+    /* 1) Neutralize previous margin injection on the faculty title */
+    .faculty h3.people-title{ margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+
+    /* 2) Credits container: remove inner paddings so titles align to container padding line */
+    .container.panel > .people-group{
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      background: transparent !important;
+      border: 0 !important;
+    }
+
+    /* 3) Titles inside Credits groups should start at the same left as the Faculty title */
+    .container.panel > .people-group > .people-title{ margin-left: 0 !important; }
+  </style>
+  <style id="align-credits-thanks-20251016">
+    /* Align Credits and Thanks To titles to Faculty/Committee baseline */
+    .credits h3.people-title,
+    .thanks-section h3.people-title,
+    .thanks-section h2,
+    .credits h2 {
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+      text-align: left !important;
+    }
+
+    /* Ensure their containers share the same horizontal padding baseline */
+    .credits,
+    .thanks-section {
+      padding-left: clamp(18px, 4vw, 36px) !important;
+      padding-right: clamp(18px, 4vw, 36px) !important;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 1600px;
+      box-sizing: border-box;
+    }
+  </style>
+  <style id="president-title-left-align-20251018">
+    /* Advisor (동명대학교 총장 이상천) 제목을 Thanks to 라인과 동일하게 왼쪽 정렬 */
+    .credits-root .president .people-title {
+      text-align: left !important;
+      margin-left: clamp(18px, 4vw, 36px) !important;
+      padding-left: 0 !important;
+    }
+
+    /* 이미지는 그대로 중앙에 유지 */
+    .credits-root .president .about-photo {
+      display: block;
+      margin: 20px auto 48px;
+    }
+  </style>
+  <style id="edge-panel-align-20251018">
+    /* Make panel borders align with container edges (same as Credits / Exhibit-info) */
+    .container > .edge-panel{
+      margin-left: calc(-1 * clamp(18px, 4vw, 36px));
+      margin-right: calc(-1 * clamp(18px, 4vw, 36px));
+      padding-left: clamp(12px, 2.5vw, 24px);
+      padding-right: clamp(12px, 2.5vw, 24px);
+      box-sizing: border-box;
+    }
+  </style>
+  <style id="explain-align-bloom-20251018">
+    /* Make the first Explain container use the same side gutters as BLOOM section */
+    .explain-section > .container:first-child{ 
+      padding-left: 0 !important;  /* remove default container padding */
+      padding-right: 0 !important; 
+      max-width: var(--max);        /* same width as BLOOM */
+      margin-left: auto; 
+      margin-right: auto; 
+      box-sizing: border-box;
+    }
+    /* About mark uses the exact same left pad as BLOOM section */
+    .explain-section .about-mark{
+      padding-left: clamp(12px, 2.5vw, 24px) !important; /* match .bloom-section */
+      padding-right: clamp(12px, 2.5vw, 24px) !important;
+      text-align: left !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+  </style>
+  <style id="explain-lead-clipfix-20251018">
+    /* Ensure parent wrappers never crop content */
+    .bloom-section, .explain-section, .section, .panel { overflow: visible !important; }
+
+    .bloom-section .lead {
+      position: relative;
+      z-index: 2;
+      display: block;               /* inline-block → block: 줄박스 안정화 */
+      line-height: 2.05;            /* 행간 더 확대 */
+      margin-bottom: 22px;          /* 하단 여백 확대 */
+      padding-bottom: 10px;         /* 하강부 보호 */
+      overflow: visible !important;
+      transform: none;              /* 레이어 승격 해제 (서브픽셀 클립 방지) */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    /* 추가 가드: 가상 블록으로 하강부 확보 */
+    .bloom-section .lead::after{
+      content: ""; display: block; height: 6px; width: 100%;
+    }
+
+    .explain-section .lead {
+      position: relative;
+      z-index: 2;
+      display: block;               /* inline-block → block */
+      line-height: 2.05;            /* 행간 확대 */
+      margin-bottom: 22px;          /* 여백 확대 */
+      padding-bottom: 10px;         /* 하강부 보호 */
+      overflow: visible !important;
+      transform: none;              /* 레이어 승격 해제 */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    .explain-section .lead::after{
+      content: ""; display: block; height: 6px; width: 100%;
+    }
+
+    .explain-section p{
+      position: relative;
+      display: block;               /* inline-block → block (줄바꿈 안정) */
+      overflow: visible !important;
+      line-height: 1.95;            /* 일반 문단도 살짝 여유 */
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+    }
+    .explain-section p::after{ content: ""; display:block; height:4px; }
+
+    /* === Final fail-safe for Explain section text clipping === */
+    .explain-section {
+      overflow: visible !important;
+    }
+
+    .explain-section p {
+      display: block;
+      line-height: 2.1;              /* 넉넉한 행간 */
+      margin-bottom: 28px;           /* 하단 여백 확보 */
+      padding-bottom: 12px;          /* 하강부 공간 확보 */
+      min-height: 2em;               /* 물리적 공간 강제 확보 */
+      overflow: visible !important;  /* 부모 영향 무시 */
+    }
+
+    .explain-section p::after {
+      content: "";
+      display: block;
+      height: 10px;                  /* 하단 물리적 공간 추가 */
+    }
+    /* Responsive font sizing to prevent clipping in Explain */
+    .explain-section p,
+    .explain-section .lead{
+      font-size: clamp(14px, 1.1vw, 17px) !important; /* 반응형 축소 */
+    }
+
+    /* Smaller type to fully eliminate clipping on Explain */
+    .explain-section .lead { font-size: clamp(13px, 1vw, 16px) !important; }
+    .explain-section p     { font-size: clamp(13px, 1vw, 16px) !important; }
+  </style>
+  <style id="explain-ultimate-clipfix-20251018">
+    /* 1) Absolutely prevent any ancestor from cropping in Explain/BLOOM area */
+    .section.explain-section,
+    .section.explain-section *,
+    .bloom-section,
+    .bloom-section * {
+      overflow: visible !important;
+    }
+
+    /* 2) Neutralize scroll-in transform on this section so subpixel clipping can't occur */
+    .section.explain-section { transform: none !important; opacity: 1 !important; }
+
+    /* 3) Single, unified text box model for all Explain paragraphs */
+    .explain-section :is(p, .lead) {
+      display: block !important;
+      font-size: clamp(13px, 1vw, 16px) !important; /* smaller, consistent */
+      line-height: 2.05 !important;
+      margin-bottom: 28px !important;
+      padding-bottom: 14px !important;
+      border-bottom: 8px solid transparent !important; /* create guaranteed paint area */
+    }
+    .explain-section :is(p, .lead)::after {
+      content: "";
+      display: block;
+      height: 12px; /* physical spacer so descenders never get cut */
+    }
+
+    /* 4) BLOOM lead paragraph gets same treatment */
+    .bloom-section .lead {
+      display: block !important;
+      font-size: clamp(13px, 1vw, 16px) !important;
+      line-height: 2.05 !important;
+      margin-bottom: 28px !important;
+      padding-bottom: 14px !important;
+      border-bottom: 8px solid transparent !important;
+    }
+    .bloom-section .lead::after { content: ""; display:block; height:12px; }
+  </style>
+  <style id="explain-final-noclip-20251018">
+    /* 🧱 Prevent all parent containers from clipping */
+    .section, .panel, .container, .explain-section {
+      overflow: visible !important;
+      transform: none !important;
+    }
+
+    /* ✨ Guarantee descenders and bottom lines are never cut */
+    .explain-section p,
+    .explain-section .lead {
+      display: block !important;
+      line-height: 2.2 !important;
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+      font-size: 15px !important;
+      position: relative !important;
+    }
+
+    .explain-section p::after,
+    .explain-section .lead::after {
+      content: "" !important;
+      display: block !important;
+      height: 24px !important; /* Create guaranteed space below text */
+    }
+
+    /* 🚫 Disable all transform/animation scroll effects */
+    [data-scroll], [data-aos] {
+      transform: none !important;
+      opacity: 1 !important;
+    }
+  </style>
+  <style id="about-mark-noclip-20251018">
+    /* Prevent baseline clipping on the big 'Explain' heading */
+    .about-mark{
+      display: block !important;
+      line-height: 1.12 !important;       /* more headroom than 1.0 */
+      padding-bottom: 0.22em !important;  /* physical space under glyphs */
+      margin-bottom: 0.32em !important;   /* keep spacing rhythm */
+      overflow: visible !important;
+    }
+    /* Physical spacer to guarantee paint below baseline */
+    .about-mark::after{ content:""; display:block; height:10px; }
+  </style>
+  <style id="exhibit-info-flat-20251018">
+    /* 전시장 정보 전체: 그라데이션·글로우 전부 제거, 평면화 */
+    .exhibit-info,
+    .exhibit-info * {
+      background-image: none !important;
+    }
+
+    /* 기간/장소/관람 카드가 놓이는 스트라이프 영역 */
+    .exhibit-info .stripe { background: transparent !important; }
+    .exhibit-info .stripe::after { content: none !important; display: none !important; }
+
+    /* 기간/장소/관람 카드 및 내부 배경 */
+    .exhibit-info .info-grid { background: transparent !important; }
+    .exhibit-info .info-item {
+      background: rgba(255,255,255,.03) !important; /* 미세 톤만 유지 (필요 없으면 transparent 로 바꿔도 됨) */
+      border: 1px solid rgba(255,255,255,.08) !important;
+      box-shadow: none !important;
+    }
+
+    /* 교통정보 표: 배경 그라데이션 제거하고 단색으로 고정 */
+    .exhibit-info .traffic-table {
+      background: #121212 !important;
+      background-image: none !important;
+      box-shadow: none !important;
+    }
+    .exhibit-info .traffic-label {
+      background: #121212 !important;   /* 라벨 칼럼도 단색 */
+      background-image: none !important;
+    }
+
+    /* 오시는 길 안내 아이콘의 미세 그라데이션 제거 (있을 경우) */
+    .exhibit-info .dir .ic {
+      background: #141414 !important;
+      background-image: none !important;
+    }
+  </style>
+  <style id="vertical-compact-20251018">
+    /* === Global vertical compact pack (pull sections up) === */
+    /* About big heading */
+    .about-mark{
+      margin-top: clamp(28px, 5vh, 48px) !important; /* 100px → 28~48px */
+      margin-bottom: 16px !important;                 /* 24px → 16px */
+    }
+
+    /* Explain & BLOOM poster block spacing */
+    .bloom-section{
+      margin: clamp(40px, 6vh, 80px) auto 56px !important; /* 100~160 → 40~80, 아래 80→56 */
+    }
+    /* Explain 위 구분선 위치도 위로 */
+    .explain-section::before{ top: -20px !important; }     /* -40px → -20px */
+
+    /* Section paddings (all sections) */
+    .section{ padding: 48px 0 48px !important; }           /* 72/64 → 48/48 */
+
+    /* Hero block padding */
+    .hero{ padding: 48px 0 40px !important; }              /* 64/64 → 48/40 */
+
+    /* Info stripe density */
+    .info-grid{ padding: 18px 0 !important; }              /* 28px → 18px */
+
+    /* Venue/map column vertical gaps */
+    .map-wrapper{ gap: 24px !important; }                  /* 36px → 24px */
+
+    /* Faculty gallery top margin */
+    .faculty-gallery{ margin-top: 24px !important; }       /* 40px → 24px */
+
+    /* Credits panel breathing space */
+    .credits-root{ padding-top: 28px !important; }         /* 48px → 28px */
+  </style>
+  <style id="poster-strong-red-20251018">
+    /* 포스터 설명 부분 strong 글자색과 크기 조정 */
+    .poster-desc strong,
+    .bloom-section strong,
+    .explain-section strong {
+      color: #ff2b2b !important; /* BLOOM 테마 레드 */
+      font-weight: 700;
+      font-size: 1.25em !important; /* 기본보다 크게 */
+      letter-spacing: 0.3px;
+    }
+  </style>
+  <style id="poster-desc-center-20251018">
+    /* BLOOM 섹션의 포스터 설명 문단 중앙 정렬 및 글자 크기 확대 */
+    .bloom-section .lead {
+      text-align: center !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      max-width: 72ch;
+      font-size: 1.25rem !important; /* 글자 크기 확대 */
+      line-height: 1.9 !important;   /* 읽기 좋은 행간 */
+    }
+  </style>
+<style id="vertical-lift-20251018">
+  /* Pull overall layout upward: tighter top paddings/margins */
+  .hero{ padding: 36px 0 32px !important; }
+  .section{ padding: 40px 0 40px !important; }
+  .about-mark{ margin-top: clamp(12px, 3vh, 28px) !important; }
+  .bloom-section{ margin: clamp(28px, 5vh, 64px) auto 44px !important; }
+  .explain-section::before{ top: -14px !important; }
+  .explain-divider{ margin: 10px 0 -8px !important; }
+  /* Credits panel headroom a bit smaller */
+  .credits-root{ padding-top: 28px !important; }
+  @media (max-width:560px){
+    .hero{ padding: 28px 0 28px !important; }
+  }
+</style>
+<style id="about-text-unify-20251018">
+  /* Unified body copy size across the page */
+  :root { --about-copy-size: 16px; }
+
+  /* Apply to all descriptive copy: lead, normal paragraphs, captions, info labels/values, lists in credits, traffic, etc. */
+  body .lead,
+  body .section p,
+  body .panel p,
+  body .bloom-section .lead,
+  body .explain-section .lead,
+  body .explain-section p,
+  body .people-list li,
+  body .traffic-body p,
+  body .media-grid figcaption,
+  body .info-label,
+  body .info-value,
+  body .credits-root p {
+    font-size: var(--about-copy-size) !important;
+    line-height: 1.85 !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+  }
+
+  /* Mobile: slightly smaller for balance */
+  @media (max-width:560px){
+    :root { --about-copy-size: 15px; }
+  }
+</style>
+<style id="committee-designer-grid-20251018">
+  /* Committees & Designers: 5 per row (faculty gallery unaffected) */
+  .credits-root ul.people-list:not(.faculty-gallery){
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px 18px;
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 1200px;
+    justify-items: center;
+  }
+
+  .credits-root ul.people-list:not(.faculty-gallery) li{
+    position: static;         /* override earlier relative */
+    padding-left: 0;          /* remove left indent from bullet style */
+    text-align: center;
+    font-size: var(--about-copy-size, 16px);
+    line-height: 1.85;
+    font-weight: 400;
+  }
+
+  /* remove red bullet dot for these lists only */
+  .credits-root ul.people-list:not(.faculty-gallery) li::before{ content: none !important; }
+
+  /* Responsive breakpoints */
+  @media (max-width: 1024px){
+    .credits-root ul.people-list:not(.faculty-gallery){ grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (max-width: 800px){
+    .credits-root ul.people-list:not(.faculty-gallery){ grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 560px){
+    .credits-root ul.people-list:not(.faculty-gallery){ grid-template-columns: repeat(2, 1fr); gap: 10px 12px; }
+  }
+</style>
+  <style id="committee-title-spacing-20251018">
+    /* 위원회 / 디자이너 / 웹 등 크레딧 섹션 제목 위 간격 여유 */
+    .credits-root .people-title {
+      margin-top: 52px !important;   /* 제목 위쪽 간격 확대 */
+      margin-bottom: 12px !important; /* 제목과 내용 사이 살짝 여유 */
+      line-height: 1.35;
+    }
+
+    /* 크레딧 영역에서 첫 번째 제목은 너무 멀지 않게 */
+    .credits-root .people-title:first-of-type {
+      margin-top: 36px !important;
+    }
+
+    /* 모바일 최적화 */
+    @media (max-width:560px) {
+      .credits-root .people-title {
+        margin-top: 28px !important;
+        margin-bottom: 10px !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -921,118 +1532,290 @@ html, body{ overflow-x:hidden; }
     
     
     <!-- Theme & Intro: 전시 주제 설명 + 카테고리 카드 -->
-    <section class="section explain-section">
+    <div class="explain-divider" aria-hidden="true"></div>
+    <section class="section explain-section" id="explain">
       <div class="container"><div class="about-mark">Explain</div></div>
-      <div class="bloom-section">
+      <!-- ===== Sub Navigation Bar (Poster | Exhibition Explain | Credits) ===== -->
+      <nav class="sub-nav" aria-label="Explain Navigation">
+        <ul>
+          <li><a href="#poster">Poster</a></li>
+          <li><a href="#explain">Exhibition Explain</a></li>
+          <li><a href="#credits">Credits</a></li>
+        </ul>
+      </nav>
+      <div class="bloom-section" id="poster">
         <h2>BLOOM Poster</h2>
         <img class="about-poster" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_Poster/가로.jpg" alt="BLOOM Poster">
-        <p class="lead">한 장의 스케치에서 시작된 작은 가능성이, 리서치와 프로토타입, 피드백과 개선을 거쳐 <strong>완성의 순간</strong>을 맞이합니다. <br> 그 여정 전체가 우리가 피워 낸 <strong>꽃</strong>입니다.</p>
+        <p class="lead">한 장의 스케치에서 시작된 작은 가능성이, 리서치와 프로토타입, 피드백과 개선을 거쳐 <strong>완성의 순간</strong>을 맞이합니다.  그 여정 전체가 우리가 피워 낸 <strong>꽃</strong>입니다.</p>
       </div>
       
       <div class="container" style="margin-top:28px;">
-        <div class="panel">
-          <h2>로고</h2>
-            <p class="lead">BLOOM의 상징인 장미와 이니셜 B를 하나의 구조로 엮어 완성했습니다. 장미는 순수·열정·아름다움을, B는 브랜드의 정체성과 중심축을 뜻합니다. 두 요소를 동일한 리듬으로 결합해 상징성과 완성도를 함께 높였습니다.</p>
-        </div>
+        <h2>로고</h2>
 
         <div class="media-grid">
-            <figure>
-              <div class="pad">
-                <img class="logo-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="BLOOM 장미 심볼마크" onload="this.classList.add('is-loaded')" />
-              </div>
-              <figcaption>장미 심볼 — 순수함과 열정의 상징</figcaption>
-            </figure>
+          <figure>
+            <div class="pad">
+              <img class="logo-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/1.png" alt="BLOOM 장미 심볼마크" onload="this.classList.add('is-loaded')" />
+            </div>
+            <figcaption>장미 심볼 — 순수함과 열정의 상징</figcaption>
+          </figure>
 
-            <figure>
-              <div class="pad">
-                <img class="logo-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" alt="BLOOM 워드마크" onload="this.classList.add('is-loaded')" />
-              </div>
-              <figcaption>워드마크 — 브랜드 이니셜 B를 중심으로</figcaption>
-            </figure>
+          <figure>
+            <div class="pad">
+              <img class="logo-img zoomable" loading="lazy" decoding="async" src="../../1.Picture/1.%2027th%20Graduation/BLOOM_LOGO/BLOOM_LOGOTAXT.png" alt="BLOOM 워드마크" onload="this.classList.add('is-loaded')" />
+            </div>
+            <figcaption>워드마크 — 브랜드 이니셜 B를 중심으로</figcaption>
+          </figure>
         </div>
+        <p class="lead">BLOOM의 상징인 장미와 이니셜 B를 하나의 구조로 엮어 완성했습니다. 장미는 순수·열정·아름다움을, B는 브랜드의 정체성과 중심축을 뜻합니다. 두 요소를 동일한 리듬으로 결합해 상징성과 완성도를 함께 높였습니다.</p>
       </div>
     </section>
+
 
     <!-- Highlights: 행사/프로그램 카드 -->
-    <section class="section">
+    <section class="section" id="credits">
       <div class="container">
-        <h2>타임라인</h2>
-        <div class="cards">
-          <div class="card"><h3>오프닝 토크</h3><p>전시 기획 배경과 참여 디자이너 라운드테이블.</p></div>
-          <div class="card"><h3>워크숍</h3><p>타이포 포스터, 캐릭터 라이브 드로잉, 프로토타입 스프린트.</p></div>
-          <div class="card"><h3>가이드 투어</h3><p>도슨트와 함께 섹션별 의도와 제작 비하인드 소개.</p></div>
-        </div>
-
-        <!-- Info stripe: 기간/장소/관람 정보 -->
-    <section class="stripe">
-      <div class="container info-grid">
-        <div class="info-item"><span class="info-label">기간</span><span class="info-value">2025. 10. 17 — 10. 20</span></div>
-        <div class="info-item"><span class="info-label">장소</span><span class="info-value">부산디자인진흥원 전시홀</span></div>
-        <div class="info-item"><span class="info-label">관람</span><span class="info-value">무료 · AM 10:00 — PM 6:00</span></div>
-      </div>
-    </section>
-      </div>
-    </section>
-
-    <!-- Venue: 오시는 길 + 지도 자리 -->
-    <section class="section">
-      <div class="container venue">
-        <div class="panel">
-          
-          <h2>교통정보</h2>
-
-          <div class="traffic-table">
-            <div class="traffic-row">
-              <div class="traffic-cell traffic-label">지하철</div>
-              <div class="traffic-cell traffic-body">
-                <p>2번출구 : 스타벅스 앞 - 좌회전 - <b>300m</b> 직진 <small>(도보 10분 소요)</small></p>
-                <p>4번출구 : 대우트럼프월드센텀 - 우회전 - <b>300m</b> 직진</p>
-              </div>
+        
+        <div style="height:40px;"></div>
+        <div class="exhibit-info panel">
+          <h2 class="section-title">전시장 정보</h2>
+          <section class="stripe">
+            <div class="container info-grid">
+              <div class="info-item"><span class="info-label">기간</span><span class="info-value">2025. 10. 17 — 10. 20</span></div>
+              <div class="info-item"><span class="info-label">장소</span><span class="info-value">부산디자인진흥원 전시홀</span></div>
+              <div class="info-item"><span class="info-label">관람</span><span class="info-value">무료 · AM 10:00 — PM 6:00</span></div>
             </div>
+          </section>
 
-            <div class="traffic-row">
-              <div class="traffic-cell traffic-label">시내버스</div>
-              <div class="traffic-cell traffic-body">
-                <p>센텀시티역 하차 : 1001, 1002, 139, 141, 155, 36, 39, 40, 5, 5-1, 63</p>
-                <p>삼성홈플러스 하차 : 100-1, 31, 115-1, 307, 200, 100</p>
-                <p>센텀벤처타운 하차 : 181</p>
-                <p>부산디자인진흥원 하차 : 115</p>
+          <div class="container venue">
+            <div class="panel">
+              
+                <h2>교통정보</h2>
+
+                <div class="traffic-table">
+                  <div class="traffic-row">
+                    <div class="traffic-cell traffic-label">지하철</div>
+                    <div class="traffic-cell traffic-body">
+                      <p>2번출구 : 스타벅스 앞 - 좌회전 - <b>300m</b> 직진 <small>(도보 10분 소요)</small></p>
+                      <p>4번출구 : 대우트럼프월드센텀 - 우회전 - <b>300m</b> 직진</p>
+                    </div>
+                  </div>
+
+                  <div class="traffic-row">
+                    <div class="traffic-cell traffic-label">시내버스</div>
+                    <div class="traffic-cell traffic-body">
+                      <p>센텀시티역 하차 : 1001, 1002, 139, 141, 155, 36, 39, 40, 5, 5-1, 63</p>
+                      <p>삼성홈플러스 하차 : 100-1, 31, 115-1, 307, 200, 100</p>
+                      <p>센텀벤처타운 하차 : 181</p>
+                      <p>부산디자인진흥원 하차 : 115</p>
+                    </div>
+                  </div>
+
+                  <div class="traffic-row">
+                    <div class="traffic-cell traffic-label">승용차</div>
+                    <div class="traffic-cell traffic-body">
+                      <p>경부고속도로 : 부산톨게이트 → 원동IC → 해운대방면 → 수비사거리</p>
+                      <p>남해고속도로 : 부산톨게이트 → 동서고가로 → 황령산터널 → 수비사거리</p>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="traffic-note">* 내부가 혼잡하여 대중교통을 추천 드립니다</div>
               </div>
-            </div>
-
-            <div class="traffic-row">
-              <div class="traffic-cell traffic-label">승용차</div>
-              <div class="traffic-cell traffic-body">
-                <p>경부고속도로 : 부산톨게이트 → 원동IC → 해운대방면 → 수비사거리</p>
-                <p>남해고속도로 : 부산톨게이트 → 동서고가로 → 황령산터널 → 수비사거리</p>
+              <div class="map-wrapper">
+                <div class="map">
+                  <iframe
+                    title="부산디자인진흥원 지도"
+                    src="https://www.google.com/maps?hl=ko&output=embed&q=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90&z=18"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+                <div class="map-links">
+                  <a href="https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">네이버 지도에서 열기</a>
+                  <a href="https://map.kakao.com/?q=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">카카오맵에서 열기</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">Google 지도에서 열기</a>
+                </div>
               </div>
-            </div>
-
           </div>
-          <div class="traffic-note">* 내부가 혼잡하여 대중교통을 추천 드립니다</div>
         </div>
-        <div class="map">
-          <iframe
-            title="부산디자인진흥원 지도"
-            src="https://www.google.com/maps?hl=ko&output=embed&q=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90&z=18"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            allowfullscreen
-          ></iframe>
-        </div>
-        <div class="map-links">
-          <a href="https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">네이버 지도에서 열기</a>
-          <a href="https://map.kakao.com/?q=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">카카오맵에서 열기</a>
-          <a href="https://www.google.com/maps/search/?api=1&query=%EB%B6%80%EC%82%B0%EB%94%94%EC%9E%90%EC%9D%B8%EC%A7%84%ED%9D%A5%EC%9B%90" target="_blank" rel="noopener">Google 지도에서 열기</a>
-        </div>
+<style id="explain-subnav-20251018">
+  /* Sub Navigation below Explain */
+  .sub-nav {
+    position: sticky;
+    top: 90px;
+    z-index: 10;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    padding: 10px 0;
+    margin: 8px 0 24px;
+  }
+
+  .sub-nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 36px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sub-nav a {
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+    transition: color .25s ease;
+  }
+
+  .sub-nav a:hover,
+  .sub-nav a:focus {
+    color: #ff3b3b;
+  }
+
+  @media (max-width:560px){
+    .sub-nav ul {
+      gap: 20px;
+    }
+    .sub-nav a {
+      font-size: 14px;
+    }
+  }
+</style>
+</head>
+<style id="exhibit-info-title-20251018">
+  .exhibit-info .section-title {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-left: clamp(18px, 4vw, 36px);
+    margin-bottom: 16px;
+    letter-spacing: 0.2px;
+  }
+</style>
       </div>
     </section>
+
+
 
 
     <!-- ==================== Credits (졸업전시 크레딧) ==================== -->
     <section class="section">
       
-      <div class="container panel">
+      <div class="container panel credits-root">
+  <style id="credits-panel-lineup-20251017">
+    /* ===== Perfect alignment for all titles & text inside Credits ===== */
+    .credits-root {
+      position: relative;
+      padding-left: clamp(12px, 2.5vw, 24px) !important;
+      padding-right: clamp(12px, 2.5vw, 24px) !important;
+      box-sizing: border-box;
+      max-width: var(--max);
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Give Credits section breathing space from top edge of its panel */
+    .credits-root {
+      padding-top: 48px !important; /* add visual space above Credits title */
+    }
+
+    /* Align main title and subtitle */
+    .credits-root > h2,
+    .credits-root > .lead {
+      margin: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      text-align: left !important;
+    }
+
+    /* Align every group heading (Committee, Designers, Web, Thanks to, etc.) */
+    .credits-root .people-group .people-title,
+    .credits-root .thanks-section > h2,
+    .credits-root .thanks-section > h3,
+    .credits-root .faculty .people-title {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      text-align: left !important;
+    }
+
+    /* Align containers (keep padding same baseline as faculty section) */
+    .credits-root .people-group,
+    .credits-root .thanks-section,
+    .credits-root .faculty {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      box-sizing: border-box;
+    }
+
+    /* Ensure the nested Faculty container inside Credits has NO side padding */
+    .credits-root .faculty .container{
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    /* Align the specific faculty title line inside Credits */
+    .credits-root .faculty .people-title{
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      text-align: left !important;
+    }
+
+    /* Inner lists also start aligned with the same left edge */
+    .credits-root ul.people-list {
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+    }
+
+    /* Keep even vertical rhythm */
+    .credits-root .people-group + .people-group {
+      margin-top: 36px !important;
+    }
+
+    /* 총장님(이상천) 이미지: 교수님 4열 카드 좌우 여백과 동일한 라인에 맞춤 */
+    .credits-root .president {
+      max-width: 1600px;
+      padding-left: clamp(18px, 4vw, 36px);
+      padding-right: clamp(18px, 4vw, 36px);
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      justify-content: flex-start;  /* 중앙 → 왼쪽 정렬 */
+      align-items: stretch;         /* 내부 요소 좌측 라인 맞춤 */
+      flex-direction: column;
+      width: 100%;
+    }
+    /* Advisor(동명대학교 총장 이상천) 제목을 교수님 라인에 완벽히 맞춤 */
+    .credits-root .president .people-title {
+      text-align: left !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      align-self: flex-start !important;
+      width: 100% !important;
+      transform: translateX(-30px); /* 교수님 제목 라인과 정확히 맞춤 (조금 더 왼쪽) */
+    }
+
+    .credits-root .president .about-photo {
+      width: 100% !important;
+      max-width: 2000px !important; /* enlarge only the image */
+      height: auto !important;
+      border-radius: 18px;
+      object-fit: cover;
+      margin-top: 24px !important;
+      margin-bottom: 60px !important;
+      display: block;
+    }
+  </style>
         <h2>Credits</h2>
 
         <!-- 행사 타이틀 -->
@@ -1042,22 +1825,21 @@ html, body{ overflow-x:hidden; }
 
           <!-- Thanks/Credits: 지도교수/운영/도슨트 -->
     <section class="section">
-      <div class="container panel">
+      <div class="container panel edge-panel thanks-section">
         <h2>Thanks to</h2>
         <div class="people">
-          <div class="people-group">
+          <div class="people-group president">
             <h3 class="people-title"><span class="pill">Advisor</span>동명대학교 총장 이상천</h3>
-            <img class="about-photo" src="../../1.Picture/3.%20Graduate_Propasser/총장님.jpeg" alt="총장님">
+            <img class="about-photo" src="/1.Picture/3. Graduate_Propasser/Universitypresident.jpeg" alt="총장님">
           </div>
     <section class="faculty">
       <div class="container">
         <div class="people-group" style="margin-top:16px;">
           <h3 class="people-title"><span class="pill">Designers</span>동명대학교 시각디자인학과 교수님</h3>
-          <ul class="people-list">            
+          <ul class="people-list faculty-gallery">            
           <li class="faculty-card" data-name="정원준" data-filename="정원준교수님.jpeg">
             <img loading="lazy" alt="정원준 교수님" src="" onerror="handleFacultyError(this)" />
             <div class="cap">
-              <span class="dot"></span>
               <span class="name">정원준 교수님</span>
             </div>
           </li>
@@ -1065,7 +1847,6 @@ html, body{ overflow-x:hidden; }
           <li class="faculty-card" data-name="김재익" data-filename="김재익교수님1.png">
             <img loading="lazy" alt="김재익 교수님" src="" onerror="handleFacultyError(this)" />
             <div class="cap">
-              <span class="dot"></span>
               <span class="name">김재익 교수님</span>
             </div>
           </li>
@@ -1073,7 +1854,6 @@ html, body{ overflow-x:hidden; }
           <li class="faculty-card" data-name="박규태" data-filename="박규태교수님.jpeg">
             <img loading="lazy" alt="박규태 교수님" src="" onerror="handleFacultyError(this)" />
             <div class="cap">
-              <span class="dot"></span>
               <span class="name">박규태 교수님</span>
             </div>
           </li>
@@ -1081,7 +1861,6 @@ html, body{ overflow-x:hidden; }
           <li class="faculty-card" data-name="장경숙" data-filename="장경숙교수님.jpeg">
             <img loading="lazy" alt="장경숙 교수님" src="" onerror="handleFacultyError(this)" />
             <div class="cap">
-              <span class="dot"></span>
               <span class="name">장경숙 교수님</span>
             </div>
           </li>
@@ -1089,7 +1868,6 @@ html, body{ overflow-x:hidden; }
           <li class="faculty-card" data-name="김정은">
             <img loading="lazy" alt="김정은 교수님" src="" onerror="handleFacultyError(this)" />
             <div class="cap">
-              <span class="dot"></span>
               <span class="name">김정은 교수님</span>
             </div>
           </li>
@@ -1097,7 +1875,6 @@ html, body{ overflow-x:hidden; }
           <li class="faculty-card" data-name="원종윤" data-filename="원종윤교수님.jpeg">
             <img loading="lazy" alt="원종윤 교수님" src="" onerror="handleFacultyError(this)" />
             <div class="cap">
-              <span class="dot"></span>
               <span class="name">원종윤 교수님</span>
             </div>
           </li>
@@ -1105,7 +1882,6 @@ html, body{ overflow-x:hidden; }
           <li class="faculty-card" data-name="선정훈" data-filename="선정훈교수님.jpeg">
             <img loading="lazy" alt="선정훈 교수님" src="" onerror="handleFacultyError(this)" />
             <div class="cap">
-              <span class="dot"></span>
               <span class="name">선정훈 교수님</span>
             </div>
           </li>
@@ -1117,13 +1893,22 @@ html, body{ overflow-x:hidden; }
        <div class="people-group" style="margin-top:16px;">
         <h3 class="people-title"><span class="pill">Committee</span> 졸업준비위원회</h3>
         <ul class="people-list">
-          <li><strong>위원장</strong> 최자연</li>
-          <li><strong>부위원장</strong> 박은제</li>
-          <li><strong>편집팀</strong> 김준성, 김혜연, 이영현, 차은지, 황만규</li>
-          <li><strong>홍보팀</strong> 안정연, 김혜림, 배유진, 박은제</li>
-          <li><strong>전시팀</strong> 김사율, 이다현, 이혜주</li>
-          <li><strong>감사</strong> 안예진</li>
-          <li><strong>총무</strong> 홍화정</li>
+          <li>최자연</li>
+          <li>박은제</li>
+          <li>김준성</li>
+          <li>김혜연</li>
+          <li>지영현</li>
+          <li>차은지</li>
+          <li>황만규</li>
+          <li>안정연</li> 
+          <li>김혜림</li> 
+          <li>배유진</li>
+          <li>박은제</li>
+          <li>김사율</li>
+          <li>이다현</ul>
+          <li>이혜주</li>
+          <li>안예진</li>
+          <li>홍화정</li>
         </ul>
       </div>
 
@@ -1458,7 +2243,6 @@ html, body{ overflow-x:hidden; }
     document.querySelectorAll('.section,.hero,.venue,.faculty,.traffic-table')
       .forEach(el=>observer.observe(el));
     </script>
-</script>
 <script>
 (function alignRoseBaseline(){
   const hero = document.querySelector('.hero');
@@ -1496,3 +2280,83 @@ html, body{ overflow-x:hidden; }
 </script>
 </body>
 </html>
+  <style id="align-president-title-20251018">
+    /* Align the Advisor (총장 이상천) title with other section titles */
+    .credits-root .president .people-title {
+      margin-left: clamp(18px, 4vw, 36px) !important; /* align with section titles */
+      text-align: left !important;
+    }
+  </style>
+</head>
+  <style id="remove-gradient-20251018">
+    /* 전시장 정보 - 기간/장소/관람 그라데이션 제거 */
+    .exhibition-info,
+    .exhibition-info .period,
+    .exhibition-info .location,
+    .exhibition-info .visit {
+      background: none !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+  </style>
+  <style id="exhibit-info-wrapper-20251018">
+  .exhibit-info {
+    border-radius: 16px;
+    /* background: linear-gradient(180deg, #121212, #0d0d0d); */ /* gradient 제거 */
+    background: #121212;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    padding-top: 18px;
+    padding-bottom: 24px;
+    /* Use ONE consistent side gutter, identical to Credits */
+    padding-left: clamp(12px, 2.5vw, 24px) !important;
+    padding-right: clamp(12px, 2.5vw, 24px) !important;
+    margin-top: 12px;
+    max-width: var(--max);   /* match Credits container width */
+    /* Compensate for parent .container side paddings so border aligns to container edge */
+    margin-left: calc(-1 * clamp(18px, 4vw, 36px));  /* cancel parent .container left padding */
+    margin-right: calc(-1 * clamp(18px, 4vw, 36px)); /* cancel parent .container right padding */
+    width: auto; /* let it stretch to container edge like Credits */
+    box-sizing: border-box;
+  }
+  /* Remove inner container paddings to avoid double-gutters */
+  .exhibit-info .container { padding-left: 0 !important; padding-right: 0 !important; }
+
+  .exhibit-info .stripe {
+    border-left: 0;
+    border-right: 0;
+    margin: 0;
+    border-radius: 0;
+    padding-left: 0;  /* rely on parent .exhibit-info padding */
+    padding-right: 0;
+  }
+  .exhibit-info .venue {
+    margin-top: 18px;
+  }
+  /* Remove gradient backgrounds from 기간, 장소, 관람 section (info cards) */
+  .exhibit-info .info-item,
+  .exhibit-info .info-label,
+  .exhibit-info .info-value,
+  .exhibit-info .period,
+  .exhibit-info .location,
+  .exhibit-info .visit {
+    background: none !important;
+    background-color: transparent !important;
+  }
+  .exhibit-info,
+  .exhibit-info .info-grid {
+    background: none !important;
+    background-color: transparent !important;
+  }
+
+  /* Title should align to the same left baseline as Credits titles */
+  .exhibit-info .section-title {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 16px 0; /* no extra left margin, follow parent padding */
+    letter-spacing: 0.2px;
+  }
+</style>
